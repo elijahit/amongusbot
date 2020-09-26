@@ -9,7 +9,7 @@ class Embeds(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def get_login_message(name, color, icon, fields, footer):
+    def get_standard_embed(name, color, icon, fields, footer):
         embed = Embed(color=color)
         embed.set_author(name=name, icon_url=icon)
 
