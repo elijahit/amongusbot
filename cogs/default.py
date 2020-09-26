@@ -10,17 +10,6 @@ class Default(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-
-        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Among Us Ita - !AIUTO"))
-        cfg = self.bot.get_cog('Config')
-        print('-[{}]-\nScripted by Elijah.'.format(cfg.footer))
-        print(
-        '''\nInvite link: https://discordapp.com/oauth2/
-        authorize?client_id={}&scope=bot&permissions=8'''
-        .format(self.bot.user.id))
-
     async def _cog_handler(self, ctx, action, *args):
 
         embeds = self.bot.get_cog('Embeds')

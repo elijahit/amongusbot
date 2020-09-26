@@ -77,9 +77,9 @@ class Voicechannels(commands.Cog):
                     message += 'ed è '
                 message += f'entrato in {after.channel.name}'
 
-        embed=discord.Embed(color=cfg.blue)
+        embed = discord.Embed(color=cfg.blue)
         embed.set_author(name="{0}#{1}".format(member.name, member.discriminator), icon_url=member.avatar_url)
-        embed.add_field(name="userlogs-vocal", value="**{0}**".format(message), inline=True)
+        embed.add_field(name="userlogs-vocal", value="**{0}**".format("elijah non sa programmare"), inline=True)
         embed.set_footer(text=cfg.footer)
         await logchannel.send(embed=embed)
 

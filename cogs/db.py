@@ -3,12 +3,15 @@ from sqlite3 import connect, Error
 import os
 
 
-class db(commands.Cog):
+class Db(commands.Cog):
+
     def __init__(self, bot):
-        
+        self.bot = bot
+
+        databaseuri = 'file:C:/Users/Nicola/Documents/amongusbot/cogs/database.db?mode=rw'
 
         try:
-            self.Database = connect('file:C:/Users/Gabriele/Desktop/Workstation/newbot/cogs/database.db?mode=rw', uri=True)
+            self.Database = connect(databaseuri, uri=True)
             self.Cursor = self.Database.cursor()
 
             print("[!] Connessione al database stabilita.")
@@ -17,53 +20,46 @@ class db(commands.Cog):
 
             print(Error)
 
+    def field(self, command, *values):
+        self.Cursor.execute(command, tuple(values))
+        fetch = self.Cursor.fetchone()
 
-        class database:
-            def field(self, command, *valore):
-                Cursor.execute(command, tuple(valore))
-                fetch = Cursor.fetchone()
-                if fetch is not None:
-                    return fetch[0]
-                return
+        if fetch is not None:
+            return fetch[0]
 
+    def one_record(self, command, *values):
+        self.Cursor.execute(command, tuple(values))
+        return self.Cursor.fetchone()
 
-            def one_record(self, command, *valore):
-                Cursor.execute(command, tuple(valore))
-                return Cursor.fetchone()
+    def records(self, command, *values):
+        self.Cursor.execute(command, tuple(values))
+        return self.Cursor.fetchall()
 
-            def records(self, command, *valore):
-                Cursor.execute(command, tuple(valore))
-                return Cursor.fetchall()
+    def column(self, command, *values):
+        self.Cursor.execute(command, tuple(values))
+        return [item[0] for item in self.Cursor.fetchall()]
 
-            def column(self, command, *valore):
-                Cursor.execute(command, tuple(valore))
-                return [item[0] for item in Cursor.fetchall()]
-                
-            def execute(self, command, *valore):
-                Cursor.execute(command, tuple(valore))
-                return
+    def execute(self, command, values):
+        self.Cursor.execute(command, values)
 
-            def update(self):
-                for Member in Guild.members:
-                    database.execute("INSERT OR IGNORE INTO users (ID) VALUES (?)", Member.id)
-                for userid in database.column("SELECT ID from users"):
-                    if Guild.get_member(userid) is None:
-                        database.execute("DELETE FROM users WHERE ID = ?", userid)
-                self.Database.commit()
-                return
+    # def update(self):
+    #     for Member in Guild.members:
+    #         database.execute("INSERT OR IGNORE INTO users (ID) VALUES (?)", Member.id)
+    #     for userid in database.column("SELECT ID from users"):
+    #         if Guild.get_member(userid) is None:
+    #             database.execute("DELETE FROM users WHERE ID = ?", userid)
+    #     self.Database.commit()
+    #     return
 
+    async def commit(self):
+        self.Database.commit()
+        return
 
-            async def commit(self):
-                self.Database.commit()
-                return
-
-            def disconnect(self):
-                self.Database.close()
-                return
-
-
+    def disconnect(self):
+        self.Database.close()
+        return
 
 
 def setup(bot):
-    bot.add_cog(db(bot))
+    bot.add_cog(Db(bot))
     print("[!] modulo db caricato")
