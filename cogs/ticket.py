@@ -106,8 +106,9 @@ class Ticket(commands.Cog):
         await m.clear_reactions()
         await m.delete()
 
-        embed = discord.Embed(title = m.embeds[0].title, description = f"{user.mention} la tua richiesta è stata presa in carico da {user_.mention}.")
-        embed.add_field(name="Legenda", value="🔵 - Ticket inutilizzato\n🟡 - Impossibile risolvere il ticket\n🔴 - Ticket risolto correttamente")
+        embed = discord.Embed(title = m.embeds[0].title, description = f"Ciao {user_.mention} la tua richiesta è stata presa in carico dallo Staffer {user.mention} di Among Us Ita, come può esserti utile?\n\
+        Esponi chiaramente la tua richiesta affinchè lo staffer possa esaustivamente risolvere la tua problematica, ricordati che l'apertura di ticket inutilizzati incomberà al warn.")
+        embed.add_field(name="Legenda per lo Staff", value="🔵 - Ticket inutilizzato\n🟡 - Impossibile risolvere il ticket\n🔴 - Ticket risolto correttamente")
         m = await channel.send(embed=embed)
         await m.add_reaction('🔵')
         await m.add_reaction('🟡')
