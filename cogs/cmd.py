@@ -14,6 +14,15 @@ class cmd(commands.Cog):
 
 #CMD utente
 
+    @commands.command()
+    async def ping(ctx):
+
+        await delete_message(ctx.message)
+        before = time.monotonic()
+        message = await ctx.send(f"Ping {int(ping)}ms")
+        ping = (time.monotonic() - before) * 1000
+        await message.edit(content=f"Pong!  `{int(ping)}ms`")
+
     @commands.command()#about
     async def about (self, ctx):
 
@@ -397,12 +406,26 @@ class cmd(commands.Cog):
 
 
     @commands.command()#comando tsay
-    async def t (self, ctx, title, *, text):
+    async def t (self, ctx, *all): #!t "titolo molto utile" descrizione utile
         cfg = self.bot.get_cog('Config')
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
+
+            title = None
+            all.split()
+            for x in all:
+                if x.startswith("\""):
+                    for y in all:
+                     title += y
+                     all.pop(-1)
+                     if y.endswith("\""):
+                         break
+
+            text = " ".join(all)
+
+
             embeds=discord.Embed(color=cfg.blue)
             embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
             embeds.add_field(name=title, value=text, inline=True)
