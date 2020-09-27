@@ -18,49 +18,59 @@ class Ctrlhack(commands.Cog):
     
     @commands.command()
     async def hackhelp(self, ctx):
-        cmdsLs = discord.Embed(title="LISTA COMANDI HACKCMD", description="**-> Comandi admin** \n\
-            !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
-                !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
-                    !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
-        cmdsLs.set_author(name = "Among Us Ita")
-        cmdsLs.set_footer(text="Among Us Ita 0.1 **beta**")
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            await ctx.message.delete()
+            cmdsLs = discord.Embed(title="LISTA COMANDI HACKCMD", description="**-> Comandi admin** \n\
+                !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
+                    !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
+                        !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
+            cmdsLs.set_author(name = "Among Us Ita")
+            cmdsLs.set_footer(text="Among Us Ita 0.1 **beta**")
 
-        await ctx.channel.send(embed=cmdsLs, delete_after=120)
+            await ctx.channel.send(embed=cmdsLs, delete_after=120)
 
     @commands.command()
     async def hack(self, ctx, channel_num):
-        global mess, channel_search, admin_live_id
-        channel_search = "matchmaking " + channel_num
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            await ctx.message.delete()
+            global mess, channel_search, admin_live_id
+            channel_search = "matchmaking " + channel_num
 
-        user_send = ctx.channel.last_message.author
-        if user_send == None:
-            await sleep(1)
             user_send = ctx.channel.last_message.author
-            await sleep(3)
+            if user_send == None:
+                await sleep(1)
+                user_send = ctx.channel.last_message.author
+                await sleep(3)
 
-        await ctx.channel.purge(limit=1)
+            await ctx.channel.purge(limit=1)
 
-        if str(user_send.id) not in admin_live_id:
+            if str(user_send.id) not in admin_live_id:
 
-            admin_live_id += f"{str(user_send.id)} "
+                admin_live_id += f"{str(user_send.id)} "
 
-            Warning = discord.Embed(title="🟥 E' STATO CONVOCATO UN CONTROLLO HACK 🟥", description=f"{user_send.mention} ha convocato il gruppo: {channel_search} per un controllo hack, proseguire?", color=discord.Color.red(), timestamp=dt.datetime.utcnow())
-            Warning.set_footer(text="Among Us Ita 0.1 **beta**")
-            Warning.set_author(name = "Among Us Ita")
+                Warning = discord.Embed(title="🟥 E' STATO CONVOCATO UN CONTROLLO HACK 🟥", description=f"{user_send.mention} ha convocato il gruppo: {channel_search} per un controllo hack, proseguire?", color=discord.Color.red(), timestamp=dt.datetime.utcnow())
+                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_author(name = "Among Us Ita")
 
-            message_sent = await ctx.channel.send(embed=Warning)
-            await message_sent.add_reaction("🟢")
-            await message_sent.add_reaction("🔴")
-        
-        else:
-            Warning = discord.Embed(title="🟪 UN MEMBRO PUO' AVERE UN MASSIMO DI UN CONTROLLO APERTO 🟪", description=f"{user_send.mention}, \nchiudi prima tutti i tuoi controlli  poi riprova", color=discord.Color.purple(), timestamp=dt.datetime.utcnow())
-            Warning.set_footer(text="Among Us Ita 0.1 **beta**")
-            Warning.set_author(name = "Among Us Ita")
-            mexa = await ctx.channel.send(embed=Warning)
+                message_sent = await ctx.channel.send(embed=Warning)
+                await message_sent.add_reaction("🟢")
+                await message_sent.add_reaction("🔴")
+            
+            else:
+                Warning = discord.Embed(title="🟪 UN MEMBRO PUO' AVERE UN MASSIMO DI UN CONTROLLO APERTO 🟪", description=f"{user_send.mention}, \nchiudi prima tutti i tuoi controlli  poi riprova", color=discord.Color.purple(), timestamp=dt.datetime.utcnow())
+                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_author(name = "Among Us Ita")
+                mexa = await ctx.channel.send(embed=Warning)
 
-            await sleep(5)
+                await sleep(5)
 
-            await mexa.delete()
+                await mexa.delete()
 
         
     @commands.Cog.listener()
@@ -187,15 +197,25 @@ class Ctrlhack(commands.Cog):
 
     @commands.command()
     async def FAIL(self, ctx):
-        for channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
-            await channel.delete()
-        await ctx.message.delete()
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            await ctx.message.delete()
+            for channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
+                await channel.delete()
+            await ctx.message.delete()
 
     @commands.command()
     async def RESETLIST(self, ctx):
-        global admin_live_id
-        admin_live_id = ""
-        await ctx.channel.send("svuotato", delete_after=2)
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            await ctx.message.delete()
+            global admin_live_id
+            admin_live_id = ""
+            await ctx.channel.send("svuotato", delete_after=2)
 
 def setup(bot):
     bot.add_cog(Ctrlhack(bot))
