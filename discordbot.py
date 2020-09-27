@@ -12,7 +12,7 @@ def get_prefix(bot, message):
 
 
 startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds',
-                      'cogs.voicechannels']
+                      'cogs.voicechannels', 'cogs.ticket']
 
 bot = commands.Bot(command_prefix=get_prefix, description='')
 
@@ -25,7 +25,6 @@ if __name__ == "__main__":
             exc = f"{type(e).__name__} : {e}"
             print(f"Failed to load extension {extension}\n{exc}")
             exit(1)
-
 
 @bot.event
 async def on_ready():
@@ -43,4 +42,3 @@ async def on_ready():
 bot.run('NzU3NjQ5NDU0MjM1OTEwMTc0.X2jeCg.7pQN7yL4ylmrFXK8pSnGOdFqxRc',
         bot=True,
         reconnect=True)
-

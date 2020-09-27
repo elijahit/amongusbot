@@ -8,7 +8,7 @@ class Db(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        databaseuri = 'file:C:/Users/Nicola/Documents/amongusbot/cogs/database.db?mode=rw'
+        databaseuri = 'file:C:/Users/Gabriele/Desktop/Workstation/newbot/cogs/database.db?mode=rw'
 
         try:
             self.Database = connect(databaseuri, uri=True)
@@ -41,6 +41,10 @@ class Db(commands.Cog):
 
     def execute(self, command, values):
         self.Cursor.execute(command, values)
+
+    def fetchall(self, command, values):
+        self.Cursor.execute(command, (values))
+        return self.Cursor.fetchall()
 
     # def update(self):
     #     for Member in Guild.members:
