@@ -10,6 +10,36 @@ class cmd(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
+
+#CMD utente
+
+    @commands.command()#about
+    async def about (self, ctx):
+
+        await ctx.message.delete()
+        cfg = self.bot.get_cog('Config')
+        embed = self.bot.get_cog('Embeds')
+
+        name = "About - Among Us Ita BOT"
+        field = ("About 3rd Party Developers",
+                 "**Among Us Ita BOT**\n"
+                 "Questo BOT è stato creato e programmato in python da un team di 6+ developer per amongusita.it, sono stati richiesti \
+                 mesi di programmazione per rendere lo stesso adeguato all'utenza attualmente dentro Among Us Ita.\
+                 Il bot viene utilizato per gestire l'intera community di Among Us Ita, ciò che in altre community viene fatto con 7 bot diversi.\n"
+                 "*Developers*: **Elijah**, **Nico**, **ImNotName**, **TzSgrullee_**, **MyNameIsDark01**\n\
+                 \n© amongusita.it")
+
+        about_embed = embed.get_standard_embed(name,
+                                               cfg.green,
+                                               ctx.guild.icon_url,
+                                               [field],
+                                               cfg.footer)
+        await ctx.channel.send(embed=about_embed)
+
+
+
+        return
 ###############    ADMIN COMMAND
 
     @commands.command() ###CMD AIUTO ADMIN
@@ -31,13 +61,13 @@ class cmd(commands.Cog):
             embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
             embed.add_field(name="userlogs", value="**{0} ha usato il comando `!acmds`**".format(ctx.message.author.mention), inline=True)
             embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed) 
+            await logchannel.send(embed=embed)
             print("[LOG] {0}#{1} ha usato il comando !acmds".format(ctx.message.author.name, ctx.message.author.discriminator))
             return
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return   
+            return
 
     @commands.command()#comando purge
     async def purge(self, ctx, ammount = int(1)):
@@ -59,8 +89,8 @@ class cmd(commands.Cog):
                 return
             else:
                 await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
-                await ctx.message.delete() 
-                return   
+                await ctx.message.delete()
+                return
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
@@ -81,7 +111,7 @@ class cmd(commands.Cog):
             embed.add_field(name="RICHIESTA: {}".format(stato), value="{}".format(text), inline=True)
             embed.set_footer(text="N° {}".format((random.randint(100000, 9000000))))
             await logchannel.send(embed=embed)
-            return  
+            return
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
@@ -106,7 +136,7 @@ class cmd(commands.Cog):
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return    
+            return
 
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
@@ -119,7 +149,7 @@ class cmd(commands.Cog):
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return    
+            return
     @commands.command()#comando rteam
     async def editmsg (self, ctx, id, *, messaggio):
         cfg = self.bot.get_cog('Config')
@@ -181,7 +211,7 @@ class cmd(commands.Cog):
                 embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
                 embed.add_field(name="userlogs", value=f"**{user} è stato rimosso dal team da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
                 embed.set_footer(text=cfg.footer)
-                await logchannel.send(embed=embed)  
+                await logchannel.send(embed=embed)
                 print(f"[LOG] {user} è stato rimosso dal team da {ctx.message.author.mention} motivo: `{reason}`")
                 message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha rimosso dal team {ctx.guild.name} motivo:** `{reason}`"
                 embed=discord.Embed(color=cfg.red)
@@ -228,7 +258,7 @@ class cmd(commands.Cog):
                 embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
                 embed.add_field(name="userlogs", value=f"**{user} è stato warnato(1) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
                 embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)  
+                await sanzioni.send(embed=embed)
                 print(f"[LOG] {user} è stato warnato(1) da {ctx.message.author.mention} motivo: `{reason}`")
                 return
             if (discord.utils.get(user.roles, name="Warn 1")) and not (discord.utils.get(user.roles, name="Warn 2")) and not (discord.utils.get(user.roles, name="Warn 3")):
@@ -245,7 +275,7 @@ class cmd(commands.Cog):
                 embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
                 embed.add_field(name="userlogs", value=f"**{user} è stato warnato(2) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
                 embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)  
+                await sanzioni.send(embed=embed)
                 print(f"[LOG] {user} è stato warnato(2) da {ctx.message.author.mention} motivo: `{reason}`")
                 return
             if (discord.utils.get(user.roles, name="Warn 1")) and (discord.utils.get(user.roles, name="Warn 2")) and not (discord.utils.get(user.roles, name="Warn 3")):
@@ -263,7 +293,7 @@ class cmd(commands.Cog):
                 embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
                 embed.add_field(name="userlogs", value=f"**{user} è stato warnato(3) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
                 embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)  
+                await sanzioni.send(embed=embed)
                 print(f"[LOG] {user} è stato warnato(3) da {ctx.message.author.mention} motivo: `{reason}`")
                 return
             if (discord.utils.get(user.roles, name="Warn 1")) and (discord.utils.get(user.roles, name="Warn 2")) and (discord.utils.get(user.roles, name="Warn 3")):
@@ -279,14 +309,14 @@ class cmd(commands.Cog):
                 embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
                 embed.add_field(name="userlogs", value=f"**{user} è stato warnato(4) e bannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
                 embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)  
+                await sanzioni.send(embed=embed)
                 print(f"[LOG] {user} è stato warnato(4) e bannato da {ctx.message.author.mention} motivo: `{reason}`")
                 await ctx.guild.ban(user, reason="Limite warn (Controlla sanzioni)")
-                return               
+                return
         else:
             await ctx.message.delete()
             await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return    
+            return
 
     @commands.command()#comando ban
     async def ban (self, ctx, member:discord.User=None, *, reason=None):
@@ -318,7 +348,7 @@ class cmd(commands.Cog):
             embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
             embed.add_field(name="userlogs", value=f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
             embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed)  
+            await logchannel.send(embed=embed)
             print(f"[LOG] {member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`")
             return
         else:
@@ -357,7 +387,7 @@ class cmd(commands.Cog):
             embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
             embed.add_field(name="userlogs", value=f"**{member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
             embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed)  
+            await logchannel.send(embed=embed)
             print(f"[LOG] {member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`")
             return
         else:
@@ -420,7 +450,7 @@ class cmd(commands.Cog):
             embedsss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
             embedsss.add_field(name="{0} ha inviato questo messaggio a {1}#{2}".format(ctx.message.author.name, member.name, member.discriminator), value=text, inline=True)
             embedsss.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embedsss) 
+            await logchannel.send(embed=embedsss)
             return
         else:
             await ctx.message.delete()

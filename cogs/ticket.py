@@ -123,11 +123,10 @@ class Ticket(commands.Cog):
 
         channel = self.bot.get_channel(channel_id)
         cache = self.bot.get_channel(self.cache)
-        messages = channel.history(oldest_first=True)
 
         cached_messages = []
 
-        async for message in messages:
+        async for message in channel.history(oldest_first=True):
             author = message.author
             msg = message.content
 
@@ -152,8 +151,16 @@ class Ticket(commands.Cog):
         user_id = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
 
         user = self.bot.get_user(user_id)
-        embed = discord.Embed(title = message[0], description = message[1], colour = discord.Colour(message[2]))
-        await user.send(embed=embed)
+        channel = self.bot.get_channel(channel_id)
+
+        try:
+            embed = discord.Embed(title = message[0], description = message[1], colour = discord.Colour(message[2]))
+            await user.send(embed=embed)
+        except discord.Forbidden:
+            embed = discord.Embed(title="Error", description=f"I can't contact {user.mention} btw \n{message[1]}")
+            await channel.send()
+        except discord.HTTPException:
+            await channel.send(content="Request Failed.")
 
 def setup(bot):
     bot.add_cog(Ticket(bot))
