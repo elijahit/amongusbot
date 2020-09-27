@@ -15,7 +15,10 @@ class Config(commands.Cog):
 •[5 +] !tsay (testo) **[Scrivi in chat]**\n\
 •[6 +] !purge (valore=max200) **[Elimina messaggi]**\n\
 •[2 +] !addreact (idmsg) (emoij) **[Aggiungi reazione]**\n\
-•[3 +] !editmsg (idmsg) (testo) **[Edita un messaggio inviato con !tsay]**\n"
+•[3 +] !editmsg (idmsg) (testo) **[Edita un messaggio inviato con !tsay]**\n\
+•[6 +] !mvto (nome stanza) (menzione utenti) **[Sposta gli utenti in una stanza specifica]**\n\
+•[6 +] !mvhere (menzione utenti) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
+•[6 +] !tickethelp **[Lista comandi ticket]**"
 
         self.log = 757654227668697206 #Canale logs
         self.sanzioni = 757654227668697206 #canale sanzioni

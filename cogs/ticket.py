@@ -1,7 +1,7 @@
 import sqlite3
-import os
 import asyncio
 import discord
+import os
 from discord.ext import commands
 
 #from Warn import WarnClass
@@ -13,7 +13,29 @@ class Ticket(commands.Cog):
         self.ticketChannel = 757654228259831872 #canale ticket
         self.category = 757654228259831871 #categoria canale ticket
         self.role = 757654227211518023 #support role
-        self.cache = 757654228259831873 #cache channels
+        self.cache = 757654228259831873 #cache channels 
+
+    @commands.command()
+    async def tickethelp(self, ctx):
+
+        d = "!tAdd - Aggiungere un utente al ticket"
+        embed = discord.Embed(title = "Comandi Ticket", description = d, color = discord.Colour.green())
+        await ctx.send(embed=embed)
+        await ctx.message.delete()
+
+    @commands.command()
+    async def tAdd(self, ctx, arg: discord.User):
+
+        user = ctx.author
+        channel = ctx.message.channel
+        user2Add = arg
+
+        t = "Aggiunto utente"
+        d = f"L'utente {user2Add.mention} è stato aggiunto alla stanza"
+        await ctx.message.delete()
+        await channel.set_permissions(user2Add, read_messages=True, send_messages=True, add_reactions=False)
+        embed = discord.Embed(title=t, description = d)
+        await ctx.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -54,6 +76,8 @@ class Ticket(commands.Cog):
                     # Da finire, manca la sezione warn
                     message = ("Segnalazione inutile!", "Mi dispiace ma sembra che il tuo ticket sia inutilizzato per cui sei stato warnato.", 15158332)
                     await Ticket.SendDirect(self, channel_id, message)
+                    await Ticket.CacheMessages(self, channel_id)
+                    await Ticket.DeleteChannel(self, user_id, channel_id)
                     #WarnClass.warn(self, user_id)
                     pass
 
@@ -114,7 +138,10 @@ class Ticket(commands.Cog):
         await m.add_reaction('🟡')
         await m.add_reaction('🔴')
 
-    async def DeleteChannel(self, user_id, channel_id,):
+    async def DeleteChannel(self, user_id, channel_id):
+
+        conn = self.bot.get_cog('Db')
+        Nticket = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][0]
 
         conn = self.bot.get_cog('Db')
         conn.execute("DELETE FROM tickets WHERE channel_id = ?", (channel_id,))
@@ -123,7 +150,13 @@ class Ticket(commands.Cog):
         channel = self.bot.get_channel(channel_id)
         await channel.delete(reason = "Ticket chiuso.")
 
+        if os.path.isfile(f'{Nticket}.txt'):
+            os.remove(f'{Nticket}.txt')
+
     async def CacheMessages(self, channel_id):
+
+        conn = self.bot.get_cog('Db')
+        Nticket = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][0]
 
         channel = self.bot.get_channel(channel_id)
         cache = self.bot.get_channel(self.cache)
@@ -137,17 +170,17 @@ class Ticket(commands.Cog):
             if author.id != self.bot.user.id:
                 text = f"{author.name}: {msg}"
                 cached_messages.append(text)
-            else:
-                 Nticket = message.embeds[0].title
 
         if len(cached_messages) == 0:
             embed = discord.Embed(title=f"Ticket N: {Nticket}", description = "Nessun Messaggio")
             await cache.send(embed=embed)
         else:
-            open(Nticket + '.txt', 'w+').write('\n'.join(cached_messages))
+            with open(f'{Nticket}.txt', 'w+') as f:
+                f.write('\n'.join(cached_messages))
             embed = discord.Embed(title=f"Ticket N: {Nticket}")
             await cache.send(embed=embed)
-            await cache.send(file = discord.File(open(Nticket + '.txt', 'rb')))
+            with open(f'{Nticket}.txt', 'rb') as f:
+                await cache.send(file = discord.File(f))
 
     async def SendDirect(self, channel_id, message: tuple):
 
