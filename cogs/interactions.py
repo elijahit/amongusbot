@@ -2,7 +2,7 @@ from discord.ext.commands import CommandNotFound
 from discord.ext import commands
 
 
-class Callback(commands.Cog):
+class Interactions(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -23,9 +23,9 @@ class Callback(commands.Cog):
 
         # Embed d'ingresso
         entrychannel = self.bot.get_channel(cfg.ingresso)
-        name = f"{member.name}#{member.discriminator}"
+        name = f"{member}"
         field = ("userlogs",
-                 f"**{member.name}#{member.discriminator}** è entrato nel server.\n"
+                 f"**{member}** è entrato nel server.\n"
                  f"**Id**: {member.id}\n"
                  f"**Creato il**: {member.created_at.strftime('%d/%m/%y @ %H:%M:%S')}")
 
@@ -50,16 +50,6 @@ class Callback(commands.Cog):
 
         await member.send(embed=welcome_message)
 
-        field = ("userlogs", f"**{member.mention} gli è stato settato il ruolo `Ospite`**")
-        logchannel = self.bot.get_channel(cfg.log)  # canale log
-
-        # log
-        log_embed = embed.get_standard_embed("{member.name}#{member.discriminator}",
-                                             cfg.lightgreen,
-                                             member.avatar_url,
-                                             [field],
-                                             cfg.footer)
-        await logchannel.send(embed=log_embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
@@ -72,8 +62,8 @@ class Callback(commands.Cog):
 
         # Log d'uscita
         entrychannel = self.bot.get_channel(cfg.ingresso)
-        field = ("userlogs", f"{member.name}#{member.discriminator} è uscito dal server di **Among Us Ita**")
-        embed = embed.get_standard_embed("{member.name}#{member.discriminator}",
+        field = ("userlogs", f"{member} è uscito dal server di **Among Us Ita**")
+        embed = embed.get_standard_embed(f"{member}",
                                          cfg.red,
                                          member.avatar_url,
                                          [field],
@@ -92,5 +82,5 @@ class Callback(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Callback(bot))
+    bot.add_cog(Interactions(bot))
     print("[!] modulo callback caricato")

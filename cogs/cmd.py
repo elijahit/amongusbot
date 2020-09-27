@@ -3,6 +3,7 @@ from discord.ext import commands
 from discord import Color
 import discord
 import random
+import time
 
 
 class cmd(commands.Cog):
@@ -15,13 +16,10 @@ class cmd(commands.Cog):
 #CMD utente
 
     @commands.command()
-    async def ping(ctx):
+    async def ping(self, ctx):
 
-        await delete_message(ctx.message)
-        before = time.monotonic()
-        message = await ctx.send(f"Ping {int(ping)}ms")
-        ping = (time.monotonic() - before) * 1000
-        await message.edit(content=f"Pong!  `{int(ping)}ms`")
+        await ctx.message.delete()
+        message = await ctx.send(f"Ping! In {round(self.bot.latency * 1000)}ms")
 
     @commands.command()#about
     async def about (self, ctx):
