@@ -19,7 +19,7 @@ class cmd(commands.Cog):
     async def ping(self, ctx):
 
         await ctx.message.delete()
-        message = await ctx.send(f"Ping! In {round(self.bot.latency * 1000)}ms")
+        await ctx.send(f"Ping! In {round(self.bot.latency * 1000)}ms")
 
     @commands.command()#about
     async def about (self, ctx):
@@ -35,6 +35,7 @@ class cmd(commands.Cog):
                  mesi di programmazione per rendere lo stesso adeguato all'utenza attualmente dentro Among Us Ita.\
                  Il bot viene utilizato per gestire l'intera community di Among Us Ita, ciò che in altre community viene fatto con 7 bot diversi.\n"
                  "*Developers*: **Elijah**, **Nico**, **ImNotName**, **iTzSgrullee_**, **MyNameIsDark01**, **Kappa**\n\
+                 Librerie utilizzate: *DiscordPy*\n\
                  \n© amongusita.it")
 
         about_embed = embed.get_standard_embed(name,
@@ -165,77 +166,10 @@ class cmd(commands.Cog):
             try:
                 message = await ctx.channel.fetch_message(id)
             except discord.NotFound as e:
-                await commands.send("Messaggio non trovato")
+                await ctx.channel.send("Messaggio non trovato")
                 raise e
             await message.edit(content=messaggio)
             await ctx.message.delete()
-
-    @commands.command()#comando rteam
-    async def rteam (self, ctx, user:discord.Member=None, *, reason=None):
-        cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles]:
-            #if user == None or user == ctx.message.author:
-            #    await ctx.message.author.send("Non puoi kickarti da solo dal team.")
-            #    return
-            if reason == None:
-                reason = "Non definito"
-            guild = discord.utils.get(commands.guilds)
-            if 701844028521447556 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=701844028521447556))#coach
-            if 701593541410947083 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=701593541410947083))#senior
-            if 703325756536651806 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=703325756536651806))#esports
-            if 706818123759878184 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=706818123759878184))#esports2
-            if 705782556896788522 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=705782556896788522))#leadercomp
-            if 702191255504814162 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=702191255504814162))#comp
-            if 704812555134173283 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=704812555134173283))#accademyleader
-            if 704782635209326646 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=704782635209326646))#accademy
-            if 705164932433576026 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=705164932433576026))#juniorleader
-            if 705164776938012823 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=705164776938012823))#junior
-            if 701593626245071019 in [role.id for role in user.roles]:
-                await user.remove_roles(discord.utils.get(guild.roles, id=701593626245071019))#defaultrole
-                await user.add_roles(discord.utils.get(guild.roles, id=703771340301271053))#defaultrole
-                await ctx.message.delete()
-                sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
-                messagech = f"**{user} è stato rimosso dal team da {ctx.message.author.mention} motivo: `{reason}`**"
-                embeds=discord.Embed(color=cfg.red)
-                embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embeds.add_field(name="Admin", value=messagech, inline=True)
-                embeds.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embeds)
-                #########log##########
-                logchannel = self.bot.get_channel(cfg.log) #canale log
-                embed=discord.Embed(color=cfg.red)
-                embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                embed.add_field(name="userlogs", value=f"**{user} è stato rimosso dal team da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                embed.set_footer(text=cfg.footer)
-                await logchannel.send(embed=embed)
-                print(f"[LOG] {user} è stato rimosso dal team da {ctx.message.author.mention} motivo: `{reason}`")
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha rimosso dal team {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.red)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="team-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
-                await user.send(embed=embed)
-                await user.edit(nick=user.name)
-                return
-            else:
-                await ctx.message.delete()
-                await ctx.message.author.send("Questo membro non fa parte del team.")
-                return
-        else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return
 
     @commands.command()
     async def warn(self, ctx, user:discord.Member=None, *, reason=None):
@@ -404,25 +338,28 @@ class cmd(commands.Cog):
 
 
     @commands.command()#comando tsay
-    async def t (self, ctx, *all): #!t "titolo molto utile" descrizione utile
+    async def t (self, ctx, *tutto): #!t "titolo molto utile" descrizione utile
         cfg = self.bot.get_cog('Config')
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
 
-            title = None
-            all.split()
-            for x in all:
+            text = ""
+            tutto = str(tutto)
+            tutto = tutto.split()
+
+            for x in tutto:
                 if x.startswith("\""):
-                    for y in all:
-                     title += y
-                     all.pop(-1)
+                    for y in tutto:
+                     text += y
+                     tutto.pop(-1)
                      if y.endswith("\""):
                          break
 
-            text = " ".join(all)
-
+            title = text[0]
+            text = " ".join(tutto)
+            " ".join(tutto)
 
             embeds=discord.Embed(color=cfg.blue)
             embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
