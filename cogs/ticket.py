@@ -76,7 +76,7 @@ class Ticket(commands.Cog):
             }
             y = await guild.create_text_channel(name = f'Ticket-{n}', overwrites = overwrites, category=category)
 
-            embed = discord.Embed(title=f"Ticket #{n}", description = "GREEN - Prendi in carico il Ticket (Solo Supporter)")
+            embed = discord.Embed(title=f"Ticket #{n}", description = f"{user.mention} attendi che la tua richiesta venga presa in carico da un operatore.")
             m = await y.send(embed = embed)
             await m.add_reaction('✅')
 
@@ -103,9 +103,12 @@ class Ticket(commands.Cog):
         await channel.set_permissions(user, read_messages=True, send_messages=True, add_reactions=True)
 
         m = await channel.fetch_message(message_id)
-        embed = discord.Embed(title = m.embeds[0].title, description = "🔵 - Ticket inutilizzato\n🟡 - Impossibile risolvere il ticket\n🔴 - Ticket risolto correttamente")
         await m.clear_reactions()
-        await m.edit(embed=embed)
+        await m.delete()
+
+        embed = discord.Embed(title = m.embeds[0].title, description = f"{user.mention} la tua richiesta è stata presa in carico da {user_.mention}.")
+        embed.add_field(name="Legenda", value="🔵 - Ticket inutilizzato\n🟡 - Impossibile risolvere il ticket\n🔴 - Ticket risolto correttamente")
+        m = await channel.send(embed=embed)
         await m.add_reaction('🔵')
         await m.add_reaction('🟡')
         await m.add_reaction('🔴')
