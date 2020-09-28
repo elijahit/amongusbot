@@ -31,7 +31,7 @@ class Config(commands.Cog):
         self.categories = ["TESTVOIP", "APEX"]
 
         ##ADMIN PEX
-        self.rolea1 = "Support Team"
+        self.rolea1 = "Tester"
         self.rolea2 = "TBA"
         self.rolea3 = "TBA"
         self.rolea4 = "TBA"
