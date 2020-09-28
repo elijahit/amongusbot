@@ -4,7 +4,6 @@ import os
 
 
 # from Warn import WarnClass
-
 class Ticket(commands.Cog):
 
     def __init__(self, bot):
