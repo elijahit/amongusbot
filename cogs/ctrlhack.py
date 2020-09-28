@@ -24,12 +24,12 @@ class Ctrlhack(commands.Cog):
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
-            cmdsLs = discord.Embed(title="LISTA COMANDI HACKCMD", description="**Comandi admin** \n\
-            >hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
+            cmdsLs = discord.Embed(title="LISTA COMANDI", description="**Comandi admin** \n\
+            !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
                 \n\
                 **Per risolvere i bug** \n\
-                >FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
-                    >RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
+                !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
+                    !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
             cmdsLs.set_author(name = "Among Us Ita")
             cmdsLs.set_footer(text="Among Us Ita 0.1 **beta**")
 
@@ -44,13 +44,11 @@ class Ctrlhack(commands.Cog):
             await ctx.message.delete()
             global mess, admin_live_id
 
-            user_send = ctx.channel.last_message.author
+            user_send = ctx.message.author
             if user_send == None:
                 await sleep(1)
-                user_send = ctx.channel.last_message.author
+                user_send = ctx.message.author
                 await sleep(3)
-
-            await ctx.message.delete()
 
             if str(user_send.id) not in admin_live_id:
 
@@ -225,9 +223,8 @@ class Ctrlhack(commands.Cog):
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
-            for channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
-                await channel.delete()
-            await ctx.message.delete()
+            for ctx.channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
+                await ctx.channel.delete()
 
     @commands.command()
     async def RESETLIST(self, ctx):
