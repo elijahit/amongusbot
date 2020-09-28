@@ -1,3 +1,6 @@
+# Sistema Ticket per Among Us Ita (amongusita.it)
+# Sviluppato da MyNameIsDark01#5955
+# Per Among Us Ita#2534
 from discord.ext import commands
 import discord
 import os

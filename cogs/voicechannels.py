@@ -1,3 +1,6 @@
+# Sistema staffmover per Among Us Ita (amongusita.it)
+# Sviluppato da Nico#4306
+# Per Among Us Ita#2534
 from discord.ext import commands
 from asyncio import Lock, sleep
 import discord
@@ -65,7 +68,7 @@ class Voicechannels(commands.Cog):
     async def log_movements(self, member, before, after):
 
         cfg = self.bot.get_cog('Config')
-        embeds = self.bot.get_cog('Embeds')
+        #embeds = self.bot.get_cog('Embeds')
         logchannel = self.bot.get_channel(cfg.log)
 
         if before.channel != after.channel:

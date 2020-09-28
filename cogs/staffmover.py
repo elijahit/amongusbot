@@ -1,3 +1,6 @@
+# Sistema staffmover per Among Us Ita (amongusita.it)
+# Sviluppato da ImNotName#6666
+# Per Among Us Ita#2534
 import discord
 from discord.ext import commands
 from discord import utils
