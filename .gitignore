@@ -94,3 +94,4 @@ fabric.properties
 
 temp
 venv
+*.db
