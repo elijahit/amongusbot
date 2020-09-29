@@ -27,7 +27,7 @@ class Config(commands.Cog):
         self.lfg = 709814722668527617 #canale lfg
         self.nickname = 702555500041994330 #canale nickname
         self.generale = 701594074464911410 #canale generale
-        self.ingresso = 757654227668697203 #canale ingresso
+        self.ingresso = 760287555626860554 #canale ingresso
         self.categories = ["TESTVOIP", "APEX"]
 
         ##ADMIN PEX
