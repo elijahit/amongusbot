@@ -77,7 +77,7 @@ class Ctrlhack(commands.Cog):
     async def on_reaction_add(self, reaction, user):
 
         if user.bot == False and str((reaction.message.embeds)[0].author) == "EmbedProxy(name='Among Us Ita')":
-            global inUso
+            global inUso, admin_live_id
 
             if reaction.emoji == "🟢" and str(user.id) == (((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")) and inUso == False:
                 
@@ -87,7 +87,7 @@ class Ctrlhack(commands.Cog):
                 sus_users = [(" ", " ")]
                 sus_users.pop()
 
-                global guild_now, category, category_channels, i, hackchannels, admin_live_id
+                global guild_now, category, category_channels, i, hackchannels
                 guild_now = reaction.message.channel.guild
                 channel_got = discord.utils.get(guild_now.voice_channels, name=f"matchmaking {(((reaction.message.embeds)[0].description).split())[6]}")
                 category = discord.utils.get(guild_now.categories, name="controllo hack")
@@ -112,7 +112,7 @@ class Ctrlhack(commands.Cog):
                             member2_0 += f"{memberprovv} su 💻\n"
                 
                     
-                    sus_users.append(tuple(["".join(member2_0), (((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", ""))]))
+                    sus_users.append(tuple(["".join(member2_0), (((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", ""))]))
                     
                     i = 1
 
@@ -154,7 +154,7 @@ class Ctrlhack(commands.Cog):
 
 
                 except Exception as error:
-                    user_send = self.bot.get_user(int(((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "")))
+                    user_send = self.bot.get_user(int(((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")))
                     admin_live_id = admin_live_id.replace(str(user_send.id), " ")
                     inUso = False
 
@@ -169,7 +169,7 @@ class Ctrlhack(commands.Cog):
                 await reaction.message.clear_reactions()
 
                 
-                user_send = self.bot.get_user(int(((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "")))
+                user_send = self.bot.get_user(int(((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")))
                 Warning = discord.Embed(title="⬛️ IL CONTROLLO HACK E' STATO REVOCATO ⬛️", description=f"{user_send.mention}: questo messaggio si autodistruggerà tra 3 secondi...", color=discord.Colour.default(), timestamp=dt.datetime.utcnow())
                 Warning.set_footer(text="Among Us Ita 0.1 **beta**")
                 Warning.set_author(name = "Among Us Ita")
@@ -191,12 +191,12 @@ class Ctrlhack(commands.Cog):
 
                 for c in sus_users:
                     if c[1] == (((((reaction.message.embeds)[0].description).split())[2].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")):
-                        sus_users_true = c[0]
+                        sus_users_true = f"`{c[0]}`"
 
-                if sus_users_true == "":
-                    sus_users_true = None
+                if sus_users_true == "``":
+                    sus_users_true = "`Nessuno`"
                 
-                Warning = discord.Embed(title="⬜️ CONTROLLO HACK FINITO ⬜️", description=f"**STAFF:** {user_send.mention} \n \n**DURATA:** {timeh}:{timem}:{times}  _(h:mm:ss)_ \n**UTENTI COINVOLTI:** \n`{sus_users_true}`", color=discord.Color.lighter_gray(), timestamp=dt.datetime.utcnow())
+                Warning = discord.Embed(title="⬜️ CONTROLLO HACK FINITO ⬜️", description=f"**STAFF:** {user_send.mention} \n \n**DURATA:** {abs(timeh)}:{abs(timem)}:{abs(times)}  _(h:mm:ss)_ \n**UTENTI COINVOLTI:** \n{sus_users_true}", color=discord.Color.lighter_gray(), timestamp=dt.datetime.utcnow())
                 Warning.set_footer(text="Among Us Ita 0.1 **beta**")
                 Warning.set_author(name = "Among Us Ita")
                 await discord.Message.edit(reaction.message, embed=Warning)
