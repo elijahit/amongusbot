@@ -31,7 +31,7 @@ class Ctrlhack(commands.Cog):
                 !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
                     !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
             cmdsLs.set_author(name = "Among Us Ita")
-            cmdsLs.set_footer(text="Among Us Ita 0.1 **beta**")
+            cmdsLs.set_footer(text=cfg.footer)
 
             await ctx.channel.send(embed=cmdsLs, delete_after=120)
 
@@ -55,7 +55,7 @@ class Ctrlhack(commands.Cog):
                 admin_live_id += f"{str(user_send.id)} "
 
                 Warning = discord.Embed(title="🟥 E' STATO CONVOCATO UN CONTROLLO HACK 🟥", description=f"{user_send.mention} ha convocato il gruppo: matchmaking {num} per un controllo hack, proseguire?", color=discord.Color.red(), timestamp=dt.datetime.utcnow())
-                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_footer(text=cfg.footer)
                 Warning.set_author(name = "Among Us Ita")
 
                 message_sent = await ctx.channel.send(embed=Warning)
@@ -64,7 +64,7 @@ class Ctrlhack(commands.Cog):
             
             else:
                 Warning = discord.Embed(title="🟪 UN MEMBRO PUO' AVERE UN MASSIMO DI UN CONTROLLO APERTO 🟪", description=f"{user_send.mention}, \nchiudi prima tutti i tuoi controlli  poi riprova", color=discord.Color.purple(), timestamp=dt.datetime.utcnow())
-                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_footer(text=cfg.footer)
                 Warning.set_author(name = "Among Us Ita")
                 mexa = await ctx.channel.send(embed=Warning)
 
@@ -75,7 +75,7 @@ class Ctrlhack(commands.Cog):
         
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-
+        cfg = self.bot.get_cog("Config")
         if user.bot == False and str((reaction.message.embeds)[0].author) == "EmbedProxy(name='Among Us Ita')":
             global inUso, admin_live_id
 
@@ -99,7 +99,7 @@ class Ctrlhack(commands.Cog):
                     inUso = True
 
                     Warning = discord.Embed(title="🟡 IL TUO CONTROLLO STA PER INIZIARE 🟡", description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Aspetta che vengano create le tue stanze!* \n \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*", color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
-                    Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                    Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "HackBot")
                     await discord.Message.edit(reaction.message, embed=Warning)
 
@@ -129,7 +129,7 @@ class Ctrlhack(commands.Cog):
                     hackchannels = [discord.utils.get(guild_now.voice_channels, name=f"Vocale {i} generale 🥵"), discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-1 🥶"), discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-2 🥶"), discord.utils.get(guild_now.voice_channels, name=f"┗ Vocale {i}-3 🥶")]
 
                     Warning = discord.Embed(title="🟨 IL TUO CONTROLLO STA PER INIZIARE 🟨", description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Entra nella chat vocale (Vocale generale {i} 🥵)!* \n{await hackchannels[0].create_invite()} \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*", color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
-                    Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                    Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "HackBot")
                     await discord.Message.edit(reaction.message, embed=Warning)
 
@@ -142,7 +142,7 @@ class Ctrlhack(commands.Cog):
                     await sleep(10)
 
                     Warning = discord.Embed(title="🟩 CONTROLLO IN CORSO 🟩", description=f"Lo staff {user_send.mention} sta controllando degli utenti nella {i}° chat vocale \n \nUna volta chiuso al posto di questo messaggio troverete un rapporto dettagliato del controllo \n \n**PREMI LA REAZIONE PER CHIUDERE IL CONTROLLO**", color=discord.Color.green(), timestamp=dt.datetime.utcnow())
-                    Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                    Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "Among Us Ita")
 
                     inUso = False
@@ -158,8 +158,8 @@ class Ctrlhack(commands.Cog):
                     admin_live_id = admin_live_id.replace(str(user_send.id), " ")
                     inUso = False
 
-                    Warning = discord.Embed(title="🧻🚽 OH NO, QUALCOSA E' ANDATO STORTO 🚽🧻", description=f"{user_send.mention} la tua richiesta non è andata a buon termine, riprova e controlla che la stanza esista \nSe il problema persiste non esitare a contattare uno degli sviluppatori. \n{(reaction.message.channel.guild.get_role(758086249436151908)).mention} | {(reaction.message.channel.guild.get_role(758086640047620136)).mention} \n \n**ERRORE:**{error} \n \nQuesto messaggio si autodistruggerà tra 30 secondi...", color=discord.Color.dark_orange(), timestamp=dt.datetime.utcnow())
-                    Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                    Warning = discord.Embed(title="🧻🚽 OH NO, QUALCOSA E' ANDATO STORTO 🚽🧻", description=f"{user_send.mention} la tua richiesta non è andata a buon termine, riprova e controlla che la stanza esista \nSe il problema persiste non esitare a contattare uno degli sviluppatori. \n{(reaction.message.channel.guild.get_role(cfg.IDruoliDev[0])).mention} | {(reaction.message.channel.guild.get_role(cfg.IDruoliDev[1])).mention} \n**ERRORE:**{error} \n \nQuesto messaggio si autodistruggerà tra 30 secondi...", color=discord.Color.dark_orange(), timestamp=dt.datetime.utcnow())
+                    Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "Among Us Ita")
                     await discord.Message.edit(reaction.message, embed=Warning, delete_after=30)
                     await reaction.message.clear_reactions()
@@ -171,7 +171,7 @@ class Ctrlhack(commands.Cog):
                 
                 user_send = self.bot.get_user(int(((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")))
                 Warning = discord.Embed(title="⬛️ IL CONTROLLO HACK E' STATO REVOCATO ⬛️", description=f"{user_send.mention}: questo messaggio si autodistruggerà tra 3 secondi...", color=discord.Colour.default(), timestamp=dt.datetime.utcnow())
-                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_footer(text=cfg.footer)
                 Warning.set_author(name = "Among Us Ita")
                 await discord.Message.edit(reaction.message, embed=Warning, delete_after=3)
 
@@ -197,7 +197,7 @@ class Ctrlhack(commands.Cog):
                     sus_users_true = "`Nessuno`"
                 
                 Warning = discord.Embed(title="⬜️ CONTROLLO HACK FINITO ⬜️", description=f"**STAFF:** {user_send.mention} \n \n**DURATA:** {abs(timeh)}:{abs(timem)}:{abs(times)}  _(h:mm:ss)_ \n**UTENTI COINVOLTI:** \n{sus_users_true}", color=discord.Color.lighter_gray(), timestamp=dt.datetime.utcnow())
-                Warning.set_footer(text="Among Us Ita 0.1 **beta**")
+                Warning.set_footer(text=cfg.footer)
                 Warning.set_author(name = "Among Us Ita")
                 await discord.Message.edit(reaction.message, embed=Warning)
 

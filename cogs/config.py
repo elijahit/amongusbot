@@ -19,7 +19,7 @@ class Config(commands.Cog):
 •[6 +] !mvto (nome stanza) (menzione utenti) **[Sposta gli utenti in una stanza specifica]**\n\
 •[6 +] !mvhere (menzione utenti) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
 •[6 +] !tickethelp **[Lista comandi ticket]**\n\
-•[6 +] !hackhelp **[Lista comandi ticket]**"
+•[6 +] !hackhelp **[Lista comandi controllo hack]**"
 
         self.log = 757654227668697206 #Canale logs
         self.sanzioni = 757654227668697206 #canale sanzioni
@@ -51,6 +51,9 @@ class Config(commands.Cog):
         self.autorole = 44444
 
         self.footer = "Among Us Ita 0.1 **beta**"
+
+        self.IDruoliDev = (757654227215712423, 757654227215712422) # id dei ruoli dei dev nel server test (gestore dev, dev) per il server principale cambiarli in (758086249436151908, 758086640047620136)
+
 
 
 
