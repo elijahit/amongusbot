@@ -325,4 +325,4 @@ class Logger(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Logger(bot))
-    print("[!] Modulo logger caricato")
+    print("[!] modulo logger caricato")

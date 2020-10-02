@@ -28,6 +28,7 @@ class Config(commands.Cog):
         self.nickname = 702555500041994330 #canale nickname
         self.generale = 701594074464911410 #canale generale
         self.ingresso = 760287555626860554 #canale ingresso
+        self.voicelogs = 757654227668697205 #canale voicelogs
         self.categories = ["TESTVOIP", "APEX"]
 
         ##ADMIN PEX

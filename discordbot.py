@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 def get_prefix(bot, message):
-    prefixes = ["!"]
+    prefixes = ["it!"]
 
     if not message.guild:
         return "?"
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Among Us Ita - !AIUTO"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Among Us Ita - it!AIUTO"))
 
     print(f"Logged in as: {bot.user.name} - {bot.user.id}\n")
 

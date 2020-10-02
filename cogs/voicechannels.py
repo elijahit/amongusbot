@@ -69,7 +69,7 @@ class Voicechannels(commands.Cog):
 
         cfg = self.bot.get_cog('Config')
         #embeds = self.bot.get_cog('Embeds')
-        logchannel = self.bot.get_channel(cfg.log)
+        logchannel = self.bot.get_channel(cfg.voicelogs)
 
         if before.channel != after.channel:
             message = f'{member.display_name} è '
