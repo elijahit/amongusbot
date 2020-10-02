@@ -53,24 +53,22 @@ class cmd(commands.Cog):
     @commands.command() ###CMD AIUTO ADMIN
     async def acmds(self, ctx):
         cfg = self.bot.get_cog('Config')
+        embed = self.bot.get_cog('Embeds')
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
-            messageesports_embed=discord.Embed(color=cfg.red)
-            messageesports_embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-            messageesports_embed.add_field(name="-> Comandi admin", value=cfg.aiutoadmin, inline=True)
-            messageesports_embed.set_footer(text=cfg.footer)
 
-            await ctx.channel.send(embed=messageesports_embed)
-            #########log##########
-            logchannel = self.bot.get_channel(cfg.log) #canale log
-            embed=discord.Embed(color=cfg.lightgreen)
-            embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-            embed.add_field(name="userlogs", value="**{0} ha usato il comando `!acmds`**".format(ctx.message.author.mention), inline=True)
-            embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed)
-            print("[LOG] {0}#{1} ha usato il comando !acmds".format(ctx.message.author.name, ctx.message.author.discriminator))
+            name = "> Comandi admin"
+            field = ("**[1]** Owner **|** **[2]** Amministratore **|** **[3]** Mod **|** **[4]** Helper **|** **[5]** Gestore **|** **[6]** Support", cfg.aiutoadmin)
+
+            acmds_embed = embed.get_standard_embed(name,
+                                               cfg.blue,
+                                               ctx.guild.icon_url,
+                                               [field],
+                                               cfg.footer)
+
+            await ctx.channel.send(embed=acmds_embed)
             return
         else:
             await ctx.message.delete()
@@ -86,14 +84,6 @@ class cmd(commands.Cog):
             await ctx.message.delete()
             if ammount <= 200:
                 await ctx.channel.purge(limit=ammount)
-                ##log
-                member = ctx.message.author
-                logchannel = self.bot.get_channel(cfg.log) #canale log
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}#{1}".format(member.name, member.discriminator), icon_url=member.avatar_url)
-                embed.add_field(name="userlogs", value="**{0} ha cancellato {1} messaggi dal canale {2}**".format(member.mention, ammount, ctx.channel.mention), inline=True)
-                embed.set_footer(text=cfg.footer)
-                await logchannel.send(embed=embed)
                 return
             else:
                 await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
@@ -107,6 +97,7 @@ class cmd(commands.Cog):
     @commands.command()#comando richiesta
     async def richiesta(self, ctx, stato, *, text):
         cfg = self.bot.get_cog('Config')
+        embed = self.bot.get_cog('Embeds')
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
@@ -114,11 +105,17 @@ class cmd(commands.Cog):
             ##log
             member = ctx.message.author
             logchannel = self.bot.get_channel(758390987168677941)
-            embed=discord.Embed(color=cfg.lightgreen)
-            embed.set_author(name="{0}#{1}".format(member.name, member.discriminator), icon_url=member.avatar_url)
-            embed.add_field(name="RICHIESTA: {}".format(stato), value="{}".format(text), inline=True)
-            embed.set_footer(text="N° {}".format((random.randint(100000, 9000000))))
-            await logchannel.send(embed=embed)
+
+            name = "{0}#{1}".format(member.name, member.discriminator)
+            field = ("RICHIESTA: {}".format(stato), "{}".format(text))
+
+            request_embed = embed.get_standard_embed(name,
+                                               cfg.green,
+                                               member.avatar_url,
+                                               [field],
+                                               "N° {}".format((random.randint(100000, 9000000))))
+                                               
+            await logchannel.send(embed=request_embed)
             return
         else:
             await ctx.message.delete()
@@ -171,96 +168,9 @@ class cmd(commands.Cog):
             await message.edit(content=messaggio)
             await ctx.message.delete()
 
-    @commands.command()
-    async def warn(self, ctx, user:discord.Member=None, *, reason=None):
-        cfg = self.bot.get_cog('Config')
-        db = self.bot.get_cog('db')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
-            await ctx.message.delete()
-            if user == None or user == ctx.message.author:
-                await ctx.message.author.send("Non puoi warnarti da solo.")
-                return
-            if reason == None:
-                reason = "Non definito"
-            if not (discord.utils.get(user.roles, name="Warn 1")) and not (discord.utils.get(user.roles, name="Warn 2")) and not (discord.utils.get(user.roles, name="Warn 3")):
-                db.Database.execute("INSERT INTO warns (ID, Name, Livello, Motivo, Data) VALUES (?, ?, ?, ?, ?)", (user.id, user.name, 1, reason, 1))
-                db.Database.commit()
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha warnato per la prima volta da {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
-                await user.send(embed=embed)
-                #########log##########
-                sanzioni = self.bot.get_channel(cfg.sanzioni) #canale log
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                embed.add_field(name="userlogs", value=f"**{user} è stato warnato(1) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)
-                print(f"[LOG] {user} è stato warnato(1) da {ctx.message.author.mention} motivo: `{reason}`")
-                return
-            if (discord.utils.get(user.roles, name="Warn 1")) and not (discord.utils.get(user.roles, name="Warn 2")) and not (discord.utils.get(user.roles, name="Warn 3")):
-                await user.add_roles(discord.utils.get(self, ctx.guild.roles, name="Warn 2"))
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha warnato per la seconda volta da {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
-                await user.send(embed=embed)
-                #########log##########
-                sanzioni = self.bot.get_channel(cfg.sanzioni) #canale log
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                embed.add_field(name="userlogs", value=f"**{user} è stato warnato(2) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)
-                print(f"[LOG] {user} è stato warnato(2) da {ctx.message.author.mention} motivo: `{reason}`")
-                return
-            if (discord.utils.get(user.roles, name="Warn 1")) and (discord.utils.get(user.roles, name="Warn 2")) and not (discord.utils.get(user.roles, name="Warn 3")):
-                await user.add_roles(discord.utils.get(self, ctx.guild.roles, name="Warn 3"))
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha warnato per la terza volta da {ctx.guild.name} motivo:** `{reason}`\n\
-                **Sei già al terzo WARN, in caso di un successivo warning verrai automaticamente bannato dal server.**"
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
-                await user.send(embed=embed)
-                #########log##########
-                sanzioni = self.bot.get_channel(cfg.sanzioni) #canale log
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                embed.add_field(name="userlogs", value=f"**{user} è stato warnato(3) da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)
-                print(f"[LOG] {user} è stato warnato(3) da {ctx.message.author.mention} motivo: `{reason}`")
-                return
-            if (discord.utils.get(user.roles, name="Warn 1")) and (discord.utils.get(user.roles, name="Warn 2")) and (discord.utils.get(user.roles, name="Warn 3")):
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha warnato per la quarta volta da {ctx.guild.name} di conseguenza sei stato bannato motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.red)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
-                await user.send(embed=embed)
-                #########log##########
-                sanzioni = self.bot.get_channel(cfg.sanzioni) #canale log
-                embed=discord.Embed(color=cfg.red)
-                embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                embed.add_field(name="userlogs", value=f"**{user} è stato warnato(4) e bannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                embed.set_footer(text=cfg.footer)
-                await sanzioni.send(embed=embed)
-                print(f"[LOG] {user} è stato warnato(4) e bannato da {ctx.message.author.mention} motivo: `{reason}`")
-                await ctx.guild.ban(user, reason="Limite warn (Controlla sanzioni)")
-                return
-        else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            return
-
     @commands.command()#comando ban
     async def ban (self, ctx, member:discord.User=None, *, reason=None):
+        
         cfg = self.bot.get_cog('Config')
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]:
             await ctx.message.delete()
@@ -269,6 +179,7 @@ class cmd(commands.Cog):
                 return
             if reason == None:
                 reason = "Non definito"
+            
             message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha bannato da {ctx.guild.name} motivo:** `{reason}`"
             embed=discord.Embed(color=cfg.lightgreen)
             embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
@@ -276,6 +187,7 @@ class cmd(commands.Cog):
             embed.set_footer(text=cfg.footer)
             await member.send(embed=embed)
             await ctx.guild.ban(member, reason=reason)
+            
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
             messagech = f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**"
             embeds=discord.Embed(color=cfg.red)
@@ -283,6 +195,8 @@ class cmd(commands.Cog):
             embeds.add_field(name="Admin", value=messagech, inline=True)
             embeds.set_footer(text=cfg.footer)
             await sanzioni.send(embed=embeds)
+            
+            
             #########log##########
             logchannel = self.bot.get_channel(cfg.log) #canale log
             embed=discord.Embed(color=cfg.red)

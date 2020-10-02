@@ -5,21 +5,22 @@ class Config(commands.Cog):
         self.bot = bot
         self.bot.remove_command('help')
 
-        self.aiutoadmin = "**[1]** server query **|** **[2]** Amministratore **|** **[3]** Coach **|** **[4]** TBA **|** **[5]** TBA **|** **[6]** Senior\n\
-•[2 +] !ban (@user) (motivo) **[Banna un utente]**\n\
+        self.aiutoadmin = "•[2 +] !ban (@user) (motivo) **[Banna un utente]**\n\
 •[2 +] !addreact (idmsg) (emoij) **[Aggiungi reazione]**\n\
 •[3 +] !kick (@user) (motivo) **[Kicka un utente dal server]**\n\
 •[3 +] !editmsg (idmsg) (testo) **[Edita un messaggio inviato con !tsay]**\n\
 •[5 +] !t (titolo) (testo) **[Invia EMBED nel canale]**\n\
 •[5 +] !tuser (@user) (testo) **[Invia EMBED a un utente]**\n\
 •[5 +] !tsay (testo) **[Scrivi in chat]**\n\
-•[6 +] !warn (@user) (motivo) **[Warna un utente]**\n\
 •[6 +] !banlist **[Lista ban]**\n\
 •[6 +] !purge (valore=max200) **[Elimina messaggi]**\n\
 •[6 +] !mvto (nome stanza) (menzione utenti) **[Sposta gli utenti in una stanza specifica]**\n\
 •[6 +] !mvhere (menzione utenti) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
 •[6 +] !tickethelp **[Lista comandi ticket]**\n\
 •[6 +] !hackhelp **[Lista comandi controllo hack]**"
+
+        self.aiuto = "it!aiuto **[Mostra la lista dei comandi]**\n\
+            it!insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"
 
         self.log = 757654227668697206 #Canale logs
         self.sanzioni = 757654227668697206 #canale sanzioni
