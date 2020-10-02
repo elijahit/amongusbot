@@ -1,3 +1,6 @@
+# Sistema insulti per Among Us Ita (amongusita.it)
+# Sviluppato da iTzSgrullee_#5858
+# Per Among Us Ita#2534
 import discord
 from discord.ext import commands
 import random
