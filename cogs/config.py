@@ -5,22 +5,22 @@ class Config(commands.Cog):
         self.bot = bot
         self.bot.remove_command('help')
 
-        self.aiutoadmin = "•[2 +] !ban (@user) (motivo) **[Banna un utente]**\n\
-•[2 +] !addreact (idmsg) (emoij) **[Aggiungi reazione]**\n\
-•[3 +] !kick (@user) (motivo) **[Kicka un utente dal server]**\n\
-•[3 +] !editmsg (idmsg) (testo) **[Edita un messaggio inviato con !tsay]**\n\
-•[5 +] !t (titolo) (testo) **[Invia EMBED nel canale]**\n\
-•[5 +] !tuser (@user) (testo) **[Invia EMBED a un utente]**\n\
-•[5 +] !tsay (testo) **[Scrivi in chat]**\n\
-•[6 +] !banlist **[Lista ban]**\n\
-•[6 +] !purge (valore=max200) **[Elimina messaggi]**\n\
-•[6 +] !mvto (nome stanza) (@user @user) **[Sposta gli utenti in una stanza specifica]**\n\
-•[6 +] !mvhere (@user @user) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
-•[6 +] !tickethelp **[Lista comandi ticket]**\n\
-•[6 +] !hackhelp **[Lista comandi controllo hack]**\n\
-•[6 +] !find (@user) **[Ricerca user in stanza VoiP]**\n\
-•[6 +] !muteroom (nome stanza) o !muteroom **[Silenzia una stanza VoiP]**\n\
-•[6 +] !unmuteroom (nome stanza) o !unmuteroom **[Attiva il VoiP in una stanza]**"
+        self.aiutoadmin = "•[2 +] it!ban (@user) (motivo) **[Banna un utente]**\n\
+•[2 +] it!addreact (idmsg) (emoij) **[Aggiungi reazione]**\n\
+•[3 +] it!kick (@user) (motivo) **[Kicka un utente dal server]**\n\
+•[3 +] it!editmsg (idmsg) (testo) **[Edita un messaggio inviato con it!tsay]**\n\
+•[5 +] it!t (titolo) (testo) **[Invia EMBED nel canale]**\n\
+•[5 +] it!tuser (@user) (testo) **[Invia EMBED a un utente]**\n\
+•[5 +] it!tsay (testo) **[Scrivi in chat]**\n\
+•[6 +] it!banlist **[Lista ban]**\n\
+•[6 +] it!purge (valore=max200) **[Elimina messaggi]**\n\
+•[6 +] it!mvto (nome stanza) (@user @user) **[Sposta gli utenti in una stanza specifica]**\n\
+•[6 +] it!mvhere (@user @user) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
+•[6 +] it!tickethelp **[Lista comandi ticket]**\n\
+•[6 +] it!hackhelp **[Lista comandi controllo hack]**\n\
+•[6 +] it!find (@user) **[Ricerca user in stanza VoiP]**\n\
+•[6 +] it!muteroom (nome stanza) o it!muteroom **[Silenzia una stanza VoiP]**\n\
+•[6 +] it!unmuteroom (nome stanza) o !unmuteroom **[Attiva il VoiP in una stanza]**"
 
         self.aiuto = "it!aiuto **[Mostra la lista dei comandi]**\n\
             it!insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"
