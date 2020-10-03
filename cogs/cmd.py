@@ -1,6 +1,7 @@
 from discord.message import Embed
 from discord.ext import commands
 from discord import Color
+from discord import utils
 import discord
 import random
 import time
@@ -330,7 +331,108 @@ class cmd(commands.Cog):
             return
 
 
+    @commands.command()
+    async def find(self, ctx):
+        
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
 
+            if len(ctx.message.raw_mentions) > 0:
+
+                for user_id in ctx.message.raw_mentions:
+                    member = utils.find(lambda m: m.id == user_id, ctx.guild.members)
+                    if member.voice is not None:
+
+                        invito = await member.voice.channel.create_invite()
+                        reply = discord.Embed(description = f"L'utente {member.mention} si trova in **{member.voice.channel.name}**", colour = discord.Colour.from_rgb(3, 252, 94))
+                        reply.add_field(name="Tasto per connettersi", value=f"[[Connettiti]({invito.url} 'Clicca qui per entrare nella stanza dell'utente')]", inline=True)
+
+                        await ctx.send(content=ctx.message.author.mention, embed=reply)
+
+                    else:
+                        reply = discord.Embed(description = f"L'utente {member.mention} __non__ è collegato ad un canale vocale!", colour = discord.Colour.dark_red())
+
+                        await ctx.send(content=ctx.message.author.mention, embed=reply)
+
+    @commands.command()
+    @commands.bot_has_guild_permissions(deafen_members = True, mute_members = True)
+    async def muteroom(self, ctx, *, channel=None):
+
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            if channel is None:
+                if ctx.message.author.voice is not None:
+                    for member in ctx.message.author.voice.channel.members:
+                        if member.id != ctx.message.author.id:
+                            await member.edit(mute = True)
+                    text = discord.Embed(title = f"🔇 • Channel Mute", description=f"Ho silenziato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**", colour = discord.Colour.red())
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
+                else:
+                    text = discord.Embed(title = f"🔇 • Channel Mute - Errore", description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi mutare gli utenti o specifica il nome del canale di cui vuoi silenziare i membri.", colour = discord.Colour.from_rgb(252, 32, 3))
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
+
+            elif channel is not None:
+                found = False
+                for guild_channel in ctx.guild.voice_channels:
+                    if channel.lower() in guild_channel.name.lower():
+                        found = True
+                        if len(guild_channel.members) > 0:
+                            for member in guild_channel.members:
+                                if member.id != ctx.message.author.id:
+                                    await member.edit(mute=True)
+                            text = discord.Embed(title = f"🔇 Channel Mute", description=f"Ho silenziato tutti gli utenti presenti in **{guild_channel.name}**", colour = discord.Colour.red())
+                            await ctx.send(content = ctx.message.author.mention, embed=text)
+                        else:
+                            text = discord.Embed(title = f"🔇 Channel Mute - Errore", description=f"La stanza **{guild_channel.name}** non ha utenti connessi!", colour = discord.Colour.from_rgb(252, 32, 3))
+                            await ctx.send(content = ctx.message.author.mention, embed=text)
+                        break
+                if found == False:
+                    text = discord.Embed(title = f"🔇 Channel Mute - Errore", description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour = discord.Colour.from_rgb(252, 32, 3))
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
+
+
+
+
+    @commands.command()
+    @commands.bot_has_guild_permissions(deafen_members = True, mute_members = True)
+    async def unmuteroom(self, ctx, *, channel=None):
+        cfg = self.bot.get_cog('Config')
+        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+            if channel is None:
+                if ctx.message.author.voice is not None:
+                    for member in ctx.message.author.voice.channel.members:
+                        if member.id != ctx.message.author.id:
+                            await member.edit(mute = False)
+                    text = discord.Embed(title = f"🔈 • Channel Unmute", description=f"Ho smutato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**", colour = discord.Colour.green())
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
+                else:
+                    text = discord.Embed(title = f"🔈 • Channel Unmute - Errore", description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi smutare gli utenti o specifica il nome del canale di cui vuoi smutare i membri.", colour = discord.Colour.from_rgb(252, 32, 3))
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
+
+            elif channel is not None:
+                found = False
+                for guild_channel in ctx.guild.voice_channels:
+                    if channel.lower() in guild_channel.name.lower():
+                        found = True
+                        if len(guild_channel.members) > 0:
+                            for member in guild_channel.members:
+                                if member.id != ctx.message.author.id:
+                                    await member.edit(mute=False)
+                            text = discord.Embed(title = f"🔈 Channel Unmute", description=f"Ho smutato tutti gli utenti presenti in **{guild_channel.name}**", colour = discord.Colour.green())
+                            await ctx.send(content = ctx.message.author.mention, embed=text)
+                        else:
+                            text = discord.Embed(title = f"🔈 Channel Unmute - Errore", description=f"La stanza **{guild_channel.name}** non ha utenti connessi!", colour = discord.Colour.from_rgb(252, 32, 3))
+                            await ctx.send(content = ctx.message.author.mention, embed=text)
+                        break
+                if found == False:
+                    text = discord.Embed(title = f"🔈 Channel Unmute - Errore", description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour = discord.Colour.from_rgb(252, 32, 3))
+                    await ctx.send(content = ctx.message.author.mention, embed=text)
 
 def setup(bot):
     bot.add_cog(cmd(bot))

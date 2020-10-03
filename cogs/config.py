@@ -14,10 +14,13 @@ class Config(commands.Cog):
 •[5 +] !tsay (testo) **[Scrivi in chat]**\n\
 •[6 +] !banlist **[Lista ban]**\n\
 •[6 +] !purge (valore=max200) **[Elimina messaggi]**\n\
-•[6 +] !mvto (nome stanza) (menzione utenti) **[Sposta gli utenti in una stanza specifica]**\n\
-•[6 +] !mvhere (menzione utenti) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
+•[6 +] !mvto (nome stanza) (@user @user) **[Sposta gli utenti in una stanza specifica]**\n\
+•[6 +] !mvhere (@user @user) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
 •[6 +] !tickethelp **[Lista comandi ticket]**\n\
-•[6 +] !hackhelp **[Lista comandi controllo hack]**"
+•[6 +] !hackhelp **[Lista comandi controllo hack]**\n\
+•[6 +] !find (@user) **[Ricerca user in stanza VoiP]**\n\
+•[6 +] !muteroom (nome stanza) o !muteroom **[Silenzia una stanza VoiP]**\n\
+•[6 +] !unmuteroom (nome stanza) o !unmuteroom **[Attiva il VoiP in una stanza]**"
 
         self.aiuto = "it!aiuto **[Mostra la lista dei comandi]**\n\
             it!insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"
