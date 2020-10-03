@@ -338,6 +338,7 @@ class cmd(commands.Cog):
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        await ctx.message.delete()
 
             if len(ctx.message.raw_mentions) > 0:
 
@@ -364,6 +365,7 @@ class cmd(commands.Cog):
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        await ctx.message.delete()
             if channel is None:
                 if ctx.message.author.voice is not None:
                     for member in ctx.message.author.voice.channel.members:
@@ -404,6 +406,7 @@ class cmd(commands.Cog):
         if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
         or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        await ctx.message.delete()
             if channel is None:
                 if ctx.message.author.voice is not None:
                     for member in ctx.message.author.voice.channel.members:

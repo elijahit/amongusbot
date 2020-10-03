@@ -20,7 +20,7 @@ class Config(commands.Cog):
 •[6 +] it!hackhelp **[Lista comandi controllo hack]**\n\
 •[6 +] it!find (@user) **[Ricerca user in stanza VoiP]**\n\
 •[6 +] it!muteroom (nome stanza) o it!muteroom **[Silenzia una stanza VoiP]**\n\
-•[6 +] it!unmuteroom (nome stanza) o !unmuteroom **[Attiva il VoiP in una stanza]**"
+•[6 +] it!unmuteroom (nome stanza) o it!unmuteroom **[Attiva il VoiP in una stanza]**"
 
         self.aiuto = "it!aiuto **[Mostra la lista dei comandi]**\n\
             it!insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"
