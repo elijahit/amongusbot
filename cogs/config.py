@@ -5,22 +5,24 @@ class Config(commands.Cog):
         self.bot = bot
         self.bot.remove_command('help')
 
-        self.aiutoadmin = "•[2 +] it!addreact (idmsg) (emoij) **[Aggiungi reazione]**\n\
-•[3 +] it!kick (@user) (motivo) **[Kicka un utente dal server]**\n\
-•[3 +] it!editmsg (idmsg) (testo) **[Edita un messaggio inviato con it!tsay]**\n\
-•[5 +] it!t (titolo) (testo) **[Invia EMBED nel canale]**\n\
-•[5 +] it!tuser (@user) (testo) **[Invia EMBED a un utente]**\n\
-•[5 +] it!tsay (testo) **[Scrivi in chat]**\n\
-•[6 +] it!ban (@user) (motivo) **[Banna un utente]**\n\
-•[6 +] it!banlist **[Lista ban]**\n\
-•[6 +] it!purge (valore=max200) **[Elimina messaggi]**\n\
-•[6 +] it!mvto (nome stanza) (@user @user) **[Sposta gli utenti in una stanza specifica]**\n\
-•[6 +] it!mvhere (@user @user) **[Sposta gli utenti nella stanza dove ti trovi]**\n\
-•[6 +] it!tickethelp **[Lista comandi ticket]**\n\
-•[6 +] it!hackhelp **[Lista comandi controllo hack]**\n\
-•[6 +] it!find (@user) **[Ricerca user in stanza VoiP]**\n\
-•[6 +] it!muteroom (nome stanza) o it!muteroom **[Silenzia una stanza VoiP]**\n\
-•[6 +] it!unmuteroom (nome stanza) o it!unmuteroom **[Attiva il VoiP in una stanza]**"
+        self.aiutoadmin = "•[2 +] it!addreact (idmsg) (emoij) \n*[Aggiungi reazione]*\n\
+•[3 +] it!kick (@user) (motivo) \n*[Kicka un utente dal server]*\n\
+•[3 +] it!editmsg (idmsg) (testo) \n*[Edita un messaggio inviato con it!tsay]*\n\
+•[3 +] it!purgeinvite \n*[Cancella tutti gli inviti al server]*\n\
+•[5 +] it!t (titolo) (testo) \n*[Invia EMBED nel canale]*\n\
+•[5 +] it!tuser (@user) (testo) \n*[Invia EMBED a un utente]*\n\
+•[5 +] it!tsay (testo) \n*[Scrivi in chat]*\n"
+
+        self.aiutoadmin2 = "•[6 +] it!ban (@user) (motivo) \n*[Banna un utente]*\n\
+•[6 +] it!banlist \n*[Lista ban]*\n\
+•[6 +] it!purge (valore=max200) \n*[Elimina messaggi]*\n\
+•[6 +] it!mvto (nome stanza) (@user @user) \n*[Sposta gli utenti in una stanza specifica]*\n\
+•[6 +] it!mvhere (@user @user) \n*[Sposta gli utenti nella stanza dove ti trovi]*\n\
+•[6 +] it!tickethelp \n*[Lista comandi ticket]*\n\
+•[6 +] it!hackhelp \n*[Lista comandi controllo hack]*\n\
+•[6 +] it!find (@user) \n*[Ricerca user in stanza VoiP]*\n\
+•[6 +] it!muteroom (nome stanza) o it!muteroom \n*[Silenzia una stanza VoiP]*\n\
+•[6 +] it!unmuteroom (nome stanza) o it!unmuteroom \n*[Attiva il VoiP in una stanza]*"
 
         self.aiuto = "it!aiuto **[Mostra la lista dei comandi]**\n\
             it!insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"
@@ -41,6 +43,9 @@ class Config(commands.Cog):
         self.rolea4 = 744631301872680980 #Helper
         self.rolea5 = 754829854066737182 #Gestore
         self.rolea6 = 748907435174920283 #Support Team
+
+        self.rolea_all = set((self.rolea1, self.rolea2, self.rolea3, self.rolea4, self.rolea5, self.rolea6))
+        self.rolea_top5 = set((self.rolea1, self.rolea2, self.rolea3, self.rolea4, self.rolea5))
         ##
 
         #controllo parole scurrilid

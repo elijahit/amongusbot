@@ -55,53 +55,67 @@ class cmd(commands.Cog):
     async def acmds(self, ctx):
         cfg = self.bot.get_cog('Config')
         embed = self.bot.get_cog('Embeds')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
 
-            name = "> Comandi admin"
-            field = ("**[1]** Owner **|** **[2]** Amministratore **|** **[3]** Mod **|** **[4]** Helper **|** **[5]** Gestore **|** **[6]** Support", cfg.aiutoadmin)
+            name = "[1] Owner | [2] Amministratore | [3] Mod | [4] Helper | [5] Gestore | [6] Support"
+            field = ("Administrative Command", cfg.aiutoadmin)
+            field2 = ("Moderative Command", cfg.aiutoadmin2)
 
             acmds_embed = embed.get_standard_embed(name,
                                                cfg.blue,
                                                ctx.guild.icon_url,
-                                               [field],
+                                               [field, field2],
                                                cfg.footer)
 
             await ctx.channel.send(embed=acmds_embed)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando purge
     async def purge(self, ctx, ammount = int(1)):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             if ammount <= 200:
                 await ctx.channel.purge(limit=ammount)
                 return
             else:
-                await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
-                await ctx.message.delete()
+                try:
+                    await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
+                    await ctx.message.delete()
+                except:
+                    pass
                 return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando richiesta
     async def richiesta(self, ctx, stato, *, text):
         cfg = self.bot.get_cog('Config')
         embed = self.bot.get_cog('Embeds')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             ##log
             member = ctx.message.author
@@ -119,16 +133,20 @@ class cmd(commands.Cog):
             await logchannel.send(embed=request_embed)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando lista ban
     async def banlist(self, ctx):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             member = ctx.message.author
             bans = await ctx.guild.bans()
@@ -140,27 +158,39 @@ class cmd(commands.Cog):
             await ctx.send(embed=embed)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2))
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             message = await ctx.channel.fetch_message(messageid)
             await message.add_reaction(emoij)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
-    @commands.command()#comando rteam
+    
+    @commands.command()#comando editmsg
     async def editmsg (self, ctx, id, *, messaggio):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             try:
                 message = await ctx.channel.fetch_message(id)
             except discord.NotFound as e:
@@ -168,28 +198,38 @@ class cmd(commands.Cog):
                 raise e
             await message.edit(content=messaggio)
             await ctx.message.delete()
+        else:
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
+            return
 
     @commands.command()#comando ban
     async def ban (self, ctx, member:discord.User=None, *, reason=None):
         
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             if member == None or member == ctx.message.author:
                 await ctx.message.author.send("Non puoi bannarti da solo.")
                 return
             if reason == None:
                 reason = "Non definito"
-            
-            message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha bannato da {ctx.guild.name} motivo:** `{reason}`"
-            embed=discord.Embed(color=cfg.lightgreen)
-            embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embed.add_field(name="ban-logs", value=message, inline=True)
-            embed.set_footer(text=cfg.footer)
-            await member.send(embed=embed)
-            await ctx.guild.ban(member, reason=reason)
+            try:
+                await ctx.guild.ban(member, reason=reason)
+                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha bannato da {ctx.guild.name} motivo:** `{reason}`"
+                embed=discord.Embed(color=cfg.lightgreen)
+                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embed.add_field(name="ban-logs", value=message, inline=True)
+                embed.set_footer(text=cfg.footer)
+                await member.send(embed=embed)
+            except:
+                pass
             
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
             messagech = f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**"
@@ -210,27 +250,38 @@ class cmd(commands.Cog):
             print(f"[LOG] {member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`")
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando kick
     async def kick (self, ctx, member:discord.User=None, *, reason=None):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             if member == None or member == ctx.message.author:
-                await ctx.message.author.send("Non puoi kickarti da solo.")
+                try:
+                    await ctx.message.author.send("Non puoi kickarti da solo.")
+                except:
+                    pass
                 return
             if reason == None:
                 reason = "Non definito"
-            message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha kickato da {ctx.guild.name} motivo:** `{reason}`"
-            embed=discord.Embed(color=cfg.red)
-            embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embed.add_field(name="kick-logs", value=message, inline=True)
-            embed.set_footer(text=cfg.footer)
-            await member.send(embed=embed)
+            try:
+                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha kickato da {ctx.guild.name} motivo:** `{reason}`"
+                embed=discord.Embed(color=cfg.red)
+                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embed.add_field(name="kick-logs", value=message, inline=True)
+                embed.set_footer(text=cfg.footer)
+                await member.send(embed=embed)
+            except:
+                pass
             await ctx.guild.kick(member)
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
             messagech = f"**{member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`**"
@@ -249,17 +300,20 @@ class cmd(commands.Cog):
             print(f"[LOG] {member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`")
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
-
 
     @commands.command()#comando tsay
     async def t (self, ctx, *tutto): #!t "titolo molto utile" descrizione utile
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_top5
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
 
             text = ""
@@ -285,34 +339,47 @@ class cmd(commands.Cog):
             await ctx.channel.send(embed=embeds)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando tsay no embed
     async def tsay (self, ctx, *, text):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_top5
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             await ctx.channel.send(text)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
 
     @commands.command()#comando tsayuser
     async def tuser (self, ctx, member:discord.User=None, *, text):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]:
-            await ctx.message.delete()
-            embeds=discord.Embed(color=cfg.blue)
-            embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embeds.add_field(name="Admin Message", value=text, inline=True)
-            embeds.set_footer(text=cfg.footer)
-            await member.send(embed=embeds)
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2))
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+            try:
+                await ctx.message.delete()
+                embeds=discord.Embed(color=cfg.blue)
+                embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embeds.add_field(name="Admin Message", value=text, inline=True)
+                embeds.set_footer(text=cfg.footer)
+                await member.send(embed=embeds)
+            except:
+                await ctx.channel.send("L'utente non riceve messaggi in DM.")
             ##MESSAGGIO DI VERIFICA AL AUTORE
             embedss=discord.Embed(color=cfg.blue)
             embedss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
@@ -328,18 +395,21 @@ class cmd(commands.Cog):
             await logchannel.send(embed=embedsss)
             return
         else:
-            await ctx.message.delete()
-            await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
             return
-
 
     @commands.command()
     async def find(self, ctx):
         
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             
             await ctx.message.delete()
             if len(ctx.message.raw_mentions) > 0:
@@ -348,9 +418,9 @@ class cmd(commands.Cog):
                     member = utils.find(lambda m: m.id == user_id, ctx.guild.members)
                     if member.voice is not None:
 
-                        #invito = await member.voice.channel.create_invite()
+                        invito = await member.voice.channel.create_invite()
                         reply = discord.Embed(description = f"L'utente {member.mention} si trova in **{member.voice.channel.name}**", colour = discord.Colour.from_rgb(3, 252, 94))
-                        reply.add_field(name="Tasto per connettersi", value=f"[[Connettiti]( 'Clicca qui per entrare nella stanza dell'utente')]", inline=True)
+                        reply.add_field(name="Tasto per connettersi", value=f"[[Connettiti]({invito.url} 'Clicca qui per entrare nella stanza dell'utente')]", inline=True)
 
                         await ctx.send(content=ctx.message.author.mention, embed=reply)
 
@@ -364,9 +434,10 @@ class cmd(commands.Cog):
     async def muteroom(self, ctx, *, channel=None):
 
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             
             await ctx.message.delete()
             if channel is None:
@@ -399,16 +470,14 @@ class cmd(commands.Cog):
                     text = discord.Embed(title = f"🔇 Channel Mute - Errore", description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour = discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content = ctx.message.author.mention, embed=text)
 
-
-
-
     @commands.command()
     @commands.bot_has_guild_permissions(deafen_members = True, mute_members = True)
     async def unmuteroom(self, ctx, *, channel=None):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             
             await ctx.message.delete()
             if channel is None:

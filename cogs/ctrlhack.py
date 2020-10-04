@@ -20,9 +20,11 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def hackhelp(self, ctx): 
         cfg = self.bot.get_cog('Config') 
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+
             await ctx.message.delete()
             cmdsLs = discord.Embed(title="LISTA COMANDI", description="**Comandi admin** \n\
             !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
@@ -38,9 +40,10 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def hack(self, ctx, num):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             global mess, admin_live_id
 
@@ -219,9 +222,10 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def FAIL(self, ctx):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             for ctx.channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
                 await ctx.channel.delete()
@@ -229,9 +233,10 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def RESETLIST(self, ctx):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             global admin_live_id
             admin_live_id = ""

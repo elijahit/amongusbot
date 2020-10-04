@@ -22,9 +22,10 @@ class Ticket(commands.Cog):
     @commands.command()
     async def tickethelp(self, ctx):
         cfg = self.bot.get_cog('Config') 
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
 
             d = "it!tAdd - Aggiungere un utente al ticket"
             embed = discord.Embed(title="Comandi Ticket", description=d, color=discord.Colour.green())
@@ -35,9 +36,10 @@ class Ticket(commands.Cog):
     @commands.command()
     async def tmessage(self, ctx):
         cfg = self.bot.get_cog('Config') 
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             
             embed = discord.Embed(title="Pannello Tickets", description = "Per aprire un ticket e contattare lo staff premi la reazione 🎫 sottostante.\nTi ricordo che qualsiasi ticket aperto e inutilizzato sarà frutto di warn.\n\nIn caso di problemi relativi ai sistemi sviluppati per Among Us Ita contatta un **Developers** o un **Mod**", color = discord.Colour.green())
             z = await ctx.send(embed=embed)
@@ -47,9 +49,10 @@ class Ticket(commands.Cog):
     @commands.command()
     async def tadd(self, ctx, arg: discord.User):
         cfg = self.bot.get_cog('Config') 
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
         
             channel = ctx.message.channel
             user_2_add = arg
@@ -244,8 +247,8 @@ class Ticket(commands.Cog):
                 f.write('\n'.join(cached_messages))
                 
             embed = discord.Embed(title = title)
-            embed.add_field(name="Creatore", value=f"{user.mention}")
-            embed.add_field(name="Admin", value=f"{admin.mention}")
+            embed.add_field(name="Creatore", value=f"{user}")
+            embed.add_field(name="Admin", value=f"{admin}")
             await cache.send(embed=embed)
             
             with open(f'{n_ticket}.txt', 'rb') as f:
@@ -259,14 +262,18 @@ class Ticket(commands.Cog):
         user = self.bot.get_user(user_id)
         channel = self.bot.get_channel(channel_id)
 
-        try:
-            embed = discord.Embed(title=message[0], description=message[1], colour=discord.Colour(message[2]))
-            await user.send(embed=embed)
-        except discord.Forbidden:
-            embed = discord.Embed(title="Error", description=f"I can't contact {user.mention} btw \n{message[1]}")
-            await channel.send(embed=embed)
-        except discord.HTTPException:
-            await channel.send(content="Request Failed.")
+
+        if user == None:
+            pass
+        else:
+            try:
+                embed = discord.Embed(title=message[0], description=message[1], colour=discord.Colour(message[2]))
+                await user.send(embed=embed)
+            except discord.Forbidden:
+                embed = discord.Embed(title="Error", description=f"I can't contact {user.mention} btw \n{message[1]}")
+                await channel.send(embed=embed)
+            except discord.HTTPException:
+                await channel.send(content="Request Failed.")
 
 
 def setup(bot):

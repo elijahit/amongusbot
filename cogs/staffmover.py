@@ -16,9 +16,10 @@ class StaffMover(commands.Cog):
     async def mvhere(self, ctx):
         await ctx.message.delete()
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             sender = ctx.message.author
             moved = []
             errors = []
@@ -53,9 +54,10 @@ class StaffMover(commands.Cog):
     async def mvto(self, ctx, *ch_dest):
         await ctx.message.delete()
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
             sender = ctx.message.author
             guild = ctx.guild
             moved = []
