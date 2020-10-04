@@ -18,11 +18,11 @@ class Ctrlhack(commands.Cog):
         self.bot = bot
     
     @commands.command()
-    async def hackhelp(self, ctx):
-        cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+    async def hackhelp(self, ctx): 
+        cfg = self.bot.get_cog('Config') 
+        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
             await ctx.message.delete()
             cmdsLs = discord.Embed(title="LISTA COMANDI", description="**Comandi admin** \n\
             !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
@@ -38,9 +38,9 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def hack(self, ctx, num):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
             await ctx.message.delete()
             global mess, admin_live_id
 
@@ -128,7 +128,7 @@ class Ctrlhack(commands.Cog):
 
                     hackchannels = [discord.utils.get(guild_now.voice_channels, name=f"Vocale {i} generale 🥵"), discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-1 🥶"), discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-2 🥶"), discord.utils.get(guild_now.voice_channels, name=f"┗ Vocale {i}-3 🥶")]
 
-                    Warning = discord.Embed(title="🟨 IL TUO CONTROLLO STA PER INIZIARE 🟨", description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Entra nella chat vocale (Vocale generale {i} 🥵)!* \n{await hackchannels[0].create_invite()} \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*", color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
+                    Warning = discord.Embed(title="🟨 IL TUO CONTROLLO STA PER INIZIARE 🟨", description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Entra nella chat vocale (Vocale generale {i} 🥵)!* \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*", color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
                     Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "HackBot")
                     await discord.Message.edit(reaction.message, embed=Warning)
@@ -219,9 +219,9 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def FAIL(self, ctx):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
             await ctx.message.delete()
             for ctx.channel in (discord.utils.get(ctx.guild.categories, name="controllo hack")).voice_channels:
                 await ctx.channel.delete()
@@ -229,9 +229,9 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def RESETLIST(self, ctx):
         cfg = self.bot.get_cog('Config')
-        if cfg.rolea1 in [role.name for role in ctx.message.author.roles] or cfg.rolea2 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea3 in [role.name for role in ctx.message.author.roles] or cfg.rolea4 in [role.name for role in ctx.message.author.roles]\
-        or cfg.rolea5 in [role.name for role in ctx.message.author.roles] or cfg.rolea6 in [role.name for role in ctx.message.author.roles]:
+        if cfg.rolea1 in [role.id for role in ctx.message.author.roles] or cfg.rolea2 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea3 in [role.id for role in ctx.message.author.roles] or cfg.rolea4 in [role.id for role in ctx.message.author.roles]\
+        or cfg.rolea5 in [role.id for role in ctx.message.author.roles] or cfg.rolea6 in [role.id for role in ctx.message.author.roles]:
             await ctx.message.delete()
             global admin_live_id
             admin_live_id = ""
