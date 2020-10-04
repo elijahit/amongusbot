@@ -15,7 +15,7 @@ class Ticket(commands.Cog):
         self.category = 750086378028793908  # categoria canale ticket
         self.role = 748907435174920283  # support role
         self.cache = 762079923942195220  # cache channels
-        self.limited_roles = [754829854066737182, 744631301872680980] # limited roles 
+        self.limited_roles = [754829854066737182, 744631301872680980] # limited roles
         self.limit = [2, 2] # number of tickets for limited roles
 
     # => Help Command

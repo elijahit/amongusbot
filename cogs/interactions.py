@@ -41,14 +41,17 @@ class Interactions(commands.Cog):
         print(f"{member.id}")
 
         # welcome dm
-        field = (f"-> Benvenuto!", f"Benvenuto {member.mention} nel server ufficiale di **Among Us Ita**")
-        welcome_message = embed.get_standard_embed("AMONG US ITA",
-                                                   cfg.lightgreen,
-                                                   member.guild.icon_url,
-                                                   [field],
-                                                   cfg.footer)
+        try:       
+            field = (f"-> Benvenuto!", f"Benvenuto {member.mention} nel server ufficiale di **Among Us Ita**")
+            welcome_message = embed.get_standard_embed("AMONG US ITA",
+                                                    cfg.lightgreen,
+                                                    member.guild.icon_url,
+                                                    [field],
+                                                    cfg.footer)
 
-        await member.send(embed=welcome_message)
+            await member.send(embed=welcome_message)
+        except:
+            pass
 
 
     @commands.Cog.listener()
@@ -74,6 +77,7 @@ class Interactions(commands.Cog):
         print("[LOG] {0}#{1} è uscito dal server discord".format(member.name, member.discriminator))
         print("{0}".format(member.id))
 
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, CommandNotFound):
@@ -83,4 +87,4 @@ class Interactions(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Interactions(bot))
-    print("[!] modulo callback caricato")
+    print("[!] modulo interactions caricato")

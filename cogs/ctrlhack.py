@@ -27,11 +27,11 @@ class Ctrlhack(commands.Cog):
 
             await ctx.message.delete()
             cmdsLs = discord.Embed(title="LISTA COMANDI", description="**Comandi admin** \n\
-            !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
+            it!hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
                 \n\
                 **Per risolvere i bug** \n\
-                !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
-                    !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
+                it!FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
+                    it!RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
             cmdsLs.set_author(name = "Among Us Ita")
             cmdsLs.set_footer(text=cfg.footer)
 

@@ -140,31 +140,6 @@ class cmd(commands.Cog):
                 pass
             return
 
-    @commands.command()#comando lista ban
-    async def banlist(self, ctx):
-        cfg = self.bot.get_cog('Config')
-        user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
-
-        if len(user_roles.intersection(admin_roles)) != 0:
-            await ctx.message.delete()
-            member = ctx.message.author
-            bans = await ctx.guild.bans()
-            pretty_list = ["• {0.id} ({0.name}#{0.discriminator})".format(entry.user) for entry in bans]
-            embed=discord.Embed(color=cfg.lightgreen)
-            embed.set_author(name="{0}#{1}".format(member.name, member.discriminator), icon_url=member.avatar_url)
-            embed.add_field(name="Lista ban", value="{}".format("\n".join(pretty_list)), inline=True)
-            embed.set_footer(text=cfg.footer)
-            await ctx.send(embed=embed)
-            return
-        else:
-            try:
-                await ctx.message.delete()
-                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            except:
-                pass
-            return
-
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
         cfg = self.bot.get_cog('Config')

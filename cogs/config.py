@@ -6,15 +6,13 @@ class Config(commands.Cog):
         self.bot.remove_command('help')
 
         self.aiutoadmin = "•[2 +] it!addreact (idmsg) (emoij) \n*[Aggiungi reazione]*\n\
-•[3 +] it!kick (@user) (motivo) \n*[Kicka un utente dal server]*\n\
 •[3 +] it!editmsg (idmsg) (testo) \n*[Edita un messaggio inviato con it!tsay]*\n\
 •[3 +] it!purgeinvite \n*[Cancella tutti gli inviti al server]*\n\
-•[5 +] it!t (titolo) (testo) \n*[Invia EMBED nel canale]*\n\
 •[5 +] it!tuser (@user) (testo) \n*[Invia EMBED a un utente]*\n\
 •[5 +] it!tsay (testo) \n*[Scrivi in chat]*\n"
 
         self.aiutoadmin2 = "•[6 +] it!ban (@user) (motivo) \n*[Banna un utente]*\n\
-•[6 +] it!banlist \n*[Lista ban]*\n\
+•[6 +] it!kick (@user) (motivo) \n*[Kicka un utente dal server]*\n\
 •[6 +] it!purge (valore=max200) \n*[Elimina messaggi]*\n\
 •[6 +] it!mvto (nome stanza) (@user @user) \n*[Sposta gli utenti in una stanza specifica]*\n\
 •[6 +] it!mvhere (@user @user) \n*[Sposta gli utenti nella stanza dove ti trovi]*\n\
