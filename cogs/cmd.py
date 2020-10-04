@@ -378,22 +378,21 @@ class cmd(commands.Cog):
                 embeds.add_field(name="Admin Message", value=text, inline=True)
                 embeds.set_footer(text=cfg.footer)
                 await member.send(embed=embeds)
+                ##MESSAGGIO DI VERIFICA AL AUTORE
+                embedss=discord.Embed(color=cfg.blue)
+                embedss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embedss.add_field(name="Hai inviato questo messaggio a {0}#{1}".format(member.name, member.discriminator), value=text, inline=True)
+                embedss.set_footer(text=cfg.footer)
+                await ctx.message.author.send(embed=embedss)
+                #########log##########
+                logchannel = self.bot.get_channel(cfg.log) #canale log
+                embedsss=discord.Embed(color=cfg.blue)
+                embedsss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embedsss.add_field(name="{0} ha inviato questo messaggio a {1}#{2}".format(ctx.message.author.name, member.name, member.discriminator), value=text, inline=True)
+                embedsss.set_footer(text=cfg.footer)
+                await logchannel.send(embed=embedsss)
             except:
                 await ctx.channel.send("L'utente non riceve messaggi in DM.")
-            ##MESSAGGIO DI VERIFICA AL AUTORE
-            embedss=discord.Embed(color=cfg.blue)
-            embedss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embedss.add_field(name="Hai inviato questo messaggio a {0}#{1}".format(member.name, member.discriminator), value=text, inline=True)
-            embedss.set_footer(text=cfg.footer)
-            await ctx.message.author.send(embed=embedss)
-            #########log##########
-            logchannel = self.bot.get_channel(cfg.log) #canale log
-            embedsss=discord.Embed(color=cfg.blue)
-            embedsss.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embedsss.add_field(name="{0} ha inviato questo messaggio a {1}#{2}".format(ctx.message.author.name, member.name, member.discriminator), value=text, inline=True)
-            embedsss.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embedsss)
-            return
         else:
             try:
                 await ctx.message.delete()
