@@ -16,7 +16,7 @@ class Ticket(commands.Cog):
         self.role = 748907435174920283  # support role
         self.cache = 762079923942195220  # cache channels
         self.limited_roles = [754829854066737182, 744631301872680980] # limited roles
-        self.limit = [2, 2] # number of tickets for limited roles
+        self.limit = [3, 3] # number of tickets for limited roles
 
     # => Help Command
     @commands.command()

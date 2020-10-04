@@ -294,7 +294,7 @@ class Logger(commands.Cog):
             now = datetime.datetime.now()
             time = now.strftime("%d/%m/%Y %H:%M:%S")
 
-            if before.channel is None: # Utente si è connesso
+            if before.channel is None and after.channel is not None: # Utente si è connesso
                 Log = discord.Embed(description = f"**Azione**: {member.mention} si è connesso a {after.channel.name}", colour = discord.Colour.from_rgb(3, 252, 32))
                 Log.set_author(name = member, icon_url = member.avatar_url)
                 Log.add_field(name = "Nome Canale", value = after.channel.name, inline=True)
@@ -302,7 +302,7 @@ class Logger(commands.Cog):
                 Log.add_field(name = "Orario azione", value = time, inline=False)
                 await log_channel.send(embed = Log)
 
-            elif after.channel is None: # Utente si è disconnesso
+            elif after.channel is None and before.channel is not None: # Utente si è disconnesso
                 Log = discord.Embed(description = f"**Azione**: {member.mention} disconnesso da {before.channel.name}", colour = discord.Colour.from_rgb(252, 3, 3))
                 Log.set_author(name = member, icon_url = member.avatar_url)
                 Log.add_field(name = "Nome Canale", value = before.channel.name, inline=True)

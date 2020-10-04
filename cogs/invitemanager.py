@@ -34,8 +34,11 @@ class InviteManager(commands.Cog):
                     Embed = discord.Embed(description = f"Sto cancellando tutti gli inviti del server...", colour = discord.Colour.blue())
                     await bot_reply.edit(content = ctx.message.author.mention, embed = Embed)
                     guid_invites = await ctx.guild.invites()
+
                     for invite in guid_invites:
-                        await invite.delete()
+                        if invite.code != "hwSd6AM":
+                            await invite.delete()
+
                     Embed = discord.Embed(description = f"Ho cancellato tutti gli inviti esistenti", colour = discord.Colour.green())
                     await bot_reply.edit(content = ctx.message.author.mention, embed = Embed)
 
@@ -59,39 +62,17 @@ class InviteManager(commands.Cog):
             guid_invites = await invite.guild.invites()
 
             cfg = self.bot.get_cog('Config')
-            user_roles = set([role.id for role in invite.inviter.roles])
+            member = invite.guild.get_member(invite.inviter.id)
+            user_roles = set([role.id for role in member.roles])
             admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
 
             if len(user_roles.intersection(admin_roles)) != 0:
                 pass
-
             else:
-
-                ignored_roles_ids = [744631580504359043, # owner
-                                    744631542608822422, # mod
-                                    744631301872680980, # helper
-                                    754829854066737182, # gestore
-                                    747833282993061889 # bots
-                                    ]
-
-
-                ignored_roles_objects = []
-                for i in ignored_roles_ids:
-                    try:
-                        role = invite.guild.get_role(i)
-                        ignored_roles_objects.append(role)
-                    except Exception as e:
-                        print(e)
-
                 if len(guid_invites) > 0:
                     for server_invite in guid_invites:
                         if server_invite.inviter == invite.inviter and server_invite.code != invite.code:
-
-                            for ignored in ignored_roles_objects:
-                                if ignored in server_invite.inviter.roles:
-                                    pass
-                                else:
-                                    await server_invite.delete()
+                            await server_invite.delete()
 
 
 def setup(bot):
