@@ -32,7 +32,7 @@ class Config(commands.Cog):
         self.ingresso = 744613754829799444 #canale ingresso
         self.voicelogs = 751077692446736444 #canale voicelogs
         self.staffroom = 746868296892284948
-        self.categories = ["TESTVOIP", "APEX"]
+        self.categories = ["STAFF VOICE"]
 
         ##ADMIN PEX 
 

@@ -11,8 +11,8 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds',
-                      'cogs.voicechannels', 'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager']
+startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds', 
+'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager']
 
 bot = commands.Bot(command_prefix=get_prefix, description='', case_insensitive=True)
 

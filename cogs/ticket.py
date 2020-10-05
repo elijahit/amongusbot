@@ -38,7 +38,7 @@ class Ticket(commands.Cog):
     async def tmessage(self, ctx):
         cfg = self.bot.get_cog('Config') 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set(cfg.roledev)
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             
@@ -61,7 +61,7 @@ class Ticket(commands.Cog):
             t = "Aggiunto utente"
             d = f"L'utente {user_2_add.mention} è stato aggiunto alla stanza"
             await ctx.message.delete()
-            await channel.set_permissions(user_2_add, read_messages=True, send_messages=True, add_reactions=False)
+            await channel.set_permissions(user_2_add, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True)
             embed = discord.Embed(title=t, description=d)
             await ctx.send(embed=embed)
 
@@ -156,6 +156,9 @@ class Ticket(commands.Cog):
         channel = self.bot.get_channel(channel_id)
         guild = self.bot.get_guild(guild_id)
         supporter = guild.get_role(self.role)
+        moderator = guild.get_role(744631301872680980)
+        senmod = guild.get_role(762459421665525802)
+        thelper = guild.get_role(762459426128789525)
         
         utente = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
         utente = self.bot.get_user(utente)
@@ -175,8 +178,11 @@ class Ticket(commands.Cog):
         await conn.commit()        
 
         await channel.set_permissions(supporter, read_messages=False, send_messages=False, add_reactions=False)
-        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False)
-        await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True)
+        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True)
+        await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        await channel.set_permissions(thelper, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
 
         await m.clear_reactions()
         await m.delete()

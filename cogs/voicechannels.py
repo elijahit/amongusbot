@@ -1,11 +1,8 @@
-# Sistema staffmover per Among Us Ita (amongusita.it)
-# Sviluppato da Nico#4306
-# Per Among Us Ita#2534
 from discord.ext import commands
-from asyncio import Lock, sleep
+from asyncio import Lock
 import discord
 
-categories = ["TESTVOIP"]
+categories = ["STAFF VOICE"]
 
 
 class Voicechannels(commands.Cog):
@@ -23,7 +20,7 @@ class Voicechannels(commands.Cog):
         return None
 
     @staticmethod
-    def _is_channel(channel, guild):
+    def _is_apex(channel, guild):
         if channel:
             category = guild.get_channel(channel.category_id)
             if category.name.upper() in categories:
@@ -45,7 +42,6 @@ class Voicechannels(commands.Cog):
         try:
             if len(before_channel.members) == 0 and len(before_category.voice_channels) > 1:
                 await before_channel.delete()
-                await sleep(0.7)
                 for i, channel in enumerate(before_category.voice_channels):
                     await channel.edit(name=f'{before_channel.name.split()[0]} {i + 1}')
 
@@ -57,8 +53,8 @@ class Voicechannels(commands.Cog):
 
         guild = self._get_guild(before, after)
         if guild:
-            before_category = self._is_channel(before.channel, guild)
-            after_category = self._is_channel(after.channel, guild)
+            before_category = self._is_apex(before.channel, guild)
+            after_category = self._is_apex(after.channel, guild)
             # if before_category != after_category:
             if before_category:
                 await self._delete_channel(before_category, before.channel)
@@ -86,7 +82,8 @@ class Voicechannels(commands.Cog):
             embed.set_footer(text=cfg.footer)
             await logchannel.send(embed=embed)
 
-    #LISTENERS
+
+    # LISTENERS
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
 
@@ -97,4 +94,3 @@ class Voicechannels(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Voicechannels(bot))
-    print("[!] modulo voichechannels caricato")

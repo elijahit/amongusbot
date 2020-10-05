@@ -55,7 +55,7 @@ class Logger(commands.Cog):
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
         cfg = self.bot.get_cog('Config')
-        log_channel = guild.get_channel(cfg.log)
+        log_channel = guild.get_channel(cfg.staffroom)
         if log_channel is not None:
             now = datetime.datetime.now()
             time = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -82,7 +82,7 @@ class Logger(commands.Cog):
     @commands.Cog.listener()
     async def on_member_unban(self, guild, user):
         cfg = self.bot.get_cog('Config')
-        log_channel = guild.get_channel(cfg.log)
+        log_channel = guild.get_channel(cfg.staffroom)
         if log_channel is not None:
             now = datetime.datetime.now()
             time = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -289,7 +289,7 @@ class Logger(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         guild = member.guild
         cfg = self.bot.get_cog('Config')
-        log_channel = guild.get_channel(cfg.log)
+        log_channel = guild.get_channel(cfg.voicelogs)
         if log_channel is not None:
             now = datetime.datetime.now()
             time = now.strftime("%d/%m/%Y %H:%M:%S")
