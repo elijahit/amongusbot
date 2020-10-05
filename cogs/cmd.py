@@ -62,15 +62,16 @@ class cmd(commands.Cog):
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
 
-            name = "[1] Owner | [2] Amministratore | [3] Mod | [4] Helper | [5] Gestore | [6] Support"
+            name = "Comandi per admin"
             field = ("Administrative Command", cfg.aiutoadmin)
             field2 = ("Moderative Command", cfg.aiutoadmin2)
+            field3 = ("Non Administrative", cfg.aiutoadmin3)
 
             acmds_embed = embed.get_standard_embed(name,
                                                cfg.blue,
                                                ctx.guild.icon_url,
-                                               [field, field2],
-                                               cfg.footer)
+                                               [field, field2, field3],
+                                               "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T Helper | [8] Gestore | [9] Prova")
 
             await ctx.channel.send(embed=acmds_embed)
             return
@@ -86,7 +87,7 @@ class cmd(commands.Cog):
     async def purge(self, ctx, ammount = int(1)):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -108,43 +109,11 @@ class cmd(commands.Cog):
                 pass
             return
 
-    @commands.command()#comando richiesta
-    async def richiesta(self, ctx, stato, *, text):
-        cfg = self.bot.get_cog('Config')
-        embed = self.bot.get_cog('Embeds')
-        user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
-
-        if len(user_roles.intersection(admin_roles)) != 0:
-            await ctx.message.delete()
-            ##log
-            member = ctx.message.author
-            logchannel = self.bot.get_channel(758390987168677941)
-
-            name = "{0}#{1}".format(member.name, member.discriminator)
-            field = ("RICHIESTA: {}".format(stato), "{}".format(text))
-
-            request_embed = embed.get_standard_embed(name,
-                                               cfg.green,
-                                               member.avatar_url,
-                                               [field],
-                                               "N° {}".format((random.randint(100000, 9000000))))
-                                               
-            await logchannel.send(embed=request_embed)
-            return
-        else:
-            try:
-                await ctx.message.delete()
-                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            except:
-                pass
-            return
-
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2))
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -163,7 +132,7 @@ class cmd(commands.Cog):
     async def editmsg (self, ctx, id, *, messaggio):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             try:
@@ -186,7 +155,8 @@ class cmd(commands.Cog):
         
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, 
+        cfg.rolea6, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -236,7 +206,8 @@ class cmd(commands.Cog):
     async def kick (self, ctx, member:discord.User=None, *, reason=None):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, 
+        cfg.rolea6, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -282,50 +253,11 @@ class cmd(commands.Cog):
                 pass
             return
 
-    @commands.command()#comando tsay
-    async def t (self, ctx, *tutto): #!t "titolo molto utile" descrizione utile
-        cfg = self.bot.get_cog('Config')
-        user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_top5
-
-        if len(user_roles.intersection(admin_roles)) != 0:
-            await ctx.message.delete()
-
-            text = ""
-            tutto = str(tutto)
-            tutto = tutto.split()
-
-            for x in tutto:
-                if x.startswith("\""):
-                    for y in tutto:
-                     text += y
-                     tutto.pop(-1)
-                     if y.endswith("\""):
-                         break
-
-            title = text[0]
-            text = " ".join(tutto)
-            " ".join(tutto)
-
-            embeds=discord.Embed(color=cfg.blue)
-            embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embeds.add_field(name=title, value=text, inline=True)
-            embeds.set_footer(text=cfg.footer)
-            await ctx.channel.send(embed=embeds)
-            return
-        else:
-            try:
-                await ctx.message.delete()
-                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
-            except:
-                pass
-            return
-
     @commands.command()#comando tsay no embed
     async def tsay (self, ctx, *, text):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_top5
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -343,7 +275,7 @@ class cmd(commands.Cog):
     async def tuser (self, ctx, member:discord.User=None, *, text):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2))
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             try:
@@ -409,7 +341,7 @@ class cmd(commands.Cog):
 
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             
@@ -449,7 +381,7 @@ class cmd(commands.Cog):
     async def unmuteroom(self, ctx, *, channel=None):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             

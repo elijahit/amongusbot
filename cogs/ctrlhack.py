@@ -21,7 +21,7 @@ class Ctrlhack(commands.Cog):
     async def hackhelp(self, ctx): 
         cfg = self.bot.get_cog('Config') 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
 
@@ -41,7 +41,7 @@ class Ctrlhack(commands.Cog):
     async def hack(self, ctx, num):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()

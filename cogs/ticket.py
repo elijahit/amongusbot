@@ -11,12 +11,13 @@ class Ticket(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        cfg = self.bot.get_cog('Config') 
         self.ticketChannel = 748908550973292604  # canale ticket
         self.category = 750086378028793908  # categoria canale ticket
         self.role = 748907435174920283  # support role
         self.cache = 762079923942195220  # cache channels
-        self.limited_roles = [754829854066737182, 744631301872680980] # limited roles
-        self.limit = [3, 3] # number of tickets for limited roles
+        self.limited_roles = [cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.rolea8, cfg.rolea9] # limited roles
+        self.limit = [4, 3, 3, 2, 2, 2] # number of tickets for limited roles
 
     # => Help Command
     @commands.command()
@@ -37,7 +38,7 @@ class Ticket(commands.Cog):
     async def tmessage(self, ctx):
         cfg = self.bot.get_cog('Config') 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = set(cfg.roledev)
 
         if len(user_roles.intersection(admin_roles)) != 0:
             

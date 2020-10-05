@@ -17,7 +17,7 @@ class StaffMover(commands.Cog):
         await ctx.message.delete()
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             sender = ctx.message.author
@@ -55,7 +55,7 @@ class StaffMover(commands.Cog):
         await ctx.message.delete()
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = cfg.rolea_all
+        admin_roles = cfg.rolea_top8
 
         if len(user_roles.intersection(admin_roles)) != 0:
             sender = ctx.message.author
