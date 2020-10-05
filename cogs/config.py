@@ -5,8 +5,8 @@ class Config(commands.Cog):
         self.bot = bot
         self.bot.remove_command('help')
 
-        self.aiutoadmin = "•[3 +] **editmsg** (idmsg) (testo) \n*[Edita un messaggio inviato con tsay]*\n\
-•[2 +] **purgeinvite** \n*[Cancella tutti gli inviti al server]*\n\
+        self.aiutoadmin = "•[2 +] **purgeinvite** \n*[Cancella tutti gli inviti al server]*\n\
+•[3 +] **editmsg** (idmsg) (testo) \n*[Edita un messaggio inviato con tsay]*\n\
 •[5 +] **tuser** (@user) (testo) \n*[Invia EMBED a un utente]*\n\
 •[5 +] **purge** (valore=max200) \n*[Elimina messaggi]*\n\
 •[5 +] **tsay** (testo) \n*[Scrivi in chat]*\n"
@@ -14,7 +14,8 @@ class Config(commands.Cog):
         self.aiutoadmin2 = "•[6 +] **ban** (@user) (motivo) \n*[Banna un utente]*\n\
 •[6 +] **kick** (@user) (motivo) \n*[Kicka un utente dal server]*\n"
 
-        self.aiutoadmin3 = "•[8 +] **mvto** (nome stanza) (@user @user) \n*[Sposta gli utenti in una stanza specifica]*\n\
+        self.aiutoadmin3 = "•[7 +] **addrole** (@ruolo) (@user) (motivo) \n*[Inserisce il ruolo al utente]*\n\
+•[8 +] **mvto** (nome stanza) (@user @user) \n*[Sposta gli utenti in una stanza specifica]*\n\
 •[8 +] **mvhere** (@user @user) \n*[Sposta gli utenti nella stanza dove ti trovi]*\n\
 •[8 +] **hackhelp** \n*[Lista comandi controllo hack]*\n\
 •[8 +] **addreact** (idmsg) (emoij) \n*[Aggiungi reazione]*\n\
@@ -30,6 +31,7 @@ class Config(commands.Cog):
         self.sanzioni = 757000456261206057 #canale sanzioni
         self.ingresso = 744613754829799444 #canale ingresso
         self.voicelogs = 751077692446736444 #canale voicelogs
+        self.staffroom = 746868296892284948
         self.categories = ["TESTVOIP", "APEX"]
 
         ##ADMIN PEX 

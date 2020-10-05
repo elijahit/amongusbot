@@ -62,7 +62,7 @@ class cmd(commands.Cog):
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
 
-            name = "Comandi per admin"
+            name = "COMANDI ADMIN - [it!]"
             field = ("Administrative Command", cfg.aiutoadmin)
             field2 = ("Moderative Command", cfg.aiutoadmin2)
             field3 = ("Non Administrative", cfg.aiutoadmin3)
@@ -71,7 +71,7 @@ class cmd(commands.Cog):
                                                cfg.blue,
                                                ctx.guild.icon_url,
                                                [field, field2, field3],
-                                               "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T Helper | [8] Gestore | [9] Prova")
+                                               "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T. Helper | [8] Gestore | [9] Prova")
 
             await ctx.channel.send(embed=acmds_embed)
             return
@@ -108,6 +108,96 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+
+    @commands.command()#addrole
+    async def addrole(self, ctx, role:discord.Role, member:discord.Member=None, *, motivo=None):
+        cfg = self.bot.get_cog('Config')
+        db = self.bot.get_cog('Db')
+        embed = self.bot.get_cog('Embeds')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea6, cfg.rolea7, cfg.roledev))
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+
+            try:
+                query = "SELECT * FROM addrole WHERE role_id=?"
+                values = (role.id,)
+                roleadd = db.fetchall(query, values)[0][1]
+            except:
+                await ctx.message.delete()
+
+                name = "Amministratore ruoli"
+                field = ("Errore", f"Il ruolo {role.mention} non è presente nella lista di gestione.")
+
+                role_embed = embed.get_standard_embed(name,
+                                                cfg.red,
+                                                ctx.guild.icon_url,
+                                                [field],
+                                                cfg.footer)
+
+                await ctx.channel.send(embed=role_embed)
+                await member.add_roles(role)
+
+
+            if role.id == roleadd:
+
+                rolecheck = discord.utils.find(lambda r: r.id == role.id, ctx.guild.roles)
+                if rolecheck in member.roles:
+                    
+                    await ctx.message.delete()
+
+                    name = "Amministratore ruoli"
+                    field = ("Errore", f"L'utente {member.mention} possiede già il ruolo {role.mention}.")
+
+                    role_embed = embed.get_standard_embed(name,
+                                                    cfg.red,
+                                                    ctx.guild.icon_url,
+                                                    [field],
+                                                    cfg.footer)
+
+                    await ctx.channel.send(embed=role_embed)
+
+                else:
+                    await ctx.message.delete()
+                    staff = self.bot.get_channel(cfg.staffroom) #canale sanzioni
+
+                    name = "Amministratore ruoli"
+                    field = ("Aggiunto", f"Hai inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
+
+                    role_embed = embed.get_standard_embed(name,
+                                                    cfg.blue,
+                                                    ctx.guild.icon_url,
+                                                    [field],
+                                                    cfg.footer)
+
+                    await ctx.channel.send(embed=role_embed)
+
+                    name = "user-logs"
+                    field = ("Aggiunto", f"{ctx.author.mention} ha inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
+
+                    logs_embed = embed.get_standard_embed(name,
+                                                    cfg.green,
+                                                    ctx.guild.icon_url,
+                                                    [field],
+                                                    cfg.footer)
+
+                    await staff.send(embed=logs_embed)
+                    await member.add_roles(role)
+            else:
+                await ctx.message.delete()
+
+                name = "Amministratore ruoli"
+                field = ("Errore", f"Il ruolo {role.mention} non è presente nella lista di gestione.")
+
+                role_embed = embed.get_standard_embed(name,
+                                                cfg.red,
+                                                ctx.guild.icon_url,
+                                                [field],
+                                                cfg.footer)
+
+                await ctx.channel.send(embed=role_embed)
+                await member.add_roles(role)
+                
 
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
