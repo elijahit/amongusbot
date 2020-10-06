@@ -33,7 +33,6 @@ class Config(commands.Cog):
         self.voicelogs = 751077692446736444 #canale voicelogs
         self.staffroom = 746868296892284948
         self.categories = ["STAFF VOICE"]
-
         ##ADMIN PEX 
 
         
@@ -71,9 +70,13 @@ class Config(commands.Cog):
 
 
 
+        self.welcomemessage = "Ciao *{user}* benvenuto in **{server}** come prima cosa ti consigliamo di leggere le {regole}.\n\n\
+ \n**Annunci e staff** Generalmente tutte le cose che facciamo tra la quale eventi/sondaggi/candidature per far parte del nostro team saranno annunciati in {annunci}.\n\n\
+ \n**Tornei e eventi**\nVi chiederete cosa sia. {wtf} Uno degli enti che collabora con noi per quanto riguarda la gestione degli eventi è WhatTheFactory. Grazie a questa organizzazione voi, giocatori di AmongUs, potrete partecipare a tornei legalizzati con premi in denaro in modo totalmente gratuito.\n\n"
 
-
-
+        self.welcomemessage2 = "Il {booster} è un potenziamento che si può ottenere in qualsiasi server discord, in questo caso nel nostro discord avrete dei privilegi che potrete trovare nel canale apposito {annunci}.\n\n\
+ \n**Supporto**\nNel caso in cui tu abbia dei problemi o per qualsiasi motivo tu voglia conattare lo staff dirigiti nel canale {report}.\n\n\
+ \n**Attività e gameplay**\nNei canali {matchmaking} e {generale} potrai interaggire attivamente con la community, con ciò ti augiriamo una **buona permanenza** nella community di {server}"
 
 def setup(bot):
     bot.add_cog(Config(bot))

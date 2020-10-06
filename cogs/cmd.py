@@ -109,6 +109,13 @@ class cmd(commands.Cog):
                 pass
             return
 
+    @purge.error
+    async def purge_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!purge (valore max 200)")
+
+
     @commands.command()#addrole
     async def addrole(self, ctx, role:discord.Role, member:discord.Member=None, *, motivo=None):
         cfg = self.bot.get_cog('Config')
@@ -118,7 +125,7 @@ class cmd(commands.Cog):
         admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea6, cfg.rolea7, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
-
+            roleadd = None
             try:
                 query = "SELECT * FROM addrole WHERE role_id=?"
                 values = (role.id,)
@@ -182,20 +189,35 @@ class cmd(commands.Cog):
 
                     await staff.send(embed=logs_embed)
                     await member.add_roles(role)
-            else:
-                await ctx.message.delete()
 
-                name = "Amministratore ruoli"
-                field = ("Errore", f"Il ruolo {role.mention} non è presente nella lista di gestione.")
+    @addrole.error
+    async def addrole_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!addrole (@ruolo) (@utente) (motivo)")
 
-                role_embed = embed.get_standard_embed(name,
-                                                cfg.red,
-                                                ctx.guild.icon_url,
-                                                [field],
-                                                cfg.footer)
 
-                await ctx.channel.send(embed=role_embed)
+    @commands.command()#updatedb
+    async def updatedb(self, ctx, table, colunm, where1, where2, *value):
+        cfg = self.bot.get_cog('Config')
+        db = self.bot.get_cog('Db')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.roledev))
+
+        if len(user_roles.intersection(admin_roles)) != 0: 
+            try:
+                query = f"UPDATE {table} SET {colunm} = ? WHERE {where1} = ?"
+                values = (' '.join(i for i in value), where2,)
+                db.execute(query, values)
+                await db.commit()
+            except Exception as e:
+                print(e)    
                 
+    @updatedb.error
+    async def updatedb_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.send("[!] USA: it!updatedb (tabella) (colonna) (field) (contenuto) valore")
+            await ctx.send("ES: it!updatedb config testo titolo welcomedm testo valore")
 
     @commands.command()#comando add reaction
     async def addreact(self, ctx, messageid, emoij):
@@ -215,6 +237,11 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @addreact.error
+    async def addreact_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!addreact (idmsg) (emoij)")
     
     @commands.command()#comando editmsg
     async def editmsg (self, ctx, id, *, messaggio):
@@ -237,9 +264,14 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @editmsg.error
+    async def editmsg_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!editmsg (idmsg) (testo)")
 
     @commands.command()#comando ban
-    async def ban (self, ctx, member:discord.User=None, *, reason=None):
+    async def ban (self, ctx, member:discord.User, *, reason=None):
         
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
@@ -254,7 +286,6 @@ class cmd(commands.Cog):
             if reason == None:
                 reason = "Non definito"
             try:
-                await ctx.guild.ban(member, reason=reason)
                 message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha bannato da {ctx.guild.name} motivo:** `{reason}`"
                 embed=discord.Embed(color=cfg.lightgreen)
                 embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
@@ -263,7 +294,8 @@ class cmd(commands.Cog):
                 await member.send(embed=embed)
             except:
                 pass
-            
+
+            await ctx.guild.ban(member, reason=reason)
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
             messagech = f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**"
             embeds=discord.Embed(color=cfg.red)
@@ -289,9 +321,14 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @ban.error
+    async def ban_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!ban (@tag/id) (motivo)")
 
     @commands.command()#comando kick
-    async def kick (self, ctx, member:discord.User=None, *, reason=None):
+    async def kick (self, ctx, member:discord.User, *, reason=None):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
         admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, 
@@ -340,6 +377,11 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @kick.error
+    async def kick_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!kick (@tag/id) (motivo)")
 
     @commands.command()#comando tsay no embed
     async def tsay (self, ctx, *, text):
@@ -358,6 +400,11 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @tsay.error
+    async def tsay_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!tsay (testo)")
 
     @commands.command()#comando tsayuser
     async def tuser (self, ctx, member:discord.User=None, *, text):
@@ -395,6 +442,11 @@ class cmd(commands.Cog):
             except:
                 pass
             return
+    @tuser.error
+    async def tuser_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!tuser (@tag/id) (testo)")
 
     @commands.command()
     async def find(self, ctx):
@@ -412,7 +464,7 @@ class cmd(commands.Cog):
                     member = utils.find(lambda m: m.id == user_id, ctx.guild.members)
                     if member.voice is not None:
 
-                        invito = await member.voice.channel.create_invite()
+                        invito = await member.voice.channel.create_invite(temporary=True)
                         reply = discord.Embed(description = f"L'utente {member.mention} si trova in **{member.voice.channel.name}**", colour = discord.Colour.from_rgb(3, 252, 94))
                         reply.add_field(name="Tasto per connettersi", value=f"[[Connettiti]({invito.url} 'Clicca qui per entrare nella stanza dell'utente')]", inline=True)
 
@@ -422,6 +474,11 @@ class cmd(commands.Cog):
                         reply = discord.Embed(description = f"L'utente {member.mention} __non__ è collegato ad un canale vocale!", colour = discord.Colour.dark_red())
 
                         await ctx.send(content=ctx.message.author.mention, embed=reply)
+    @find.error
+    async def find_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!find (@tag/id)")
 
     @commands.command()
     @commands.bot_has_guild_permissions(deafen_members = True, mute_members = True)
@@ -463,6 +520,11 @@ class cmd(commands.Cog):
                 if found == False:
                     text = discord.Embed(title = f"🔇 Channel Mute - Errore", description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour = discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content = ctx.message.author.mention, embed=text)
+    @muteroom.error
+    async def muteroom_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!muteroom (nome stanza)")
 
     @commands.command()
     @commands.bot_has_guild_permissions(deafen_members = True, mute_members = True)
@@ -503,6 +565,11 @@ class cmd(commands.Cog):
                 if found == False:
                     text = discord.Embed(title = f"🔈 Channel Unmute - Errore", description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour = discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content = ctx.message.author.mention, embed=text)
+    @unmuteroom.error
+    async def unmuteroom_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!unmuteroom (nome stanza)")
 
 def setup(bot):
     bot.add_cog(cmd(bot))

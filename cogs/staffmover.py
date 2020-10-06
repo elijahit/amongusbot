@@ -49,6 +49,11 @@ class StaffMover(commands.Cog):
                 Warning.add_field(name = "📕 Errori", value = f"{''.join(errors)}", inline=True)
                 Warning.set_footer(text="Among Us Ita 0.1 **beta**")
                 await ctx.send(embed = Warning)
+    @mvhere.error
+    async def mvhere_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!mvhere (@tag/id) [Si possono spostare più di un utente]")
 
     @commands.command()
     async def mvto(self, ctx, *ch_dest):
@@ -114,6 +119,11 @@ class StaffMover(commands.Cog):
                     Warning.add_field(name = "📕 Errori", value = f"{''.join(errors)}", inline=True)
                     Warning.set_footer(text="Among Us Ita 0.1 **beta**")
                     await ctx.send(embed = Warning)
+    @mvto.error
+    async def mvto_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!mvto (@tag/id) (nome stanza) [Si possono spostare più di un utente]")
 
 
 def setup(bot):

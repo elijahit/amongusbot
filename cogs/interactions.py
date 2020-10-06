@@ -1,11 +1,63 @@
 from discord.ext.commands import CommandNotFound
 from discord.ext import commands
+import discord
 
 
 class Interactions(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    async def welcome_dm(self, member):
+        debug = self.bot.get_channel(758089360410411108)
+        embed = self.bot.get_cog('Embeds')
+        cfg = self.bot.get_cog('Config')
+
+        ##CANALI##
+        regolamento = self.bot.get_channel(750840605545857064)
+        annunci = self.bot.get_channel(748504257782743081)
+        wtf = self.bot.get_channel(755865318777159790)
+        booster = self.bot.get_channel(746337813795962961)
+        report = self.bot.get_channel(748908550973292604)
+        matchmaking = self.bot.get_channel(748932393154641970)
+        generale = self.bot.get_channel(747841447407124510)
+        live = self.bot.get_channel(751062558206590976)
+        ruoli = self.bot.get_channel(746124795791540224)
+
+
+        field = (f"Benvenuto", cfg.welcomemessage.format(user=member.mention,
+                                        server=member.guild.name,
+                                        regole=regolamento.mention,
+                                        annunci=annunci.mention,
+                                        wtf=wtf.mention,
+                                        booster=booster.mention,
+                                        report=report.mention,
+                                        matchmaking=matchmaking.mention,
+                                        generale=generale.mention,
+                                        live=live.mention,
+                                        ruoli=ruoli.mention))
+
+        field2 = (f"Come interaggire con la community", cfg.welcomemessage2.format(user=member.mention,
+                                        server=member.guild.name,
+                                        regole=regolamento.mention,
+                                        annunci=annunci.mention,
+                                        wtf=wtf.mention,
+                                        booster=booster.mention,
+                                        report=report.mention,
+                                        matchmaking=matchmaking.mention,
+                                        generale=generale.mention,
+                                        live=live.mention,
+                                        ruoli=ruoli.mention))
+        welcome_message = embed.get_image_embed("AMONG US ITA",
+                                                cfg.lightgreen,
+                                                member.avatar_url,
+                                                [field, field2],
+                                                "https://cdn.discordapp.com/attachments/758087809671102574/763020270084554772/Benvenuto.jpg",
+                                                member.guild.icon_url,
+                                                "Among Us ita © amongusita.it | Devloped by 3rd Party Developers")
+
+        await debug.send(embed=welcome_message)
+
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -19,7 +71,7 @@ class Interactions(commands.Cog):
                   member.joined_at.strftime("%d/%m/%y @ %H:%M:%S"))
 
         db.execute(query, values)
-        db.commit()
+        await db.commit()
 
         # Embed d'ingresso
         entrychannel = self.bot.get_channel(cfg.ingresso)
@@ -42,17 +94,14 @@ class Interactions(commands.Cog):
 
         # welcome dm
         try:       
-            field = (f"-> Benvenuto!", f"Benvenuto {member.mention} nel server ufficiale di **Among Us Ita**")
-            welcome_message = embed.get_standard_embed("AMONG US ITA",
-                                                    cfg.lightgreen,
-                                                    member.guild.icon_url,
-                                                    [field],
-                                                    cfg.footer)
-
-            await member.send(embed=welcome_message)
+            #self.welcome_dm(member)
+            pass
         except:
             pass
 
+    @commands.command()#addrole
+    async def debugdm(self, ctx, member:discord.Member):
+        await self.welcome_dm(member)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):

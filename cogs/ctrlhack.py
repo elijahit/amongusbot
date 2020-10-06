@@ -74,6 +74,11 @@ class Ctrlhack(commands.Cog):
                 await sleep(5)
 
                 await mexa.delete()
+    @hack.error
+    async def hack_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!hack (numero matchmaking)")
 
         
     @commands.Cog.listener()

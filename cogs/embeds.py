@@ -19,6 +19,19 @@ class Embeds(commands.Cog):
 
         return embed
 
+    @staticmethod
+    def get_image_embed(name, color, icon, fields, image, thumbnail, footer):
+        embed = Embed(color=color)
+        embed.set_author(name=name, icon_url=icon)
+
+        for field in fields:
+            embed.add_field(name=field[0], value=field[1])
+        embed.set_thumbnail(url=thumbnail)
+        embed.set_image(url=image)
+        embed.set_footer(text=footer)
+
+        return embed
+
 
     @staticmethod
     def get_error_message(description=None, color=Color(0xf72525)):

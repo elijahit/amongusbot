@@ -64,6 +64,11 @@ class Ticket(commands.Cog):
             await channel.set_permissions(user_2_add, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True)
             embed = discord.Embed(title=t, description=d)
             await ctx.send(embed=embed)
+    @tadd.error
+    async def tadd_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!tadd (@tag/id)")
 
     # => Listen reaction + Ticket Functions
     @commands.Cog.listener()
@@ -277,10 +282,10 @@ class Ticket(commands.Cog):
                 embed = discord.Embed(title=message[0], description=message[1], colour=discord.Colour(message[2]))
                 await user.send(embed=embed)
             except discord.Forbidden:
-                embed = discord.Embed(title="Error", description=f"I can't contact {user.mention} btw \n{message[1]}")
+                embed = discord.Embed(title="Errore", description=f"Non riesco a contattare {user.mention} per \n{message[1]}")
                 await channel.send(embed=embed)
             except discord.HTTPException:
-                await channel.send(content="Request Failed.")
+                await channel.send(content="Richiesta fallita.")
 
 
 def setup(bot):
