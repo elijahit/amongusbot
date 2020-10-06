@@ -136,7 +136,6 @@ class cmd(commands.Cog):
                                                 cfg.footer)
 
                 await ctx.channel.send(embed=role_embed)
-                await member.add_roles(role)
 
 
             if role.id == roleadd:
@@ -196,7 +195,6 @@ class cmd(commands.Cog):
                                                 cfg.footer)
 
                 await ctx.channel.send(embed=role_embed)
-                await member.add_roles(role)
                 
 
     @commands.command()#comando add reaction
