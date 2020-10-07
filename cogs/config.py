@@ -76,7 +76,7 @@ class Config(commands.Cog):
 
         self.welcomemessage2 = "Il {booster} è un potenziamento che si può ottenere in qualsiasi server discord, in questo caso nel nostro discord avrete dei privilegi che potrete trovare nel canale apposito {annunci}.\n\n\
  \n**Supporto**\nNel caso in cui tu abbia dei problemi o per qualsiasi motivo tu voglia conattare lo staff dirigiti nel canale {report}.\n\n\
- \n**Attività e gameplay**\nNei canali {matchmaking} e {generale} potrai interaggire attivamente con la community, con ciò ti augiriamo una **buona permanenza** nella community di {server}"
+ \n**Attività e gameplay**\nNei canali {matchmaking} e {generale} potrai interaggire attivamente con la community, con ciò ti auguriamo una **buona permanenza** nella community di {server}"
 
 def setup(bot):
     bot.add_cog(Config(bot))

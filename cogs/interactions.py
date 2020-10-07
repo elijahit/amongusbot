@@ -37,7 +37,7 @@ class Interactions(commands.Cog):
                                         live=live.mention,
                                         ruoli=ruoli.mention))
 
-        field2 = (f"Come interaggire con la community", cfg.welcomemessage2.format(user=member.mention,
+        field2 = (f"Vuoi supportarci?", cfg.welcomemessage2.format(user=member.mention,
                                         server=member.guild.name,
                                         regole=regolamento.mention,
                                         annunci=annunci.mention,
@@ -48,7 +48,7 @@ class Interactions(commands.Cog):
                                         generale=generale.mention,
                                         live=live.mention,
                                         ruoli=ruoli.mention))
-        welcome_message = embed.get_image_embed("AMONG US ITA",
+        welcome_message = embed.get_image_embed("Benvenuto su Among Us Ita",
                                                 cfg.lightgreen,
                                                 member.avatar_url,
                                                 [field, field2],

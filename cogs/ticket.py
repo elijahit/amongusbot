@@ -18,6 +18,7 @@ class Ticket(commands.Cog):
         self.cache = 762079923942195220  # cache channels
         self.limited_roles = [cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.rolea8, cfg.rolea9] # limited roles
         self.limit = [4, 3, 3, 2, 2, 2] # number of tickets for limited roles
+        self.stato = "Non definito"
 
     # => Help Command
     @commands.command()
@@ -101,20 +102,23 @@ class Ticket(commands.Cog):
                     # Non è stato possibile
                     message = ("Mi dispiace", "Non è stato possibile chiudere il ticket in maniera corretta", 15844367)
                     await Ticket.send_direct(self, channel_id, message)
+                    self.stato = "Non risolto"
                     await Ticket.cache_messages(self, channel_id)
                     await Ticket.delete_channel(self, channel_id)
-                elif emoji == '🔴':
+                elif emoji == '🟢':
                     # Risolto con successo
                     message = ("Perfetto!", "Il ticket è stato risolto.", 3066993)
                     await Ticket.send_direct(self, channel_id, message)
+                    self.stato = "Risolto"
                     await Ticket.cache_messages(self, channel_id)
                     await Ticket.delete_channel(self, channel_id)
-                elif emoji == '🔵':
+                elif emoji == '🔴':
                     # Da finire, manca la sezione warn
                     message = ("Segnalazione inutile!",
                                "Mi dispiace ma sembra che il tuo ticket sia inutilizzato per cui sei stato warnato.",
                                15158332)
                     await Ticket.send_direct(self, channel_id, message)
+                    self.stato = "Inutilizzato"
                     await Ticket.cache_messages(self, channel_id)
                     await Ticket.delete_channel(self, channel_id)
                     # WarnClass.warn(self, user_id)
@@ -194,20 +198,18 @@ class Ticket(commands.Cog):
 
         embed = discord.Embed(title=m.embeds[0].title,
                               description=f"Ciao {utente.mention} la tua richiesta è stata presa in carico dallo "
-                                          f"Staffer {admin.mention} di Among Us Ita, come può esserti utile?\n"
-                                          f"Esponi chiaramente la tua richiesta affinchè lo staffer possa "
-                                          f"esaustivamente risolvere la tua problematica, ricordati che l'apertura di "
-                                          f"ticket inutilizzati incomberà al warn.")
+                                          f"Staffer {admin.mention} di Among Us Ita.")
 
         embed.add_field(name="Legenda per lo Staff",
-                        value="🔵 - Ticket inutilizzato\n"
+                        value="🔴 - Ticket inutilizzato\n"
                               "🟡 - Impossibile risolvere il ticket\n"
-                              "🔴 - Ticket risolto correttamente")
+                              "🟢 - Ticket risolto correttamente")
 
         msg = await channel.send(embed=embed)
-        await msg.add_reaction('🔵')
-        await msg.add_reaction('🟡')
+        await channel.send(f"Ciao {utente.mention} lo staffer {admin.mention} ha accettato la tua richiesta, descrivi chiaramente il tuo problema affinchè si risolva nel minor tempo possibile la tua problematica, ti ricordiamo che l'apertura di ticket inutilizzati prevede il warn.")
         await msg.add_reaction('🔴')
+        await msg.add_reaction('🟡')
+        await msg.add_reaction('🟢')
 
     async def delete_channel(self, channel_id):
 
@@ -253,6 +255,7 @@ class Ticket(commands.Cog):
             embed = discord.Embed(title = title, description = description)
             embed.add_field(name="Creatore", value=f"{user.mention}")
             embed.add_field(name="Admin", value=f"{admin.mention}")
+            embed.add_field(name="Stato", value=f"{self.stato}")
             await cache.send(embed=embed)
         else:
             with open(f'{n_ticket}.txt', 'w+') as f:
@@ -261,6 +264,7 @@ class Ticket(commands.Cog):
             embed = discord.Embed(title = title)
             embed.add_field(name="Creatore", value=f"{user}")
             embed.add_field(name="Admin", value=f"{admin}")
+            embed.add_field(name="Stato", value=f"{self.stato}")
             await cache.send(embed=embed)
             
             with open(f'{n_ticket}.txt', 'rb') as f:
