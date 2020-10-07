@@ -22,7 +22,8 @@ class Config(commands.Cog):
 •[8 +] **muteroom** (nome stanza) o muteroom \n*[Silenzia una stanza VoiP]*\n\
 •[8 +] **unmuteroom** (nome stanza) o unmuteroom \n*[Attiva il VoiP in una stanza]*\n\
 •[9 +] **find** (@user) \n*[Ricerca user in stanza VoiP]*\n\
-•[9 +] **tickethelp** \n*[Lista comandi ticket]*\n"
+•[9 +] **tickethelp** \n*[Lista comandi ticket]*\n\
+•[9 +] **analytics** (@user) \n*[Visualizza le analisi dello staffer]*\n"
 
         self.aiuto = "aiuto **[Mostra la lista dei comandi]**\n\
             insulta (utente) (M/F) **[Insulto random, definire se maschile o femminile]**"

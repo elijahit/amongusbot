@@ -15,6 +15,7 @@ class Embeds(commands.Cog):
 
         for field in fields:
             embed.add_field(name=field[0], value=field[1])
+            
         embed.set_footer(text=footer)
 
         return embed
@@ -26,6 +27,7 @@ class Embeds(commands.Cog):
 
         for field in fields:
             embed.add_field(name=field[0], value=field[1])
+
         embed.set_thumbnail(url=thumbnail)
         embed.set_image(url=image)
         embed.set_footer(text=footer)

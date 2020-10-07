@@ -183,6 +183,14 @@ class Ticket(commands.Cog):
                     return 0
                         
         conn.execute("UPDATE tickets SET admin_id = ? WHERE channel_id = ?", (user_id, channel_id,))
+        g = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,))
+        try:
+            if len(g) == 0:
+                conn.execute("INSERT INTO analytics (admin_id, tickets, hack) VALUES (?, ?, ?)", (user_id, 1, 0,))
+            else:
+                conn.execute("UPDATE analytics SET tickets = tickets+1 WHERE admin_id = ?", (user_id,))
+        except:
+            print("errore")
         
         await conn.commit()        
 
@@ -197,7 +205,7 @@ class Ticket(commands.Cog):
         await m.delete()
 
         embed = discord.Embed(title=m.embeds[0].title,
-                              description=f"Ciao {utente.mention} la tua richiesta è stata presa in carico dallo "
+                              description=f"{utente.mention} la tua richiesta è stata presa in carico dallo "
                                           f"Staffer {admin.mention} di Among Us Ita.")
 
         embed.add_field(name="Legenda per lo Staff",
@@ -206,7 +214,7 @@ class Ticket(commands.Cog):
                               "🟢 - Ticket risolto correttamente")
 
         msg = await channel.send(embed=embed)
-        await channel.send(f"Ciao {utente.mention} lo staffer {admin.mention} ha accettato la tua richiesta, descrivi chiaramente il tuo problema affinchè si risolva nel minor tempo possibile la tua problematica, ti ricordiamo che l'apertura di ticket inutilizzati prevede il warn.")
+        await channel.send(f"Ciao {utente.mention} lo staffer {admin.mention} ha preso in carico la tua richiesta, descrivi chiaramente il tuo problema affinchè si risolva nel minor tempo possibile la tua problematica, ti ricordiamo che l'apertura di ticket inutilizzati prevede il warn.")
         await msg.add_reaction('🔴')
         await msg.add_reaction('🟡')
         await msg.add_reaction('🟢')
@@ -256,7 +264,7 @@ class Ticket(commands.Cog):
             embed.add_field(name="Creatore", value=f"{user.mention}")
             embed.add_field(name="Admin", value=f"{admin.mention}")
             embed.add_field(name="Stato", value=f"{self.stato}")
-            await cache.send(embed=embed)
+            await cache.send(embed=embed)   
         else:
             with open(f'{n_ticket}.txt', 'w+') as f:
                 f.write('\n'.join(cached_messages))

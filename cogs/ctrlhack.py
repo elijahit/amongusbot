@@ -159,6 +159,17 @@ class Ctrlhack(commands.Cog):
 
                     await discord.Message.edit(reaction.message, embed=Warning)
                     await discord.Message.add_reaction(reaction.message, "🔕")
+                    conn = self.bot.get_cog("Db")
+                    g = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,))
+                    try:
+                        if len(g) == 0:
+                            conn.execute("INSERT INTO analytics (admin_id, tickets, hack) VALUES (?, ?, ?)", (user.id, 0, 1,))
+                        else:
+                            conn.execute("UPDATE analytics SET hack = hack+1 WHERE admin_id = ?", (user.id,))
+                    except:
+                        print("errore")
+                    
+                    await conn.commit()
 
 
                 except Exception as error:

@@ -571,6 +571,57 @@ class cmd(commands.Cog):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!unmuteroom (nome stanza)")
 
+    @commands.command()#comando tsay no embed
+    async def analytics (self, ctx, user:discord.Member):
+        cfg = self.bot.get_cog('Config')
+        embed = self.bot.get_cog('Embeds')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.rolea_all
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+            await ctx.message.delete()
+            conn = self.bot.get_cog('Db')
+
+            try:
+                for x in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
+                    if x[2] == 0:
+                        field = (f"Ticket", "0")
+                    else:
+                        field = (f"Ticket", f"{x[2]}")
+                    if x[3] == 0:
+                        field2 = (f"Controllo Hack", "0")
+                    else:
+                        field2 = (f"Controllo Hack", f"{x[3]}")
+                    field3 = (f"Amministratore", f"**{user.name}**({x[1]})")
+                
+                analytics_message = embed.get_standard_embed("Analisi staffer",
+                                                    cfg.blue,
+                                                    user.guild.icon_url,
+                                                    [field, field2, field3],
+                                                    "Administrative system")
+                await ctx.send(embed=analytics_message)
+            except:
+                field = ("Errore", "Utente non presente nel database.")
+                analytics_message = embed.get_standard_embed("Analisi staffer",
+                                                    cfg.red,
+                                                    user.guild.icon_url,
+                                                    [field],
+                                                    "Administrative system")
+                await ctx.send(embed=analytics_message)
+
+            return
+        else:
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
+            return
+    @analytics.error
+    async def analytics_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!analytics (@user)")
 def setup(bot):
     bot.add_cog(cmd(bot))
     print("[!] modulo cmd caricato")
