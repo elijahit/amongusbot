@@ -140,6 +140,25 @@ class Ctrlhack(commands.Cog):
                     Warning.set_footer(text=cfg.footer)
                     Warning.set_author(name = "HackBot")
                     await discord.Message.edit(reaction.message, embed=Warning)
+                    
+                    conn = self.bot.get_cog("Db")
+                    try:
+                        for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
+                            if g[4] == None:
+                                conn.execute("UPDATE analytics SET hack = 1 WHERE admin_id = ?", (user.id,))
+                            else:
+                                conn.execute("UPDATE analytics SET hack = hack+1 WHERE admin_id = ?", (user.id,))
+                    except:
+                        print("errore")
+
+                    try:
+                        d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,))
+                        if len(d) == 0:
+                            conn.execute("INSERT INTO analytics (admin_id, hack) VALUES (?, ?)", (user.id, 1,))
+                    except:
+                        print("error2")
+                    
+                    await conn.commit()
 
                     for member in channel_got.members:
                         await member.move_to(hackchannels[0])
@@ -159,17 +178,6 @@ class Ctrlhack(commands.Cog):
 
                     await discord.Message.edit(reaction.message, embed=Warning)
                     await discord.Message.add_reaction(reaction.message, "🔕")
-                    conn = self.bot.get_cog("Db")
-                    g = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,))
-                    try:
-                        if len(g) == 0:
-                            conn.execute("INSERT INTO analytics (admin_id, tickets, hack) VALUES (?, ?, ?)", (user.id, 0, 1,))
-                        else:
-                            conn.execute("UPDATE analytics SET hack = hack+1 WHERE admin_id = ?", (user.id,))
-                    except:
-                        print("errore")
-                    
-                    await conn.commit()
 
 
                 except Exception as error:

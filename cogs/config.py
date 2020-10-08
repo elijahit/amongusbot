@@ -11,8 +11,10 @@ class Config(commands.Cog):
 •[5 +] **purge** (valore=max200) \n*[Elimina messaggi]*\n\
 •[5 +] **tsay** (testo) \n*[Scrivi in chat]*\n"
 
-        self.aiutoadmin2 = "•[6 +] **ban** (@user) (motivo) \n*[Banna un utente]*\n\
-•[6 +] **kick** (@user) (motivo) \n*[Kicka un utente dal server]*\n"
+        self.aiutoadmin2 = "•[6 +] **ban** (@user or Name#0000) (motivo) \n*[Banna un utente]*\n\
+•[6 +] **unban** (@Name#0000) (motivo) \n*[Sbanna un utente]*\n\
+•[6 +] **kick** (@user) (motivo) \n*[Kicka un utente dal server]*\n\
+•[6 +] **pollshelp** (@user) (motivo) \n*[Comandi relativi ai sondaggi]*\n"
 
         self.aiutoadmin3 = "•[7 +] **addrole** (@ruolo) (@user) (motivo) \n*[Inserisce il ruolo al utente]*\n\
 •[8 +] **mvto** (nome stanza) (@user @user) \n*[Sposta gli utenti in una stanza specifica]*\n\

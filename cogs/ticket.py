@@ -183,14 +183,20 @@ class Ticket(commands.Cog):
                     return 0
                         
         conn.execute("UPDATE tickets SET admin_id = ? WHERE channel_id = ?", (user_id, channel_id,))
-        g = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,))
         try:
-            if len(g) == 0:
-                conn.execute("INSERT INTO analytics (admin_id, tickets, hack) VALUES (?, ?, ?)", (user_id, 1, 0,))
-            else:
-                conn.execute("UPDATE analytics SET tickets = tickets+1 WHERE admin_id = ?", (user_id,))
+            for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,)):
+                if g[2] == None:
+                    conn.execute("UPDATE analytics SET tickets = 1 WHERE admin_id = ?", (user_id,))
+                else:
+                    conn.execute("UPDATE analytics SET tickets = tickets+1 WHERE admin_id = ?", (user_id,))
         except:
-            print("errore")
+            print("errorticket")
+        try:
+            d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,))
+            if len(d) == 0:
+                conn.execute("INSERT INTO analytics (admin_id, tickets) VALUES (?, ?)", (user_id, 1,))
+        except:
+            print("error2ticket")
         
         await conn.commit()        
 

@@ -111,7 +111,7 @@ class cmd(commands.Cog):
 
     @purge.error
     async def purge_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!purge (valore max 200)")
 
@@ -192,7 +192,7 @@ class cmd(commands.Cog):
 
     @addrole.error
     async def addrole_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!addrole (@ruolo) (@utente) (motivo)")
 
@@ -215,7 +215,7 @@ class cmd(commands.Cog):
                 
     @updatedb.error
     async def updatedb_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.send("[!] USA: it!updatedb (tabella) (colonna) (field) (contenuto) valore")
             await ctx.send("ES: it!updatedb config testo titolo welcomedm testo valore")
 
@@ -239,7 +239,7 @@ class cmd(commands.Cog):
             return
     @addreact.error
     async def addreact_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!addreact (idmsg) (emoij)")
     
@@ -266,7 +266,7 @@ class cmd(commands.Cog):
             return
     @editmsg.error
     async def editmsg_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!editmsg (idmsg) (testo)")
 
@@ -303,7 +303,23 @@ class cmd(commands.Cog):
             embeds.add_field(name="Admin", value=messagech, inline=True)
             embeds.set_footer(text=cfg.footer)
             await sanzioni.send(embed=embeds)
-            
+
+            conn = self.bot.get_cog("Db")
+            try:
+                for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
+                    if g[4] == None:
+                        conn.execute("UPDATE analytics SET ban = 1 WHERE admin_id = ?", (ctx.message.author.id,))
+                    else:
+                        conn.execute("UPDATE analytics SET ban = ban+1 WHERE admin_id = ?", (ctx.message.author.id,))
+            except:
+                print("errore")
+
+            try:
+                d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,))
+                if len(d) == 0:
+                    conn.execute("INSERT INTO analytics (admin_id, ban) VALUES (?, ?)", (ctx.message.author.id, 1,))
+            except:
+                print("error2")
             
             #########log##########
             logchannel = self.bot.get_channel(cfg.log) #canale log
@@ -323,9 +339,91 @@ class cmd(commands.Cog):
             return
     @ban.error
     async def ban_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!ban (@tag/id) (motivo)")
+            await ctx.send("[!] USA: it!ban (@tag/Name#0000) (motivo)")
+        
+    @commands.command()#comando ban
+    async def unban (self, ctx, member, *, reason=None):
+        
+        cfg = self.bot.get_cog('Config')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, 
+        cfg.rolea6, cfg.roledev))
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+            await ctx.message.delete()
+
+            banned_users = await ctx.guild.bans()
+            member_name, member_discriminator = member.split('#')
+
+            if member == None or member == ctx.message.author:
+                await ctx.message.author.send("Non puoi sbannarti da solo.")
+                return
+            if reason == None:
+                reason = "Non definito"
+            try:
+                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha sbannato da {ctx.guild.name} motivo:** `{reason}`"
+                embed=discord.Embed(color=cfg.lightgreen)
+                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                embed.add_field(name="ban-logs", value=message, inline=True)
+                embed.set_footer(text=cfg.footer)
+                await member.send(embed=embed)
+            except:
+                pass
+
+            for ban_entry in banned_users:
+                user = ban_entry.user
+                
+                if (user.name, user.discriminator) == (member_name, member_discriminator):
+
+                    await ctx.guild.unban(user, reason=reason)
+                    sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
+                    messagech = f"**{member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`**"
+                    embeds=discord.Embed(color=cfg.green)
+                    embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
+                    embeds.add_field(name="Admin", value=messagech, inline=True)
+                    embeds.set_footer(text=cfg.footer)
+                    await sanzioni.send(embed=embeds)
+
+                    conn = self.bot.get_cog("Db")
+                    try:
+                        for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
+                            if g[6] == None:
+                                conn.execute("UPDATE analytics SET unban = 1 WHERE admin_id = ?", (ctx.message.author.id,))
+                            else:
+                                conn.execute("UPDATE analytics SET unban = unban+1 WHERE admin_id = ?", (ctx.message.author.id,))
+                    except:
+                        print("errore")
+
+                    try:
+                        d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,))
+                        if len(d) == 0:
+                            conn.execute("INSERT INTO analytics (admin_id, unban) VALUES (?, ?)", (ctx.message.author.id, 1,))
+                    except:
+                        print("error2")
+                    
+                    #########log##########
+                    logchannel = self.bot.get_channel(cfg.log) #canale log
+                    embed=discord.Embed(color=cfg.green)
+                    embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
+                    embed.add_field(name="userlogs", value=f"**{member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
+                    embed.set_footer(text=cfg.footer)
+                    await logchannel.send(embed=embed)
+                    print(f"[LOG] {member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`")
+                    return
+        else:
+            try:
+                await ctx.message.delete()
+                await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
+            except:
+                pass
+            return
+    @unban.error
+    async def unban_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: it!unban (Nome#0000) (motivo)")
 
     @commands.command()#comando kick
     async def kick (self, ctx, member:discord.User, *, reason=None):
@@ -353,6 +451,23 @@ class cmd(commands.Cog):
                 await member.send(embed=embed)
             except:
                 pass
+            conn = self.bot.get_cog("Db")
+            try:
+                for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
+                    if g[8] == None:
+                        conn.execute("UPDATE analytics SET kick = 1 WHERE admin_id = ?", (ctx.message.author.id,))
+                    else:
+                        conn.execute("UPDATE analytics SET kick = kick+1 WHERE admin_id = ?", (ctx.message.author.id,))
+            except:
+                pass
+
+            try:
+                d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,))
+                if len(d) == 0:
+                    conn.execute("INSERT INTO analytics (admin_id, kick) VALUES (?, ?)", (ctx.message.author.id, 1,))
+            except:
+                pass
+
             await ctx.guild.kick(member)
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
             messagech = f"**{member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`**"
@@ -379,7 +494,7 @@ class cmd(commands.Cog):
             return
     @kick.error
     async def kick_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!kick (@tag/id) (motivo)")
 
@@ -402,7 +517,7 @@ class cmd(commands.Cog):
             return
     @tsay.error
     async def tsay_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!tsay (testo)")
 
@@ -444,7 +559,7 @@ class cmd(commands.Cog):
             return
     @tuser.error
     async def tuser_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!tuser (@tag/id) (testo)")
 
@@ -476,7 +591,7 @@ class cmd(commands.Cog):
                         await ctx.send(content=ctx.message.author.mention, embed=reply)
     @find.error
     async def find_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!find (@tag/id)")
 
@@ -522,7 +637,7 @@ class cmd(commands.Cog):
                     await ctx.send(content = ctx.message.author.mention, embed=text)
     @muteroom.error
     async def muteroom_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!muteroom (nome stanza)")
 
@@ -567,7 +682,7 @@ class cmd(commands.Cog):
                     await ctx.send(content = ctx.message.author.mention, embed=text)
     @unmuteroom.error
     async def unmuteroom_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!unmuteroom (nome stanza)")
 
@@ -584,20 +699,19 @@ class cmd(commands.Cog):
 
             try:
                 for x in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
-                    if x[2] == 0:
-                        field = (f"Ticket", "0")
-                    else:
-                        field = (f"Ticket", f"{x[2]}")
-                    if x[3] == 0:
-                        field2 = (f"Controllo Hack", "0")
-                    else:
-                        field2 = (f"Controllo Hack", f"{x[3]}")
-                    field3 = (f"Amministratore", f"**{user.name}**({x[1]})")
+                    field = (f"Statistiche", f"*Ticket*: {x[2]}\n\
+                            *Hack*: {x[3]}\n\
+                                *Ban*: {x[4]}\n\
+                                    *Note*: {x[5]}\n\
+                                        *Sban*: {x[6]}\n\
+                                            *Warn*: {x[8]}\n\
+                                                *Kick*: {x[7]}")
+                    field2 = (f"Amministratore", f"**{user.mention}**({x[1]})")
                 
                 analytics_message = embed.get_standard_embed("Analisi staffer",
                                                     cfg.blue,
                                                     user.guild.icon_url,
-                                                    [field, field2, field3],
+                                                    [field, field2],
                                                     "Administrative system")
                 await ctx.send(embed=analytics_message)
             except:
@@ -619,7 +733,7 @@ class cmd(commands.Cog):
             return
     @analytics.error
     async def analytics_error(self, ctx, error):
-        if isinstance(error, commands.errors.MissingRequiredArgument):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
             await ctx.message.delete()
             await ctx.send("[!] USA: it!analytics (@user)")
 def setup(bot):
