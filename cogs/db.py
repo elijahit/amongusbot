@@ -8,14 +8,15 @@ class Db(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        databaseuri = 'file:C:/Users/Gabriele/Desktop/Workstation/newbot/cogs/database.db?mode=rw'
+        databaseuri = 'cogs/database.db'
 
         try:
-            self.Database = connect(databaseuri, uri=True)
+            self.Database = connect(databaseuri)
             self.Cursor = self.Database.cursor()
 
             print("[!] Connessione al database stabilita.")
-
+            self.Cursor.execute("CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id, channel_id, admin_id)")
+            self.Cursor.execute("CREATE TABLE IF NOT EXISTS warns (id INTEGER PRIMARY KEY AUTOINCREMENT, guild_id INTEGER, user_id INTEGER, gravity INTEGER, reason TEXT)")
         except Error:
 
             print(Error)

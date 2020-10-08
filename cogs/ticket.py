@@ -114,6 +114,7 @@ class Ticket(commands.Cog):
                     await Ticket.delete_channel(self, channel_id)
                 elif emoji == '🔴':
                     # Da finire, manca la sezione warn
+                    await Ticket.warn_on_useless_ticket(self, guild_id, channel, member, user_id, 1, f'Ticket Inutilizzato \"{channel.name}\""')                
                     message = ("Segnalazione inutile!",
                                "Mi dispiace ma sembra che il tuo ticket sia inutilizzato per cui sei stato warnato.",
                                15158332)
@@ -173,6 +174,7 @@ class Ticket(commands.Cog):
         utente = self.bot.get_user(utente)
         
         m = await channel.fetch_message(message_id)
+        
         
         if len(check_n_ticket) > 0:
             for idx, i in enumerate(self.limited_roles):
@@ -305,7 +307,17 @@ class Ticket(commands.Cog):
             except discord.HTTPException:
                 await channel.send(content="Richiesta fallita.")
 
-
+    async def warn_on_useless_ticket(self, guild_id: int, channel: discord.TextChannel, member: discord.Member, user_id: int, gravity: int, reason: str = None):
+        
+        warn = self.bot.get_cog("Warns")
+        conn = self.bot.get_cog("Db")
+        
+        guild = self.bot.get_guild(guild_id)
+        user_id = conn.fetchall("SELECT user_id FROM tickets WHERE channel_id = ? AND admin_id = ?", (channel.id, member.id,))[0][0]
+        
+        user = self.bot.get_user(user_id)
+        await warn.warn_user(guild, channel, member, user, gravity, reason)
+                    
 def setup(bot):
     bot.add_cog(Ticket(bot))
     print("[!] modulo ticket caricato")

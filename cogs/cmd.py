@@ -286,22 +286,22 @@ class cmd(commands.Cog):
             if reason == None:
                 reason = "Non definito"
             try:
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha bannato da {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
+                embed = discord.Embed(title = "⛔️ • Ban", description = f"{ctx.message.author.mention} ti ha bannato")
+                embed.add_field(name = "Staffer", value = ctx.message.author, inline = True)
+                embed.add_field(name = "Utente bannato", value = member, inline = True)
+
+                embed.add_field(name = "Motivazione", value = reason, inline = True)
                 await member.send(embed=embed)
             except:
                 pass
 
             await ctx.guild.ban(member, reason=reason)
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
-            messagech = f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**"
-            embeds=discord.Embed(color=cfg.red)
-            embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embeds.add_field(name="Admin", value=messagech, inline=True)
-            embeds.set_footer(text=cfg.footer)
+            embeds = discord.Embed(title = "⛔️ • Ban", description = f"{ctx.message.author.mention} ha bannato {member.mention}")
+            embeds.add_field(name = "Lo Staffer", value = ctx.message.author, inline = True)
+            embeds.add_field(name = "Ha bannato", value = member, inline = True)
+
+            embeds.add_field(name = "Motivazione", value = reason, inline = True)
             await sanzioni.send(embed=embeds)
 
             conn = self.bot.get_cog("Db")
@@ -320,15 +320,7 @@ class cmd(commands.Cog):
                     conn.execute("INSERT INTO analytics (admin_id, ban) VALUES (?, ?)", (ctx.message.author.id, 1,))
             except:
                 print("error2")
-            
-            #########log##########
-            logchannel = self.bot.get_channel(cfg.log) #canale log
-            embed=discord.Embed(color=cfg.red)
-            embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-            embed.add_field(name="userlogs", value=f"**{member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-            embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed)
-            print(f"[LOG] {member} è stato bannato da {ctx.message.author.mention} motivo: `{reason}`")
+
             return
         else:
             try:
@@ -363,11 +355,10 @@ class cmd(commands.Cog):
             if reason == None:
                 reason = "Non definito"
             try:
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha sbannato da {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.lightgreen)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="ban-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
+                embed = discord.Embed(title = "✅ • Unban", description = f"{ctx.message.author.mention} ti ha sbannato")
+                embed.add_field(name = "Lo Staffer", value = ctx.message.author, inline = True)
+                embed.add_field(name = "Utente sbannato", value = member, inline = True)
+
                 await member.send(embed=embed)
             except:
                 pass
@@ -379,11 +370,11 @@ class cmd(commands.Cog):
 
                     await ctx.guild.unban(user, reason=reason)
                     sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
-                    messagech = f"**{member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`**"
-                    embeds=discord.Embed(color=cfg.green)
-                    embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                    embeds.add_field(name="Admin", value=messagech, inline=True)
-                    embeds.set_footer(text=cfg.footer)
+                    embeds = discord.Embed(title = "✅ • Unban", description = f"{ctx.message.author.mention} ha sbannato")
+                    embeds.add_field(name = "Lo Staffer", value = ctx.message.author, inline = True)
+                    embeds.add_field(name = "Utente sbannato", value = member, inline = True)
+
+                    embeds.add_field(name = "Motivazione", value = reason, inline = True)
                     await sanzioni.send(embed=embeds)
 
                     conn = self.bot.get_cog("Db")
@@ -403,14 +394,6 @@ class cmd(commands.Cog):
                     except:
                         print("error2")
                     
-                    #########log##########
-                    logchannel = self.bot.get_channel(cfg.log) #canale log
-                    embed=discord.Embed(color=cfg.green)
-                    embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-                    embed.add_field(name="userlogs", value=f"**{member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-                    embed.set_footer(text=cfg.footer)
-                    await logchannel.send(embed=embed)
-                    print(f"[LOG] {member} è stato sbannato da {ctx.message.author.mention} motivo: `{reason}`")
                     return
         else:
             try:
@@ -443,11 +426,11 @@ class cmd(commands.Cog):
             if reason == None:
                 reason = "Non definito"
             try:
-                message = f"**{ctx.message.author.name}#{ctx.message.author.discriminator} ti ha kickato da {ctx.guild.name} motivo:** `{reason}`"
-                embed=discord.Embed(color=cfg.red)
-                embed.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-                embed.add_field(name="kick-logs", value=message, inline=True)
-                embed.set_footer(text=cfg.footer)
+                embed = discord.Embed(title = "⛔️ • Kick", description = f"{ctx.message.author.mention}  ti ha kickato dal server")
+                embed.add_field(name = "Lo Staffer", value = ctx.message.author, inline = True)
+                embed.add_field(name = "Ha Kickato", value = member, inline = True)
+
+                embed.add_field(name = "Motivazione", value = reason, inline = True)
                 await member.send(embed=embed)
             except:
                 pass
@@ -470,21 +453,13 @@ class cmd(commands.Cog):
 
             await ctx.guild.kick(member)
             sanzioni = self.bot.get_channel(cfg.sanzioni) #canale sanzioni
-            messagech = f"**{member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`**"
-            embeds=discord.Embed(color=cfg.red)
-            embeds.set_author(name="{0}".format(ctx.guild.name), icon_url=ctx.guild.icon_url)
-            embeds.add_field(name="Admin", value=messagech, inline=True)
-            embeds.set_footer(text=cfg.footer)
+            embeds = discord.Embed(title = "⛔️ • Kick", description = f"{ctx.message.author.mention} ha kickato {member.mention}")
+            embeds.add_field(name = "Lo Staffer", value = ctx.message.author, inline = True)
+            embeds.add_field(name = "Ha Kickato", value = member, inline = True)
+
+            embeds.add_field(name = "Motivazione", value = reason, inline = True)
             await sanzioni.send(embed=embeds)
-            #########log##########
-            logchannel = self.bot.get_channel(cfg.log) #canale log
-            embed=discord.Embed(color=cfg.red)
-            embed.set_author(name="{0}#{1}".format(ctx.message.author.name, ctx.message.author.discriminator), icon_url=ctx.message.author.avatar_url)
-            embed.add_field(name="userlogs", value=f"**{member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`**", inline=True)
-            embed.set_footer(text=cfg.footer)
-            await logchannel.send(embed=embed)
-            print(f"[LOG] {member} è stato kickato da {ctx.message.author.mention} motivo: `{reason}`")
-            return
+
         else:
             try:
                 await ctx.message.delete()
