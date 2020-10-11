@@ -20,6 +20,22 @@ class Embeds(commands.Cog):
 
         return embed
 
+    
+    @staticmethod
+    def get_welcomemessage_embed (name, color, icon, fields, inlinefiled, image, thumbnail, footer):
+        embed = Embed(color=color)
+        embed.set_author(name=name, icon_url=icon)
+
+        for field in fields:
+            embed.add_field(name=field[0], value=field[1])
+        embed.add_field(name=inlinefiled[0], value=inlinefiled[1], inline=False)
+
+        embed.set_thumbnail(url=thumbnail)
+        embed.set_image(url=image)
+        embed.set_footer(text=footer)
+
+        return embed
+
     @staticmethod
     def get_image_embed(name, color, icon, fields, image, thumbnail, footer):
         embed = Embed(color=color)
@@ -29,6 +45,19 @@ class Embeds(commands.Cog):
             embed.add_field(name=field[0], value=field[1])
 
         embed.set_thumbnail(url=thumbnail)
+        embed.set_image(url=image)
+        embed.set_footer(text=footer)
+
+        return embed
+
+    @staticmethod
+    def get_ticket_embed(name, color, icon, fields, image, footer):
+        embed = Embed(color=color)
+        embed.set_author(name=name, icon_url=icon)
+
+        for field in fields:
+            embed.add_field(name=field[0], value=field[1])
+
         embed.set_image(url=image)
         embed.set_footer(text=footer)
 

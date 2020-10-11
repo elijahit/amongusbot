@@ -69,7 +69,7 @@ class Ticket(commands.Cog):
     async def tadd_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!tadd (@tag/id)")
+            await ctx.send("[!] USA: !tadd (@tag/id)")
 
     # => Listen reaction + Ticket Functions
     @commands.Cog.listener()
@@ -127,6 +127,8 @@ class Ticket(commands.Cog):
 
     async def create_channel(self, user_id, guild):
         conn = self.bot.get_cog('Db')
+        cfg = self.bot.get_cog('Config')
+        embed = self.bot.get_cog('Embeds')
         z = conn.fetchall('SELECT * FROM tickets WHERE user_id = ?', (user_id,))
         if len(z) == 0:
             conn.execute("INSERT INTO tickets (user_id) VALUES (?)", (user_id,))
@@ -146,10 +148,15 @@ class Ticket(commands.Cog):
             }
             y = await guild.create_text_channel(name=f'Ticket-{n}', overwrites=overwrites, category=category)
 
-            embed = discord.Embed(title=f"Ticket #{n}",
-                                  description=f"{user.mention} attendi che la tua richiesta venga presa in carico "
-                                              f"da un operatore.")
-            m = await y.send(embed=embed)
+            field = (f"Ticket #{n}", f"{user.mention} attendi che la tua richiesta venga presa in carico da un operatore.")
+
+            embeds = embed.get_ticket_embed("Hai richiesto supporto allo staff!",
+                                                cfg.lightgreen,
+                                                user.avatar_url,
+                                                [field],
+                                                "https://i.imgur.com/RJzaGNC.png",
+                                                cfg.footer)
+            m = await y.send(embed=embeds)
             await m.add_reaction('✅')
 
             conn.execute("UPDATE tickets SET channel_id = ? WHERE user_id = ?", (y.id, user_id,))
@@ -171,7 +178,7 @@ class Ticket(commands.Cog):
         thelper = guild.get_role(762459426128789525)
         
         utente = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
-        utente = self.bot.get_user(utente)
+        utente = guild.get_member(utente)
         
         m = await channel.fetch_message(message_id)
         
@@ -203,7 +210,7 @@ class Ticket(commands.Cog):
         await conn.commit()        
 
         await channel.set_permissions(supporter, read_messages=False, send_messages=False, add_reactions=False)
-        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True)
+        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True, attach_files=True)
         await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
         await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
         await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)

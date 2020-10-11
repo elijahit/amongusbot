@@ -3,7 +3,7 @@ from discord.ext import commands
 
 
 def get_prefix(bot, message):
-    prefixes = ["it!"]
+    prefixes = ["!"]
 
     if not message.guild:
         return "?"
@@ -12,7 +12,7 @@ def get_prefix(bot, message):
 
 
 startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds', 
-'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager', 'cogs.warns']
+'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager', 'cogs.warn']
 
 bot = commands.Bot(command_prefix=get_prefix, description='', case_insensitive=True)
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
 
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Among Us Ita - it!AIUTO"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Among Us Ita - !AIUTO"))
 
     print(f"Logged in as: {bot.user.name} - {bot.user.id}\n")
 

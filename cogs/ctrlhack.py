@@ -78,13 +78,13 @@ class Ctrlhack(commands.Cog):
     async def hack_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!hack (numero matchmaking)")
+            await ctx.send("[!] USA: !hack (numero matchmaking)")
 
         
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         cfg = self.bot.get_cog("Config")
-        if user.bot == False and str((reaction.message.embeds)[0].author) == "EmbedProxy(name='Among Us Ita')":
+        if user.bot == False and str((reaction.message.embeds)[0].author) == "EmbedProxy(name='Among Us Ita')" and reaction.message.channel.category_id == 762080734537056266:
             global inUso, admin_live_id
 
             if reaction.emoji == "🟢" and str(user.id) == (((((reaction.message.embeds)[0].description).split())[0].replace("<@!", "")).replace(">", "").replace("<@", "").replace(":", "")) and inUso == False:

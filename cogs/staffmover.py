@@ -53,7 +53,7 @@ class StaffMover(commands.Cog):
     async def mvhere_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!mvhere (@tag/id) [Si possono spostare più di un utente]")
+            await ctx.send("[!] USA: !mvhere (@tag/id) [Si possono spostare più di un utente]")
 
     @commands.command()
     async def mvto(self, ctx, *ch_dest):
@@ -123,7 +123,7 @@ class StaffMover(commands.Cog):
     async def mvto_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!mvto (@tag/id) (nome stanza) [Si possono spostare più di un utente]")
+            await ctx.send("[!] USA: !mvto (@tag/id) (nome stanza) [Si possono spostare più di un utente]")
 
 
 def setup(bot):

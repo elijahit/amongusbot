@@ -1,3 +1,6 @@
+# Sistema Warn per Among Us Ita (amongusita.it)
+# Sviluppato da MyNameIsDark01#5955
+# Per Among Us Ita#2534
 import discord, time, datetime, sqlite3
 
 from discord.ext import commands
@@ -39,6 +42,32 @@ class Warns(commands.Cog):
                 # YOU CAN'T WARN YOUSELF
                 return 0
             await Warns.warn_user(self, guild, channel, author, user, gravity, reason)
+    @warn.error
+    async def warn_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: !warn (@utente) (gravità) (motivo)")
+
+    @commands.command()
+    async def delwarn(self, ctx, user: discord.Member, warn: int, *, reason=None):
+
+        cfg = self.bot.get_cog('Config')
+        
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev))
+
+        guild = ctx.message.guild
+        author = ctx.message.author
+        channel = ctx.channel
+        
+        await ctx.message.delete()
+        if len(user_roles.intersection(admin_roles)) != 0:
+            await Warns.delwarn_user(self, guild, channel, author, user, warn, reason)
+    @delwarn.error
+    async def delwarn_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: !delwarn (@utente) (id warn) (motivo)")
     
     @commands.command()
     async def warnings(self, ctx, user: discord.Member):
@@ -61,20 +90,25 @@ class Warns(commands.Cog):
             embed=discord.Embed(title = f"Warns di {user}", description = "\n".join(warns) if len(warns)>0 else "Questo utente non ha nessun warns", color = discord.Colour.orange())
             
             await ctx.send(embed=embed)
+    @warnings.error
+    async def warnings_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: !addrole (@utente)")
         
     @warnings.error
     async def warnings_on_error(self, ctx, error):
         
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!warnings (@tag/id)")
+            await ctx.send("[!] USA: !warnings (@tag/id)")
             
     @warn.error
     async def warn_on_error(self, ctx, error):
         
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.message.delete()
-            await ctx.send("[!] USA: it!warn (@tag/id) gravità motivazione")
+            await ctx.send("[!] USA: !warn (@tag/id) gravità motivazione")
             
     async def warn_user(self, guild, channel: discord.TextChannel, author: discord.Member, user: discord.Member, gravity: int, reason: str):
         
@@ -82,11 +116,16 @@ class Warns(commands.Cog):
         cfg = self.bot.get_cog('Config')
 
         guild_id = guild.id
-        author_id = author.id
+        #author_id = author.id
         user_id = user.id
         gravity = gravity
         reason = reason if reason is not None else 'Non specificato'
 
+        if gravity > 4:
+            # GRAVITY MAJOR THAN 4 DOESN'T EXIST
+            
+            return 0
+        
         if gravity == 1:
             conn.execute("INSERT INTO warns(guild_id, user_id, gravity, reason) VALUES (?, ?, ?, ?)", (guild_id, user_id, gravity, reason,))
         elif gravity == 2 or gravity == 3 or gravity == 4:
@@ -94,15 +133,15 @@ class Warns(commands.Cog):
 
             if gravity == 2 and len(check) == 3:
                 conn.execute("DELETE FROM warns WHERE user_id = ?", (user.id,))
-                await Warns.ban_user(self, guild, channel, author, user, "Limite warn di gravità 2")
+                await Warns.ban_user(self, guild, channel, author, user, gravity, f"{reason} | Limite warn (2)")
                 return 0
             elif gravity == 3 and len(check) == 2:
                 conn.execute("DELETE FROM warns WHERE user_id = ?", (user.id,))
-                await Warns.ban_user(self, guild, channel, author, user, "Limite warn di gravità 3")
+                await Warns.ban_user(self, guild, channel, author, user, gravity, f"{reason} | Limite warn (3)")
                 return 0
             elif gravity == 4 and len(check) == 1:
                 conn.execute("DELETE FROM warns WHERE user_id = ?", (user.id,))
-                await Warns.ban_user(self, guild, channel, author, user, "Limite warn di gravità 4")
+                await Warns.ban_user(self, guild, channel, author, user, gravity, f"{reason} | Limite warn (4)")
                 return 0
             else:
                 conn.execute("INSERT INTO warns(guild_id, user_id, gravity, reason) VALUES (?, ?, ?, ?)", (guild_id, user_id, gravity, reason,))
@@ -125,7 +164,7 @@ class Warns(commands.Cog):
 
         await conn.commit()
 
-        warns = len(conn.fetchall("SELECT * FROM warns WHERE user_id = ? AND gravity = ?", (user_id, gravity,)))
+        warns = len(conn.fetchall("SELECT * FROM warns WHERE user_id = ?", (user_id,)))
 
         Warn = discord.Embed(title = "⚠️ • Warn", description= f"{author.mention} ha warnato {user.mention}", colour= discord.Colour.red())
 
@@ -137,11 +176,14 @@ class Warns(commands.Cog):
         Warn.add_field(name = "Warn attuali", value = warns, inline = True)
         Warn.add_field(name = "⠀", value = "⠀", inline = True)
 
+        Send = discord.Embed(title = "⚠️ • Warn system", description= f"{author.mention} hai warnato a {user.mention} gravità {gravity} | {reason}", colour= discord.Colour.red())
+        await channel.send(content= author.mention, embed= Send, delete_after=2)
+
         #await channel.send(content = user.mention, embed = Warn)
         logchannel = self.bot.get_channel(cfg.sanzioni) #canale log
         await logchannel.send(content = user.mention, embed = Warn)
 
-    async def ban_user(self, guild, channel: discord.TextChannel, author: discord.Member, user: discord.Member, reason=None):
+    async def ban_user(self, guild, channel: discord.TextChannel, author: discord.Member, user: discord.Member, gravity: int, reason=None):
 
         cfg = self.bot.get_cog('Config')
         
@@ -154,8 +196,53 @@ class Warns(commands.Cog):
         embed.add_field(name = "Motivazione", value = reason, inline = True)
         
         #await channel.send(embed=embed)
+        Send = discord.Embed(title = "⚠️ • Warn system", description= f"{author.mention} hai warnato a {user.mention} gravità {gravity} | {reason}\nDi conseguenza è stato bannato.", colour= discord.Colour.red())
+        await channel.send(content= author.mention, embed= Send, delete_after=2)
         logchannel = self.bot.get_channel(cfg.sanzioni) #canale log
         await logchannel.send(embed = embed)
+    
+    async def delwarn_user(self, guild, channel: discord.TextChannel, author: discord.Member, user: discord.Member, warn, reason: str):
+        
+        conn = self.bot.get_cog('Db')
+        cfg = self.bot.get_cog('Config')
+
+        #author_id = author.id
+        user_id = user.id
+        reason = reason if reason is not None else 'Non specificato'
+
+        #check = conn.fetchall("SELECT * FROM warns WHERE id = ? AND user_id = ?", (warn, user,))
+
+        try:
+            i = conn.fetchall("SELECT * FROM warns WHERE id = ? AND user_id = ?", (warn, user_id,))
+            
+            if (i[0])[0] == warn:
+
+                conn.execute("DELETE FROM warns WHERE user_id = ? AND id = ?", (user.id, warn,))
+                warns = len(conn.fetchall("SELECT * FROM warns WHERE user_id = ?", (user_id,)))
+
+                Warn = discord.Embed(title = "👼🏼 • Warn Rimosso", description= f"{author.mention} ha rimosso il warn a {user.mention} id {warn}", colour= discord.Colour.green())
+
+                Warn.add_field(name = "Staffer", value = author, inline = True)
+                Warn.add_field(name = "Utente", value = user, inline = True)
+                Warn.add_field(name = "Warn rimosso", value = f"ID: {warn}", inline = True)
+
+                Warn.add_field(name = "Motivazione", value = reason, inline = True)
+                Warn.add_field(name = "Warn attuali", value = warns, inline = True)
+                Warn.add_field(name = "⠀", value = "⠀", inline = True)
+
+                Send = discord.Embed(title = "👼🏽 • Warn system", description= f"{author.mention} hai rimosso il warn a {user.mention} id {warn}", colour= discord.Colour.green())
+
+                #await channel.send(content = user.mention, embed = Warn)
+                logchannel = self.bot.get_channel(cfg.sanzioni) #canale log
+                await logchannel.send(content = user.mention, embed = Warn)
+                await channel.send(content= author.mention, embed= Send, delete_after=2)
+                await conn.commit()
+            else:
+                await channel.send("ID Warn inesistente.")
+        except:
+            await channel.send("ID Warn o utente inesistente.")
+
+
 
 def setup(client):
     client.add_cog(Warns(client))

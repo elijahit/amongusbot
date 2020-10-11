@@ -1,12 +1,19 @@
 from discord.ext.commands import CommandNotFound
-from discord.ext import commands
+from datetime import datetime, timedelta
+from discord.ext import commands, tasks
 import discord
-
+import time
 
 class Interactions(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.tasks = None
+        if self.messageloop.is_running():
+            self.messageloop.cancel()
+            self.messageloop.start()
+        else:
+            self.messageloop.start()
 
     async def welcome_dm(self, member):
         debug = self.bot.get_channel(758089360410411108)
@@ -48,15 +55,21 @@ class Interactions(commands.Cog):
                                         generale=generale.mention,
                                         live=live.mention,
                                         ruoli=ruoli.mention))
-        welcome_message = embed.get_image_embed("Benvenuto su Among Us Ita",
+        field3 = (f"\n\nIn fine", cfg.welcomemessage3.format(server=member.guild.name))
+        welcome_message = embed.get_welcomemessage_embed("Benvenuto su Among Us Ita",
                                                 cfg.lightgreen,
                                                 member.avatar_url,
                                                 [field, field2],
+                                                field3, #inlinefield
                                                 "https://cdn.discordapp.com/attachments/758087809671102574/763020270084554772/Benvenuto.jpg",
                                                 member.guild.icon_url,
                                                 "Among Us ita © amongusita.it | Devloped by 3rd Party Developers")
 
         await debug.send(embed=welcome_message)
+
+    async def checkinvite(self, message):
+        pass
+        
 
 
     @commands.Cog.listener()
@@ -88,6 +101,8 @@ class Interactions(commands.Cog):
                                                cfg.footer)
 
         await entrychannel.send(embed=login_embed)
+        crewmember = member.guild.get_role(746124009715924996)
+        await member.add_roles(crewmember)
 
         print(f"[LOG] {member.name}#{member.discriminator} è entrato nel server discord")
         print(f"{member.id}")
@@ -132,6 +147,87 @@ class Interactions(commands.Cog):
         if isinstance(error, CommandNotFound):
             return
         raise error
+
+    @tasks.loop(seconds=10)
+    async def messageloop(self):
+        if self.tasks is None:
+            await self.load_tasks()
+            return 0
+
+        if len(self.tasks) > 0:
+            for i in self.tasks:
+                
+                # 0 = id, 1 = channel_id, 2 = text, 3 = freq
+                now = round(int(time.time()), -1)
+
+                # TODO: Read list of recurrent msgs from DB
+                msg = i[2]
+                freq = i[3]
+                #
+
+                freq = datetime.strptime(freq, "%H:%M:%S")
+                ms = int(timedelta(hours=freq.hour, minutes=freq.minute, seconds=freq.second).total_seconds())
+
+                if now % ms == 0:
+                    Send = discord.Embed(title = "🤖 • Messaggio automatico", description= f"{msg}")
+                    await self.bot.get_channel(i[1]).send(embed=Send)
+
+    @messageloop.before_loop
+    async def before_loop(self):        
+        await self.bot.wait_until_ready()
+    
+    async def load_tasks(self):
+        conn = self.bot.get_cog("Db")
+        z = conn.fetchallnovalues("SELECT * FROM scheduled_tasks")
+        self.tasks = z
+        
+        if self.messageloop.is_running() is True:
+            self.messageloop.restart()
+        else:
+            self.messageloop.start()        
+    
+    @commands.command()
+    async def addmessage(self, ctx, channel_id: int, freq: str, *, text: str):
+        
+        conn = self.bot.get_cog("Db")
+        cfg = self.bot.get_cog('Config')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.roledev
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+            conn.execute("INSERT INTO scheduled_tasks (channel_id, text, freq) VALUES (?, ?, ?)", (channel_id, text, freq,))
+            await conn.commit()
+            
+            msg = f"Messaggio automatico in: {channel_id}\nesto: {text}\nFrequenza: {freq}"
+            await ctx.send(content=msg, delete_after=40)
+            await self.load_tasks()
+    @addmessage.error
+    async def addmessage_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: !addmessage (canaleID) (freq 00:00:00) (testo)")
+
+    @commands.command()
+    async def removemessage(self, ctx, messageid):
+        
+        conn = self.bot.get_cog("Db")
+        cfg = self.bot.get_cog('Config')
+        user_roles = set([role.id for role in ctx.message.author.roles])
+        admin_roles = cfg.roledev
+
+        if len(user_roles.intersection(admin_roles)) != 0:
+            conn.execute("DELETE FROM scheduled_tasks WHERE id=?", (messageid,))
+            await conn.commit()
+            
+            msg = f"Rimosso messaggio ID: {messageid}"
+            await ctx.send(content=msg, delete_after=40)
+            await self.load_tasks()
+    
+    @removemessage.error
+    async def removemessage_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
+            await ctx.message.delete()
+            await ctx.send("[!] USA: !removemessage (ID message DB)")
 
 
 def setup(bot):
