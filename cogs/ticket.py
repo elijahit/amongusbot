@@ -1,6 +1,8 @@
 # Sistema Ticket per Among Us Ita (amongusita.it)
 # Sviluppato da MyNameIsDark01#5955
 # Per Among Us Ita#2534
+
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from discord.ext import commands
 import discord
 import os
@@ -135,6 +137,8 @@ class Ticket(commands.Cog):
             await conn.commit()
             n = conn.fetchall('SELECT * FROM tickets WHERE user_id = ?', (user_id,))[0][0]
 
+            image_path = self.create_image(n)
+
             guild = self.bot.get_guild(guild)
             category = self.bot.get_channel(self.category)
             user = self.bot.get_user(user_id)
@@ -154,10 +158,13 @@ class Ticket(commands.Cog):
                                                 cfg.lightgreen,
                                                 user.avatar_url,
                                                 [field],
-                                                "https://i.imgur.com/RJzaGNC.png",
+                                                f"attachment://ticket.png",
                                                 cfg.footer)
-            m = await y.send(embed=embeds)
+
+            m = await y.send(embed=embeds, file=discord.File(open(image_path,"rb"), filename="ticket.png"))
             await m.add_reaction('✅')
+            if os.path.isfile(image_path):
+                os.remove(image_path)
 
             conn.execute("UPDATE tickets SET channel_id = ? WHERE user_id = ?", (y.id, user_id,))
 
@@ -218,17 +225,21 @@ class Ticket(commands.Cog):
 
         await m.clear_reactions()
         await m.delete()
+        image_path = self.create_imageentry(admin.name)
 
         embed = discord.Embed(title=m.embeds[0].title,
                               description=f"{utente.mention} la tua richiesta è stata presa in carico dallo "
                                           f"Staffer {admin.mention} di Among Us Ita.")
+        embed.set_image(url="attachment://ticketstaff.png")
 
         embed.add_field(name="Legenda per lo Staff",
                         value="🔴 - Ticket inutilizzato\n"
                               "🟡 - Impossibile risolvere il ticket\n"
                               "🟢 - Ticket risolto correttamente")
 
-        msg = await channel.send(embed=embed)
+        msg = await channel.send(embed=embed, file=discord.File(open(image_path,"rb"), filename="ticketstaff.png"))
+        if os.path.isfile(image_path):
+            os.remove(image_path)
         await channel.send(f"Ciao {utente.mention} lo staffer {admin.mention} ha preso in carico la tua richiesta, descrivi chiaramente il tuo problema affinchè si risolva nel minor tempo possibile la tua problematica, ti ricordiamo che l'apertura di ticket inutilizzati prevede il warn.")
         await msg.add_reaction('🔴')
         await msg.add_reaction('🟡')
@@ -324,6 +335,60 @@ class Ticket(commands.Cog):
         
         user = self.bot.get_user(user_id)
         await warn.warn_user(guild, channel, member, user, gravity, reason)
+    
+    def create_image(self, numero):
+		
+        W, H = (400, 200)
+        x, y = (2450, 790)
+
+        msg = str(numero)
+
+        background = Image.open('image/ticket.png')
+
+        font = ImageFont.truetype(font='emmasophia.ttf', size=65)
+        w, h = font.getsize(msg)
+
+        text = Image.new("L", (W,H))
+        draw = ImageDraw.Draw(text)
+        draw.text(((W-w)//2,(H-h)//2), msg, font=font, fill=255)
+
+        rotated = text.rotate(5.0, expand=1)
+
+        background.paste(ImageOps.colorize(rotated, (0, 0, 0), (10, 10, 10)), (x-W//2,y-H//2), rotated)
+        path = f'/root/amongusbot/image/generation/ticket_img_{numero}.png'
+        background.save(path)
+
+        return path
+
+    def create_imageentry(self, nome):
+		
+        W, H = (400, 200)
+        x, y = (1689, 1570)
+
+        msg = str(nome)
+
+        background = Image.open('image/ticketentry.png')
+
+        for font_size in range(50, 10, -1):
+            font = ImageFont.truetype(font='emmasophia.ttf', size=font_size)
+            w, h = font.getsize(msg)
+
+            if w < W:
+                break
+
+        text = Image.new("L", (W,H))
+        draw = ImageDraw.Draw(text)
+        draw.text(((W-w)//2,(H-h)//2), msg, font=font, fill=255)
+
+        rotated = text.rotate(3.0, expand=1)
+        if nome.find("/"):
+            nome = nome.replace("/", "")
+
+        background.paste(ImageOps.colorize(rotated, (0, 0, 0), (10, 10, 10)), (x-W//2,y-H//2), rotated)
+        path = f'/root/amongusbot/image/generation/ticketentry_img_{nome}.png'
+        background.save(path)
+
+        return path
                     
 def setup(bot):
     bot.add_cog(Ticket(bot))

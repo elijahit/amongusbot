@@ -35,7 +35,7 @@ class cmd(commands.Cog):
                  "Questo BOT è stato creato e programmato in python da un team di 6+ developer per amongusita.it, sono stati richiesti \
                  mesi di programmazione per rendere lo stesso adeguato all'utenza attualmente dentro Among Us Ita.\
                  Il bot viene utilizato per gestire l'intera community di Among Us Ita, ciò che in altre community viene fatto con 7 bot diversi.\n"
-                 "*Developers*: **Elijah**, **Nico**, **ImNotName**, **iTzSgrullee_**, **MyNameIsDark01**, **Kappa**\n\
+                 "*Developers*: **Elijah**, **Nico**, **EazY**, **ImNotName**, **iTzSgrullee_**, **MyNameIsDark01**, **Kappa**\n\
                  Librerie utilizzate: *DiscordPy*\n\
                  \n© amongusita.it")
 
