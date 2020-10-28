@@ -1,6 +1,7 @@
-from discord.ext import commands
 from asyncio import Lock
+
 import discord
+from discord.ext import commands
 
 categories = ["STAFF VOICE"]
 
@@ -64,7 +65,7 @@ class Voicechannels(commands.Cog):
     async def log_movements(self, member, before, after):
 
         cfg = self.bot.get_cog('Config')
-        #embeds = self.bot.get_cog('Embeds')
+        # embeds = self.bot.get_cog('Embeds')
         logchannel = self.bot.get_channel(cfg.voicelogs)
 
         if before.channel != after.channel:
@@ -81,7 +82,6 @@ class Voicechannels(commands.Cog):
             embed.add_field(name="userlogs-vocal", value=f"**{message}**", inline=True)
             embed.set_footer(text=cfg.footer)
             await logchannel.send(embed=embed)
-
 
     # LISTENERS
     @commands.Cog.listener()

@@ -1,29 +1,33 @@
 # Sistema invitesystem per Among Us Ita (amongusita.it)
 # Sviluppato da ImNotName#6666
 # Per Among Us Ita#2534
-import discord, time, datetime
-from discord.ext import commands
 import asyncio
+
+import discord
+from discord.ext import commands
+
 
 class InviteManager(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command()
     async def purgeinvite(self, ctx):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3}
         if len(user_roles.intersection(admin_roles)) != 0:
 
-            Embed = discord.Embed(description = f"Sei sicuro di voler cancellare tutti gli inviti esistenti attualmente?", colour = discord.Colour.orange())
-            bot_reply = await ctx.send(content = ctx.message.author.mention, embed = Embed)
+            embed = discord.Embed(description=f"Sei sicuro di voler cancellare tutti gli inviti esistenti attualmente?",
+                                  colour=discord.Colour.orange())
+            bot_reply = await ctx.send(content=ctx.message.author.mention, embed=embed)
             await bot_reply.add_reaction("✅")
             await bot_reply.add_reaction("🚫")
-            def check(reaction, user):
+
+            def check(_, user):
                 return user.id == ctx.message.author.id
+
             try:
                 reaction, user = await self.bot.wait_for('reaction_add', check=check)
             except asyncio.TimeoutError:
@@ -31,30 +35,32 @@ class InviteManager(commands.Cog):
             else:
                 if reaction.emoji == "✅":
                     await bot_reply.clear_reactions()
-                    Embed = discord.Embed(description = f"Sto cancellando tutti gli inviti del server...", colour = discord.Colour.blue())
-                    await bot_reply.edit(content = ctx.message.author.mention, embed = Embed)
+                    embed = discord.Embed(description=f"Sto cancellando tutti gli inviti del server...",
+                                          colour=discord.Colour.blue())
+                    await bot_reply.edit(content=ctx.message.author.mention, embed=embed)
                     guid_invites = await ctx.guild.invites()
 
                     for invite in guid_invites:
                         if invite.code != "hwSd6AM":
                             await invite.delete()
 
-                    Embed = discord.Embed(description = f"Ho cancellato tutti gli inviti esistenti", colour = discord.Colour.green())
-                    await bot_reply.edit(content = ctx.message.author.mention, embed = Embed)
+                    embed = discord.Embed(description=f"Ho cancellato tutti gli inviti esistenti",
+                                          colour=discord.Colour.green())
+                    await bot_reply.edit(content=ctx.message.author.mention, embed=embed)
 
                 elif reaction.emoji == "🚫":
                     await bot_reply.clear_reactions()
                     await bot_reply.delete()
                     await ctx.message.delete()
 
-
     @commands.Cog.listener()
     async def on_invite_create(self, invite):
 
         if invite.max_age == 0:
-            Embed = discord.Embed(description = f"Non puoi creare un invito con scadenza illimitata!", colour = discord.Colour.red())
+            embed = discord.Embed(description=f"Non puoi creare un invito con scadenza illimitata!",
+                                  colour=discord.Colour.red())
             try:
-                await invite.inviter.send(content = invite.inviter.mention, embed = Embed)
+                await invite.inviter.send(content=invite.inviter.mention, embed=embed)
             except:
                 pass
             await invite.delete()
@@ -64,7 +70,7 @@ class InviteManager(commands.Cog):
             cfg = self.bot.get_cog('Config')
             member = self.bot.get_user(invite.inviter.id)
             user_roles = set([role.id for role in member.roles])
-            admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
+            admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3}
 
             if len(user_roles.intersection(admin_roles)) != 0:
                 pass

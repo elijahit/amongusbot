@@ -28,4 +28,3 @@ if __name__ == '__main__':
     cursor.execute(create_users_table)
     cursor.execute(create_tickets_table)
     cursor.execute(create_addrole_table)
-

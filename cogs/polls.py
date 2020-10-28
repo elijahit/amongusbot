@@ -1,13 +1,13 @@
+import asyncio
+
 import discord
 from discord.ext import commands, tasks
-import asyncio
 
 
 class Poll(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.update.start()
-
 
     @commands.command()
     async def poll(self, ctx, domanda, *opzioni):
@@ -16,8 +16,7 @@ class Poll(commands.Cog):
         cfg = self.bot.get_cog("Config")
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -25,12 +24,14 @@ class Poll(commands.Cog):
             # Manda un messaggio di errore in caso le opzioni selezionate siano minori di 1 o maggiori di 10
 
             if len(opzioni) == 0 or len(opzioni) <= 1:
-                msg = await ctx.channel.send(embed=embeds.get_error_message(description="Non puoi iniziare un sondaggio con meno di 2 opzioni! Assicurati di aver utilizzato la giusta formattazione: `?poll \"Domanda\" \"Opzione 1\" \"Opzione 2\"` (le opzioni vanno messe tra le virgolette con un massimo di 10 opzioni)."))
+                msg = await ctx.channel.send(embed=embeds.get_error_message(
+                    description="Non puoi iniziare un sondaggio con meno di 2 opzioni! Assicurati di aver utilizzato la giusta formattazione: `?poll \"Domanda\" \"Opzione 1\" \"Opzione 2\"` (le opzioni vanno messe tra le virgolette con un massimo di 10 opzioni)."))
                 await asyncio.sleep(10)
                 await msg.delete()
 
             elif len(opzioni) > 10:
-                msg = await ctx.channel.send(embed=embeds.get_error_message(description="Non puoi iniziare un sondaggio con più di 10 opzioni! Assicurati di aver utilizzato la giusta formattazione: `?poll \"Domanda\" \"Opzione 1\" \"Opzione 2\"` (le opzioni vanno messe tra le virgolette con un massimo di 10 opzioni)."))
+                msg = await ctx.channel.send(embed=embeds.get_error_message(
+                    description="Non puoi iniziare un sondaggio con più di 10 opzioni! Assicurati di aver utilizzato la giusta formattazione: `?poll \"Domanda\" \"Opzione 1\" \"Opzione 2\"` (le opzioni vanno messe tra le virgolette con un massimo di 10 opzioni)."))
                 await asyncio.sleep(10)
                 await msg.delete()
 
@@ -59,7 +60,6 @@ class Poll(commands.Cog):
 
                 except Exception:
                     print("[!] Poll non aggiunto al database.")
-
 
     @tasks.loop(seconds=10)
     async def update(self):
@@ -119,17 +119,17 @@ class Poll(commands.Cog):
 
                         intero = round(6 * stats[i] / 100)
 
-                        bar = ""
+                        # bar = ""
 
                         if intero == 0:
-                            bar = "<:vuoto1:760485808372449280>" +  "<:vuoto2:760485783542693919>" * 6 + "<:vuoto3:760485761593770034>"
+                            bar = "<:vuoto1:760485808372449280>" + "<:vuoto2:760485783542693919>" * 6 + "<:vuoto3:760485761593770034>"
 
                         elif intero == 10:
                             bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * 6 + "<:pieno3:760485685395718164>"
 
                         else:
-                            bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * intero + "<:vuoto2:760485783542693919>" * (6 - intero) + "<:vuoto3:760485761593770034>"
-
+                            bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * intero + "<:vuoto2:760485783542693919>" * (
+                                        6 - intero) + "<:vuoto3:760485761593770034>"
 
                         embed.add_field(name=f"{reactions[i]} - {stats[i]}%", value=bar, inline=False)
 
@@ -138,7 +138,6 @@ class Poll(commands.Cog):
             except:
                 continue
 
-
     @commands.command()
     async def delete_polls(self, ctx):
         db = self.bot.get_cog('Db')
@@ -146,8 +145,7 @@ class Poll(commands.Cog):
         cfg = self.bot.get_cog("Config")
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -162,7 +160,6 @@ class Poll(commands.Cog):
             except Exception:
                 await ctx.channel.send(embed=embeds.get_error_message("Non sono riuscito cancellare i polls..."))
 
-
     @commands.command()
     async def delete_poll(self, ctx, msg_id):
         db = self.bot.get_cog('Db')
@@ -170,8 +167,7 @@ class Poll(commands.Cog):
         cfg = self.bot.get_cog("Config")
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -198,7 +194,6 @@ class Poll(commands.Cog):
             except Exception:
                 await ctx.channel.send(embed=embeds.get_error_message("Non sono riuscito a rimuovere il poll dal db."))
 
-
     @commands.command()
     async def add_poll(self, ctx, msg_id, channel_id):
         db = self.bot.get_cog('Db')
@@ -208,8 +203,7 @@ class Poll(commands.Cog):
         reactions = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯"]
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -220,7 +214,7 @@ class Poll(commands.Cog):
                 in_the_db = db.Cursor.fetchone()
                 db.Database.commit()
 
-                if in_the_db == None:
+                if in_the_db is None:
                     command = "INSERT INTO polls (msg_id, channel_id) VALUES (?, ?)"
                     db.Cursor.execute(command, (msg_id, channel_id))
                     db.Database.commit()
@@ -239,14 +233,13 @@ class Poll(commands.Cog):
             except Exception:
                 await ctx.channel.send(embed=embeds.get_error_message("Non sono riuscito ad aggiungere il poll al db."))
 
-
     @commands.command()
     async def pollshelp(self, ctx):
         embed = self.bot.get_cog("Embeds")
         cfg = self.bot.get_cog("Config")
 
         name = "Polls System"
-        field = ("Comandi Poll",'''
+        field = ("Comandi Poll", '''
 poll (\"Domanda\") (\"Opzione 1\") (\"Opzione 2\") **[Inizializza il poll con un massimo di 10 opzioni]**\n
 delete_poll (msg_id) **[Rimuove tutti i polls dal db]** \n
 delete_polls **[Rimuove il poll selezionato dal db]** \n
@@ -278,8 +271,8 @@ pollshelp **[Info sul modulo Poll]**
 
             for r in msg.reactions:
 
-                if payload.member in await r.users().flatten() and not payload.member.bot and str(r) != str(payload.emoji):
-
+                if payload.member in await r.users().flatten() and not payload.member.bot and str(r) != str(
+                        payload.emoji):
                     await msg.remove_reaction(r.emoji, payload.member)
 
 
