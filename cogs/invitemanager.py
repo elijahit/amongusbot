@@ -65,10 +65,15 @@ class InviteManager(commands.Cog):
                 pass
             await invite.delete()
         else:
-            guid_invites = await invite.guild.invites()
+            guild = invite.guild
+            guid_invites = await guild.invites()
 
             cfg = self.bot.get_cog('Config')
-            member = self.bot.get_user(invite.inviter.id)
+            member = guild.get_member(invite.inviter.id)
+
+            # When is None invoke the api -> return Member object
+            if member is None:
+                member = await guild.fetch_member(invite.inviter.id)
             user_roles = set([role.id for role in member.roles])
             admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3}
 

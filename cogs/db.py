@@ -15,12 +15,11 @@ class Db(commands.Cog):
             self.Cursor = self.Database.cursor()
 
             print("[!] Connessione al database stabilita.")
-            self.Cursor.execute(
-                "CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id, channel_id, admin_id)")
-            self.Cursor.execute(
-                "CREATE TABLE IF NOT EXISTS warns (id INTEGER PRIMARY KEY AUTOINCREMENT, guild_id INTEGER, user_id INTEGER, gravity INTEGER, reason TEXT)")
-            self.Cursor.execute(
-                "CREATE TABLE IF NOT EXISTS scheduled_tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, channel_id INTEGER, text TEXT, freq TEXT)")
+            self.Cursor.execute("CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id, channel_id, admin_id)")
+            self.Cursor.execute("CREATE TABLE IF NOT EXISTS warns (id INTEGER PRIMARY KEY AUTOINCREMENT, guild_id INTEGER, user_id INTEGER, gravity INTEGER, reason TEXT)")
+            self.Cursor.execute("CREATE TABLE IF NOT EXISTS scheduled_tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, channel_id INTEGER, text TEXT, freq TEXT)")
+            # TODO
+            # self.Cursor.execute("CREATE TABLE IF NOT EXISTS poll ()")
         except Error:
 
             print(Error)

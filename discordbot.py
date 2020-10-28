@@ -10,10 +10,15 @@ def get_prefix(bot, message):
 
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
+# TODO
+# cogs.poll
+# cogs.ctrlhack
+# cogs.staffmover -> dovrebbe andare
+
 
 startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds',
                       'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger',
-                      'cogs.polls', 'cogs.invitemanager', 'cogs.warn']
+                      'cogs.invitemanager', 'cogs.warn']
 
 bot = commands.Bot(command_prefix=get_prefix, description='', case_insensitive=True)
 
@@ -41,6 +46,6 @@ async def on_ready():
         authorize?client_id={bot.user.id}&scope=bot&permissions=8''')
 
 
-bot.run('NzU3NjQ5NDU0MjM1OTEwMTc0.X2jeCg.7pQN7yL4ylmrFXK8pSnGOdFqxRc',
+bot.run('NTk3Nzk3ODI2NjcxNDExMjEx.XSNUnA.DZzs7XUqg7zO0jGiz8WD83UGpaA',
         bot=True,
         reconnect=True)

@@ -4,6 +4,7 @@
 
 import os
 
+import asyncio
 import discord
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from discord.ext import commands
@@ -13,6 +14,7 @@ from discord.ext import commands
 class Ticket(commands.Cog):
 
     def __init__(self, bot):
+
         self.bot = bot
         cfg = self.bot.get_cog('Config')
         self.ticketChannel = 748908550973292604  # canale ticket
@@ -172,10 +174,9 @@ class Ticket(commands.Cog):
 
             m = await y.send(embed=embeds, file=discord.File(open(image_path, "rb"), filename="ticket.png"))
             await m.add_reaction('✅')
-            if os.path.isfile(image_path):
-                os.remove(image_path)
 
             conn.execute("UPDATE tickets SET channel_id = ? WHERE user_id = ?", (y.id, user_id,))
+            await conn.commit()
             notify = self.bot.get_channel(765924249336414238)
             notifyrole = guild.get_role(765925396754464790)
             try:
@@ -185,7 +186,10 @@ class Ticket(commands.Cog):
             except:
                 pass
 
-        await conn.commit()
+            if os.path.isfile(image_path):
+                await asyncio.sleep(5)
+                os.remove(image_path)
+        # await conn.commit()
 
     async def claim_ticket(self, user_id, message_id, channel_id, guild_id, user_roles):
 
@@ -201,9 +205,10 @@ class Ticket(commands.Cog):
         senmod = guild.get_role(762459421665525802)
         thelper = guild.get_role(762459426128789525)
 
-        utente = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
-        print(utente)
-        utente = self.bot.get_user(utente)
+        utente_id = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
+        utente = self.bot.get_user(utente_id)
+        if utente is None:
+            utente = guild.fetch_member(utente_id)
 
         m = await channel.fetch_message(message_id)
 
@@ -235,16 +240,11 @@ class Ticket(commands.Cog):
         await conn.commit()
 
         await channel.set_permissions(supporter, read_messages=False, send_messages=False, add_reactions=False)
-        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False,
-                                      read_message_history=True, attach_files=True)
-        await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True,
-                                      read_message_history=True)
-        await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True,
-                                      read_message_history=True)
-        await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True,
-                                      read_message_history=True)
-        await channel.set_permissions(thelper, read_messages=True, send_messages=True, add_reactions=True,
-                                      read_message_history=True)
+        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True, attach_files=True)
+        await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        # await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        # await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+        # await channel.set_permissions(thelper, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
 
         await m.clear_reactions()
         await m.delete()
@@ -261,8 +261,6 @@ class Ticket(commands.Cog):
                               "🟢 - Ticket risolto correttamente")
 
         msg = await channel.send(embed=embed, file=discord.File(open(image_path, "rb"), filename="ticketstaff.png"))
-        if os.path.isfile(image_path):
-            os.remove(image_path)
         await channel.send(
             f"Ciao {utente.mention} lo staffer {admin.mention} ha preso in carico la tua richiesta, descrivi chiaramente il tuo problema affinchè si risolva nel minor tempo possibile la tua problematica, ti ricordiamo che l'apertura di ticket inutilizzati prevede il warn.")
         await msg.add_reaction('🔴')
@@ -275,6 +273,9 @@ class Ticket(commands.Cog):
             await notify.send(embed=embednotify)
         except:
             pass
+        if os.path.isfile(image_path):
+            await asyncio.sleep(5)
+            os.remove(image_path)
 
     async def delete_channel(self, channel_id):
 
@@ -395,7 +396,7 @@ class Ticket(commands.Cog):
 
         background = Image.open('image/ticket.png')
 
-        font = ImageFont.truetype(font='emmasophia.ttf', size=65)
+        font = ImageFont.truetype(font='image/emmasophia.ttf', size=65)
         w, h = font.getsize(msg)
 
         text = Image.new("L", (W, H))
@@ -405,7 +406,7 @@ class Ticket(commands.Cog):
         rotated = text.rotate(5.0, expand=1)
 
         background.paste(ImageOps.colorize(rotated, (0, 0, 0), (10, 10, 10)), (x - W // 2, y - H // 2), rotated)
-        path = f'/root/amongusbot/image/generation/ticket_img_{numero}.png'
+        path = f'image/generation/ticket_img_{numero}.png'
         background.save(path)
 
         return path
@@ -420,7 +421,7 @@ class Ticket(commands.Cog):
         background = Image.open('image/ticketentry.png')
 
         for font_size in range(50, 10, -1):
-            font = ImageFont.truetype(font='emmasophia.ttf', size=font_size)
+            font = ImageFont.truetype(font='image/emmasophia.ttf', size=font_size)
             w, h = font.getsize(msg)
 
             if w < W:
@@ -435,7 +436,7 @@ class Ticket(commands.Cog):
             nome = nome.replace("/", "")
 
         background.paste(ImageOps.colorize(rotated, (0, 0, 0), (10, 10, 10)), (x - W // 2, y - H // 2), rotated)
-        path = f'/root/amongusbot/image/generation/ticketentry_img_{nome}.png'
+        path = f'image/generation/ticketentry_img_{nome}.png'
         background.save(path)
 
         return path

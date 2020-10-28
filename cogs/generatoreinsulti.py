@@ -1,5 +1,5 @@
 # Sistema insulti per Among Us Ita (amongusita.it)
-# Sviluppato da iTzSgrullee_#5858
+# Sviluppato da iTzSgrullee_#5858 -> altra trashata che non ho capito a cosa serve
 # Per Among Us Ita#2534
 import random
 from datetime import datetime as dt

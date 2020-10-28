@@ -67,16 +67,15 @@ class Cmd(commands.Cog):
                                                    "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T. Helper | [8] Gestore | [9] Prova")
 
             await ctx.channel.send(embed=acmds_embed)
-            return
+
         else:
             try:
                 await ctx.message.delete()
                 await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
             except:
                 pass
-            return
 
-    @commands.command()  # comando purge
+    @commands.command()  # comando purge -> purge can't raise errors
     async def purge(self, ctx, ammount=int(1)):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
@@ -86,21 +85,18 @@ class Cmd(commands.Cog):
             await ctx.message.delete()
             if ammount <= 200:
                 await ctx.channel.purge(limit=ammount)
-                return
             else:
                 try:
                     await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
                     await ctx.message.delete()
                 except:
                     pass
-                return
         else:
             try:
                 await ctx.message.delete()
                 await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
             except:
                 pass
-            return
 
     @purge.error
     async def purge_error(self, ctx, error):
@@ -290,7 +286,7 @@ class Cmd(commands.Cog):
                 embed.add_field(
                     name="Staffer", value=ctx.message.author, inline=True)
                 embed.add_field(name="Utente bannato",
-                                value=member, inline=True)
+                                value=member.mention, inline=True)
 
                 embed.add_field(name="Motivazione", value=reason, inline=True)
                 await member.send(embed=embed)
@@ -303,7 +299,7 @@ class Cmd(commands.Cog):
                 title="⛔️ • Ban", description=f"{ctx.message.author.mention} ha bannato {member.mention}")
             embeds.add_field(name="Lo Staffer",
                              value=ctx.message.author, inline=True)
-            embeds.add_field(name="Ha bannato", value=member, inline=True)
+            embeds.add_field(name="Ha bannato", value=member.mention, inline=True)
 
             embeds.add_field(name="Motivazione", value=reason, inline=True)
             await sanzioni.send(embed=embeds)
@@ -450,7 +446,7 @@ class Cmd(commands.Cog):
                     title="⛔️ • Kick", description=f"{ctx.message.author.mention}  ti ha kickato dal server")
                 embed.add_field(name="Lo Staffer",
                                 value=ctx.message.author, inline=True)
-                embed.add_field(name="Ha Kickato", value=member, inline=True)
+                embed.add_field(name="Ha Kickato", value=member.mention, inline=True)
 
                 embed.add_field(name="Motivazione", value=reason, inline=True)
                 await member.send(embed=embed)
@@ -483,7 +479,7 @@ class Cmd(commands.Cog):
                 title="⛔️ • Kick", description=f"{ctx.message.author.mention} ha kickato {member.mention}")
             embeds.add_field(name="Lo Staffer",
                              value=ctx.message.author, inline=True)
-            embeds.add_field(name="Ha Kickato", value=member, inline=True)
+            embeds.add_field(name="Ha Kickato", value=member.mention, inline=True)
 
             embeds.add_field(name="Motivazione", value=reason, inline=True)
             await sanzioni.send(embed=embeds)
@@ -746,6 +742,7 @@ class Cmd(commands.Cog):
             conn = self.bot.get_cog('Db')
 
             try:
+                field, field2 = (), ()
                 for x in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
                     field = (f"Statistiche", f"*Ticket*: {x[2]}\n\
 *Hack*: {x[3]}\n\

@@ -57,7 +57,7 @@ class Voicechannels(commands.Cog):
             before_category = self._is_apex(before.channel, guild)
             after_category = self._is_apex(after.channel, guild)
             # if before_category != after_category:
-            if before_category:
+            if before_category is not False:
                 await self._delete_channel(before_category, before.channel)
             if after_category:
                 await self._add_channel(after_category, after.channel)

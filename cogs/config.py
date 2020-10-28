@@ -43,7 +43,8 @@ class Config(commands.Cog):
         self.voicelogs = 751077692446736444  # canale voicelogs
         self.staffroom = 746868296892284948
         self.categories = ["STAFF VOICE"]
-        ##ADMIN PEX 
+
+        # ADMIN PEX
 
         self.roledev = 758086640047620136  # 3rd Party
         self.rolea1 = 744631580504359043  # Owner

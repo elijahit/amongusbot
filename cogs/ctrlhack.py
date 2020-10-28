@@ -2,8 +2,7 @@
 # Sviluppato da iTzSgrullee_#585
 # Per Among Us Ita#2534
 import datetime as dt
-from asyncio import sleep
-
+import asyncio
 import discord
 from discord.ext import commands
 
@@ -50,9 +49,9 @@ class Ctrlhack(commands.Cog):
 
             user_send = ctx.message.author
             if user_send is None:
-                await sleep(1)
+                await asyncio.sleep(1)
                 user_send = ctx.message.author
-                await sleep(3)
+                await asyncio.sleep(3)
 
             if str(user_send.id) not in admin_live_id:
 
@@ -76,7 +75,7 @@ class Ctrlhack(commands.Cog):
                 warning.set_author(name="Among Us Ita")
                 mexa = await ctx.channel.send(embed=warning)
 
-                await sleep(5)
+                await asyncio.sleep(5)
 
                 await mexa.delete()
 
@@ -191,7 +190,7 @@ class Ctrlhack(commands.Cog):
 
                     await reaction.message.clear_reaction("🟢")
 
-                    await sleep(10)
+                    await asyncio.sleep(10)
 
                     warning = discord.Embed(title="🟩 CONTROLLO IN CORSO 🟩",
                                             description=f"Lo staff {user_send.mention} sta controllando degli utenti nella {i}° chat vocale \n \nUna volta chiuso al posto di questo messaggio troverete un rapporto dettagliato del controllo \n \n**PREMI LA REAZIONE PER CHIUDERE IL CONTROLLO**",

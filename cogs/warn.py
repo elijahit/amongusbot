@@ -11,12 +11,6 @@ class Warns(commands.Cog):
     def __init__(self, client):
         self.bot = client
 
-    # conn = sqlite3.connect('database.db')
-    # c = conn.cursor()
-    # c.execute("CREATE TABLE IF NOT EXISTS warns (id INTEGER PRIMARY KEY AUTOINCREMENT, guild_id, user_id, gravity, reason)")
-    # conn.commit()
-    # conn.close()
-
     @commands.command()
     async def warn(self, ctx, user: discord.Member, gravity: int, *, reason=None):
 
