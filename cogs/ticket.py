@@ -116,7 +116,12 @@ class Ticket(commands.Cog):
                     await Ticket.delete_channel(self, channel_id)
                 elif emoji == '🔴':
                     # Da finire, manca la sezione warn
-                    await Ticket.warn_on_useless_ticket(self, guild_id, channel, member, user_id, 1, f'Ticket Inutilizzato \"{channel.name}\""')                
+                    try:
+                        await Ticket.warn_on_useless_ticket(self, guild_id, channel, member, user_id, 1, f'Ticket Inutilizzato \"{channel.name}\""')     
+                    except:
+                        embed = discord.Embed(title="Errore", description="L'utente non è più presente nel server dunque non è stato possibile warnarlo.")
+                        await channel.send(embed=embed)
+                                   
                     message = ("Segnalazione inutile!",
                                "Mi dispiace ma sembra che il tuo ticket sia inutilizzato per cui sei stato warnato.",
                                15158332)
@@ -167,6 +172,13 @@ class Ticket(commands.Cog):
                 os.remove(image_path)
 
             conn.execute("UPDATE tickets SET channel_id = ? WHERE user_id = ?", (y.id, user_id,))
+            notify = self.bot.get_channel(765924249336414238)
+            notifyrole = guild.get_role(765925396754464790)
+            try:
+                embednotify = discord.Embed(title="Ticket Aperto", description=f"E' stato aperto un ticket da {user} | Ticket-{n}")
+                await notify.send(embed=embednotify, content=f"{notifyrole.mention}")
+            except:
+                pass
 
         await conn.commit()
 
@@ -185,7 +197,8 @@ class Ticket(commands.Cog):
         thelper = guild.get_role(762459426128789525)
         
         utente = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
-        utente = guild.get_member(utente)
+        print(utente)
+        utente = self.bot.get_user(utente)
         
         m = await channel.fetch_message(message_id)
         
@@ -214,7 +227,7 @@ class Ticket(commands.Cog):
         except:
             print("error2ticket")
         
-        await conn.commit()        
+        await conn.commit()      
 
         await channel.set_permissions(supporter, read_messages=False, send_messages=False, add_reactions=False)
         await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True, attach_files=True)
@@ -244,6 +257,12 @@ class Ticket(commands.Cog):
         await msg.add_reaction('🔴')
         await msg.add_reaction('🟡')
         await msg.add_reaction('🟢')
+        notify = self.bot.get_channel(765924249336414238)
+        try:
+            embednotify = discord.Embed(title="Ticket Claimato", description=f"E' stato claimato un ticket da {admin.name} creato da {utente.name} | {channel.name}")
+            await notify.send(embed=embednotify)
+        except:
+            pass
 
     async def delete_channel(self, channel_id):
 
@@ -285,21 +304,36 @@ class Ticket(commands.Cog):
         admin = self.bot.get_user(ticket[0][3])
         
         if len(cached_messages) == 0:
-            description = "Nessun Messaggio"
-            embed = discord.Embed(title = title, description = description)
-            embed.add_field(name="Creatore", value=f"{user.mention}")
-            embed.add_field(name="Admin", value=f"{admin.mention}")
-            embed.add_field(name="Stato", value=f"{self.stato}")
-            await cache.send(embed=embed)   
+            try:
+                description = "Nessun Messaggio"
+                embed = discord.Embed(title = title, description = description)
+                embed.add_field(name="Creatore", value=f"{user.mention}")
+                embed.add_field(name="Admin", value=f"{admin.mention}")
+                embed.add_field(name="Stato", value=f"{self.stato}")
+                await cache.send(embed=embed)   
+            except:
+                description = "Nessun Messaggio"
+                embed = discord.Embed(title = title, description = description)
+                embed.add_field(name="Creatore", value=f"Non disponibile")
+                embed.add_field(name="Admin", value=f"{admin.mention}")
+                embed.add_field(name="Stato", value=f"{self.stato}")
+                await cache.send(embed=embed)   
         else:
             with open(f'{n_ticket}.txt', 'w+') as f:
                 f.write('\n'.join(cached_messages))
                 
-            embed = discord.Embed(title = title)
-            embed.add_field(name="Creatore", value=f"{user}")
-            embed.add_field(name="Admin", value=f"{admin}")
-            embed.add_field(name="Stato", value=f"{self.stato}")
-            await cache.send(embed=embed)
+            try:   
+                embed = discord.Embed(title = title)
+                embed.add_field(name="Creatore", value=f"{user}")
+                embed.add_field(name="Admin", value=f"{admin}")
+                embed.add_field(name="Stato", value=f"{self.stato}")
+                await cache.send(embed=embed)
+            except:
+                embed = discord.Embed(title = title)
+                embed.add_field(name="Creatore", value=f"Non disponibile")
+                embed.add_field(name="Admin", value=f"{admin}")
+                embed.add_field(name="Stato", value=f"{self.stato}")
+                await cache.send(embed=embed)
             
             with open(f'{n_ticket}.txt', 'rb') as f:
                 await cache.send(file=discord.File(f))

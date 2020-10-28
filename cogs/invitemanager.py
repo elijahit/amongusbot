@@ -62,7 +62,7 @@ class InviteManager(commands.Cog):
             guid_invites = await invite.guild.invites()
 
             cfg = self.bot.get_cog('Config')
-            member = invite.guild.get_member(invite.inviter.id)
+            member = self.bot.get_user(invite.inviter.id)
             user_roles = set([role.id for role in member.roles])
             admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3))
 

@@ -65,7 +65,7 @@ class Interactions(commands.Cog):
                                                 member.guild.icon_url,
                                                 "Among Us ita © amongusita.it | Devloped by 3rd Party Developers")
 
-        await debug.send(embed=welcome_message)
+        await member.send(embed=welcome_message)
 
     async def checkinvite(self, message):
         pass
@@ -103,6 +103,8 @@ class Interactions(commands.Cog):
         await entrychannel.send(embed=login_embed)
         crewmember = member.guild.get_role(746124009715924996)
         await member.add_roles(crewmember)
+
+        await self.welcome_dm(member)
 
         print(f"[LOG] {member.name}#{member.discriminator} è entrato nel server discord")
         print(f"{member.id}")

@@ -11,15 +11,13 @@ class Poll(commands.Cog):
 
     @commands.command()
     async def poll(self, ctx, domanda, *opzioni):
-
-        # Inizializza i polls
-
         db = self.bot.get_cog('Db')
         embeds = self.bot.get_cog('Embeds')
         cfg = self.bot.get_cog("Config")
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.roledev))
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
+        cfg.rolea6, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -117,9 +115,9 @@ class Poll(commands.Cog):
                     stats = []
 
                     for i, react in enumerate(msg.reactions):
-                        stats.append(int(((react.count - 1) / totale) * 100))
+                        stats.append(round(((react.count - 1) / totale) * 100))
 
-                        intero = int(stats[i] / 10)
+                        intero = round(6 * stats[i] / 100)
 
                         bar = ""
 
@@ -130,7 +128,7 @@ class Poll(commands.Cog):
                             bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * 6 + "<:pieno3:760485685395718164>"
 
                         else:
-                            bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * (intero - 3) + "<:vuoto2:760485783542693919>" * (7 - (intero)) + "<:vuoto3:760485761593770034>"
+                            bar = "<:pieno1:760485732711268382>" + "<:pieno2:760485711681683486>" * intero + "<:vuoto2:760485783542693919>" * (6 - intero) + "<:vuoto3:760485761593770034>"
 
 
                         embed.add_field(name=f"{reactions[i]} - {stats[i]}%", value=bar, inline=False)
@@ -148,7 +146,8 @@ class Poll(commands.Cog):
         cfg = self.bot.get_cog("Config")
 
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.roledev))
+        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
+        cfg.rolea6, cfg.roledev))
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -206,6 +205,8 @@ class Poll(commands.Cog):
         embeds = self.bot.get_cog('Embeds')
         cfg = self.bot.get_cog("Config")
 
+        reactions = ["🇦", "🇧", "🇨", "🇩", "🇪", "🇫", "🇬", "🇭", "🇮", "🇯"]
+
         user_roles = set([role.id for role in ctx.message.author.roles])
         admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
         cfg.rolea6, cfg.roledev))
@@ -214,17 +215,26 @@ class Poll(commands.Cog):
             await ctx.message.delete()
 
             try:
-                command = "INSERT INTO polls (msg_id, channel_id) VALUES (?, ?)"
-                db.Cursor.execute(command, (msg_id, channel_id))
+                query = "SELECT msg_id FROM polls WHERE msg_id=?"
+                db.Cursor.execute(query, (msg_id,))
+                in_the_db = db.Cursor.fetchone()
                 db.Database.commit()
 
-                channel = self.bot.get_channel(764492739660218379)
-                msg = await channel.fetch_message(msg_id)
+                if in_the_db == None:
+                    command = "INSERT INTO polls (msg_id, channel_id) VALUES (?, ?)"
+                    db.Cursor.execute(command, (msg_id, channel_id))
+                    db.Database.commit()
 
-                for i, field in enumerate(msg.embeds[0].fields):
-                    await msg.add_reaction(reactions[i])
+                    channel = self.bot.get_channel(int(channel_id))
+                    msg = await channel.fetch_message(msg_id)
 
-                await ctx.channel.send(embed=embeds.get_success_message("Poll aggiunto al db."))
+                    for i, field in enumerate(msg.embeds[0].fields):
+                        await msg.add_reaction(reactions[i])
+
+                    await ctx.channel.send(embed=embeds.get_success_message("Poll aggiunto al db."))
+
+                else:
+                    await ctx.channel.send(embed=embeds.get_error_message("Il poll è già nel db."))
 
             except Exception:
                 await ctx.channel.send(embed=embeds.get_error_message("Non sono riuscito ad aggiungere il poll al db."))
@@ -236,11 +246,13 @@ class Poll(commands.Cog):
         cfg = self.bot.get_cog("Config")
 
         name = "Polls System"
-        field = ("Comandi Poll","it!poll (\"Domanda\") (\"Opzione 1\") (\"Opzione 2\") **[Inizializza il poll con un massimo di 10 opzioni]**\n\
-                                 it!delete_poll (msg_id) **[Rimuove tutti i polls dal db]** \n\
-                                 it!delete_polls **[Rimuove il poll selezionato dal db]** \n\
-                                 it!add_poll (msg_id) (channel_id)  **[Aggiunge al db il poll indicato]** \n\
-                                 it!pollshelp **[Info sul modulo Poll]**")
+        field = ("Comandi Poll",'''
+poll (\"Domanda\") (\"Opzione 1\") (\"Opzione 2\") **[Inizializza il poll con un massimo di 10 opzioni]**\n
+delete_poll (msg_id) **[Rimuove tutti i polls dal db]** \n
+delete_polls **[Rimuove il poll selezionato dal db]** \n
+add_poll (msg_id) (channel_id)  **[Aggiunge al db il poll indicato]** \n
+pollshelp **[Info sul modulo Poll]**
+''')
 
         about_embed = embed.get_standard_embed(name,
                                                cfg.blue,
