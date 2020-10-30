@@ -1,22 +1,16 @@
-# Sistema Controllo Hack per Among Us Ita (amongusita.it)
-# Sviluppato da iTzSgrullee_#585
-# Per Among Us Ita#2534
 import datetime as dt
-import asyncio
+
 import discord
 from discord.ext import commands
-
-mess = None
-time_start = None
-sus_users = [(" ", " ")]
-admin_live_id = ""
-inUso = False
 
 
 class Ctrlhack(commands.Cog):
 
     def __init__(self, bot):
+        # 762080734537056266 TRUE
+        # 758790855321845764 TEST
         self.bot = bot
+        self.ctr_category = 762080734537056266
 
     @commands.command()
     async def hackhelp(self, ctx):
@@ -27,11 +21,11 @@ class Ctrlhack(commands.Cog):
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             cmd_ls = discord.Embed(title="LISTA COMANDI", description="**Comandi admin** \n\
-            it!hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
+            !hack (numero stanza matchmaking) **[Convoca una stanza matchmaking per il controllo hack]**\n\
                 \n\
                 **Per risolvere i bug** \n\
-                it!FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
-                    it!RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
+                !FAIL **[elimina TUTTE le chat vocali dalla categoria 'controllo hack']**\n\
+                    !RESETLIST **[resetta la lista degli helper con un controllo hack in corso]**")
             cmd_ls.set_author(name="Among Us Ita")
             cmd_ls.set_footer(text=cfg.footer)
 
@@ -40,22 +34,17 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def hack(self, ctx, num):
         cfg = self.bot.get_cog('Config')
+        db = self.bot.get_cog('Db')
         user_roles = set([role.id for role in ctx.message.author.roles])
         admin_roles = cfg.rolea_top8
 
-        if len(user_roles.intersection(admin_roles)) != 0:
+        if len(user_roles.intersection(admin_roles)) == 0:
             await ctx.message.delete()
-            global mess, admin_live_id
 
             user_send = ctx.message.author
-            if user_send is None:
-                await asyncio.sleep(1)
-                user_send = ctx.message.author
-                await asyncio.sleep(3)
+            check = db.fetchall('SELECT * FROM ctrlhack WHERE admin_id = ?', (user_send.id,))
 
-            if str(user_send.id) not in admin_live_id:
-
-                admin_live_id += f"{str(user_send.id)} "
+            if len(check) == 0:
 
                 warning = discord.Embed(title="🟥 E' STATO CONVOCATO UN CONTROLLO HACK 🟥",
                                         description=f"{user_send.mention} ha convocato il gruppo: matchmaking {num} per un controllo hack, proseguire?",
@@ -67,17 +56,17 @@ class Ctrlhack(commands.Cog):
                 await message_sent.add_reaction("🟢")
                 await message_sent.add_reaction("🔴")
 
+                db.execute("INSERT INTO ctrlhack (admin_id, message_id, matchmaking_num) VALUES (?, ?, ?)",
+                           (user_send.id, message_sent.id, int(num),))
+                await db.commit()
             else:
-                warning = discord.Embed(title="🟪 UN MEMBRO PUO' AVERE UN MASSIMO DI UN CONTROLLO APERTO 🟪",
-                                        description=f"{user_send.mention}, \nchiudi prima tutti i tuoi controlli  poi riprova",
+                warning = discord.Embed(title="🟪 UN ADMIN PUO' AVERE UN MASSIMO DI UN CONTROLLO APERTO 🟪",
+                                        description=f"{user_send.mention}, \nchiudi prima tutti i tuoi controlli  poi "
+                                                    f"riprova",
                                         color=discord.Color.purple(), timestamp=dt.datetime.utcnow())
                 warning.set_footer(text=cfg.footer)
                 warning.set_author(name="Among Us Ita")
-                mexa = await ctx.channel.send(embed=warning)
-
-                await asyncio.sleep(5)
-
-                await mexa.delete()
+                await ctx.channel.send(embed=warning, delete_after=5)
 
     @hack.error
     async def hack_error(self, ctx, error):
@@ -86,215 +75,210 @@ class Ctrlhack(commands.Cog):
             await ctx.send("[!] USA: !hack (numero matchmaking)")
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
+    async def on_raw_reaction_add(self, payload):
         cfg = self.bot.get_cog("Config")
-        if user.bot is False and str(reaction.message.embeds[
-                                         0].author) == "EmbedProxy(name='Among Us Ita')" and reaction.message.channel.category_id == 762080734537056266:
-            global inUso, admin_live_id
+        db = self.bot.get_cog("Db")
+        user_id = payload.user_id
+        channel_id = payload.channel_id
+        message_id = payload.message_id
+        emoji = payload.emoji
+        emoji_name = payload.emoji.name
+        guild_id = payload.guild_id
+        member = payload.member
+        # user_roles = [i.id for i in member.roles]
 
-            if reaction.emoji == "🟢" and str(user.id) == (
-                    ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                     "").replace(
-                        "<@",
-                        "").replace(
-                        ":", "")) and inUso is False:
+        if member.bot is False:
+            check_list = db.fetchall("SELECT * FROM ctrlhack WHERE admin_id = ? AND message_id = ?", (member.id, message_id,))
+            channel = self.bot.get_channel(channel_id)
+            message = await channel.fetch_message(message_id)
+            guild = self.bot.get_guild(guild_id)
+            if len(check_list) > 0:
+                check = check_list[0]
+            else:
+                await message.remove_reaction(emoji, member)
+                return 0
 
-                await reaction.message.clear_reaction("🔴")
+            if emoji_name == "🟢" and user_id == check[1]:
+                num = check[3]
 
-                global sus_users
-                sus_users = [(" ", " ")]
-                sus_users.pop()
+                await message.clear_reaction("🔴")
 
-                # TODO
-                # Da rifare l'intero sistema perchè con i globals non si può guardare
+                guild_now = message.channel.guild
+                channel_got = discord.utils.get(guild_now.voice_channels, name=f"matchmaking {num}")
 
-                global guild_now, category, category_channels, i, hackchannels
-                guild_now = reaction.message.channel.guild
-                channel_got = discord.utils.get(guild_now.voice_channels,
-                                                name=f"matchmaking {(reaction.message.embeds[0].description.split())[6]}")
                 category = discord.utils.get(guild_now.categories, name="controllo hack")
                 category_channels = category.voice_channels
 
                 try:
-                    user_send = self.bot.get_user(int(
-                        ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                         "").replace(
-                            "<@", "").replace(":", "")))
-
-                    inUso = True
+                    user_send = self.bot.get_user(check[1])
 
                     warning = discord.Embed(title="🟡 IL TUO CONTROLLO STA PER INIZIARE 🟡",
-                                            description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Aspetta che vengano create le tue stanze!* \n \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*",
+                                            description=f"{user_send.mention}: torna qui una volta finito per "
+                                                        f"chiudere il controllo \n \n*Aspetta che vengano create le "
+                                                        f"tue stanze!* \n \n \n**Hai 10 secondi...** \n \n*Durante "
+                                                        f"questa operazione non sarà possibile reagire ad altri "
+                                                        f"controlli hack*",
                                             color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
                     warning.set_footer(text=cfg.footer)
                     warning.set_author(name="HackBot")
-                    await discord.Message.edit(reaction.message, embed=warning)
-
-                    member2_0 = []
-                    for member in channel_got.members:
-                        memberprovv = f"{str(member.name)}#{str(member.discriminator)} ({member.nick})" if member.nick is not None else f"{str(member.name)}#{str(member.discriminator)} ({member.name})"
-                        if member.is_on_mobile() is True:
-                            member2_0 += f"{memberprovv} su 📱\n"
-                        else:
-                            member2_0 += f"{memberprovv} su 💻\n"
-
-                    sus_users.append(tuple(["".join(member2_0), (
-                        ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                         "").replace(
-                            "<@", "").replace(":", ""))]))
+                    await message.edit(embed=warning)
 
                     i = 1
 
                     for channel in category_channels:
-                        if str(channel).startswith(f"Vocale {i} generale"):
+                        if channel.name.startswith(f"Vocale {i} generale"):
                             i += 1
+
+                    db.execute("UPDATE ctrlhack SET ctrl_num = ? WHERE admin_id = ?", (i, check[1],))
+                    await db.commit()
 
                     await category.create_voice_channel(f"Vocale {i} generale 🥵")
                     await category.create_voice_channel(f"┠ Vocale {i}-1 🥶")
                     await category.create_voice_channel(f"┠ Vocale {i}-2 🥶")
                     await category.create_voice_channel(f"┗ Vocale {i}-3 🥶")
 
-                    hackchannels = [discord.utils.get(guild_now.voice_channels, name=f"Vocale {i} generale 🥵"),
-                                    discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-1 🥶"),
-                                    discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-2 🥶"),
-                                    discord.utils.get(guild_now.voice_channels, name=f"┗ Vocale {i}-3 🥶")]
+                    hackchannels = [
+                        discord.utils.get(guild_now.voice_channels, name=f"Vocale {i} generale 🥵"),
+                        discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-1 🥶"),
+                        discord.utils.get(guild_now.voice_channels, name=f"┠ Vocale {i}-2 🥶"),
+                        discord.utils.get(guild_now.voice_channels, name=f"┗ Vocale {i}-3 🥶")
+                    ]
 
                     warning = discord.Embed(title="🟨 IL TUO CONTROLLO STA PER INIZIARE 🟨",
-                                            description=f"{user_send.mention}: torna qui una volta finito per chiudere il controllo \n \n*Entra nella chat vocale (Vocale generale {i} 🥵)!* \n \n**Hai 10 secondi...** \n \n*Durante questa operazione non sarà possibile reagire ad altri controlli hack*",
+                                            description=f"{user_send.mention}: torna qui una volta finito per "
+                                                        f"chiudere il controllo \n \n*Entra nella chat vocale (Voca"
+                                                        f"le generale {i} 🥵)!* \n \n**Hai 10 secondi...** \n "
+                                                        f"\n*Durante questa operazione non sarà possibile reagire ad "
+                                                        f"altri controlli hack*",
                                             color=discord.Color.orange(), timestamp=dt.datetime.utcnow())
                     warning.set_footer(text=cfg.footer)
                     warning.set_author(name="HackBot")
-                    await discord.Message.edit(reaction.message, embed=warning)
+                    await message.edit(embed=warning)
 
-                    conn = self.bot.get_cog("Db")
                     try:
-                        for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
+                        for g in db.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,)):
                             if g[4] is None:
-                                conn.execute("UPDATE analytics SET hack = 1 WHERE admin_id = ?", (user.id,))
+                                db.execute("UPDATE analytics SET hack = 1 WHERE admin_id = ?", (user_id,))
                             else:
-                                conn.execute("UPDATE analytics SET hack = hack+1 WHERE admin_id = ?", (user.id,))
-                    except:
-                        print("errore")
+                                db.execute("UPDATE analytics SET hack = hack+1 WHERE admin_id = ?", (user_id,))
+                    except Exception as e:
+                        print(f"Error: {e}")
 
                     try:
-                        d = conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,))
+                        d = db.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user_id,))
                         if len(d) == 0:
-                            conn.execute("INSERT INTO analytics (admin_id, hack) VALUES (?, ?)", (user.id, 1,))
-                    except:
-                        print("error2")
+                            db.execute("INSERT INTO analytics (admin_id, hack) VALUES (?, ?)", (user_id, 1,))
+                    except Exception as e:
+                        print(f"Error2: {e}")
 
-                    await conn.commit()
+                    await db.commit()
 
-                    for member in channel_got.members:
-                        await member.move_to(hackchannels[0])
+                    for user_in in channel_got.members:
+                        await user_in.move_to(hackchannels[0])
+                        member_id = user_in.id
+                        member_nick = user_in.nick
+                        member_name = user_in.name
+                        member_discriminator = user_in.discriminator
+                        member_device = "📱" if user_in.is_on_mobile() else "💻"
+                        if member_nick is None:
+                            member_nick = f"{member_name} #{member_discriminator} ({member_name})"
+                        db.execute("INSERT INTO userundercontrol (id, user_id, user_name, user_device) VALUES (?, "
+                                   "?, ?, ?)", (check[0], member_id, member_nick, member_device,))
+                    await db.commit()
 
-                    await reaction.message.clear_reaction("🟢")
-
-                    await asyncio.sleep(10)
+                    await message.clear_reaction("🟢")
 
                     warning = discord.Embed(title="🟩 CONTROLLO IN CORSO 🟩",
-                                            description=f"Lo staff {user_send.mention} sta controllando degli utenti nella {i}° chat vocale \n \nUna volta chiuso al posto di questo messaggio troverete un rapporto dettagliato del controllo \n \n**PREMI LA REAZIONE PER CHIUDERE IL CONTROLLO**",
+                                            description=f"Lo staff {user_send.mention} sta controllando degli utenti "
+                                                        f"nella {i}° chat vocale \n \nUna volta chiuso al posto di "
+                                                        f"questo messaggio troverete un rapporto dettagliato del "
+                                                        f"controllo \n \n**PREMI LA REAZIONE PER CHIUDERE IL "
+                                                        f"CONTROLLO**",
                                             color=discord.Color.green(), timestamp=dt.datetime.utcnow())
                     warning.set_footer(text=cfg.footer)
                     warning.set_author(name="Among Us Ita")
 
-                    inUso = False
-
-                    # user_send = (
-                    #     ((reaction.message.embeds[0].description.split())[2].replace("<@!", "")).replace(">",
-                    #                                                                                      "").replace(
-                    #         "<@", "").replace(":", ""))
-
-                    await discord.Message.edit(reaction.message, embed=warning)
-                    await discord.Message.add_reaction(reaction.message, "🔕")
+                    await message.edit(embed=warning)
+                    await message.add_reaction("🔕")
 
                 except Exception as error:
-                    user_send = self.bot.get_user(int(
-                        ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                         "").replace(
-                            "<@", "").replace(":", "")))
-                    admin_live_id = admin_live_id.replace(str(user_send.id), " ")
-                    inUso = False
+                    user_id = check[1]
+                    db.execute("DELETE FROM ctrlhack WHERE admin_id = ?", (user_id,))
+                    await db.commit()
 
                     warning = discord.Embed(title="🧻🚽 OH NO, QUALCOSA E' ANDATO STORTO 🚽🧻",
-                                            description=f"{user_send.mention} la tua richiesta non è andata a buon termine, riprova e controlla che la stanza esista \nSe il problema persiste non esitare a contattare uno degli sviluppatori. \n{(reaction.message.channel.guild.get_role(cfg.IDruoliDev[0])).mention} | {(reaction.message.channel.guild.get_role(cfg.IDruoliDev[1])).mention} \n**ERRORE:**{error} \n \nQuesto messaggio si autodistruggerà tra 30 secondi...",
+                                            description=f"{member.mention} la tua richiesta non è andata a buon "
+                                                        f"termine, riprova e controlla che la stanza esista \nSe il "
+                                                        f"problema persiste non esitare a contattare uno degli "
+                                                        f"sviluppatori. \n"
+                                                        f"{(guild.get_role(cfg.IDruoliDev[0])).mention} | {(guild.get_role(cfg.IDruoliDev[1])).mention} \n**ERRORE:**{error} \n \nQuesto messaggio si autodistruggerà tra 30 secondi...",
                                             color=discord.Color.dark_orange(), timestamp=dt.datetime.utcnow())
                     warning.set_footer(text=cfg.footer)
                     warning.set_author(name="Among Us Ita")
-                    await discord.Message.edit(reaction.message, embed=warning, delete_after=30)
-                    await reaction.message.clear_reactions()
+                    await message.edit(embed=warning, delete_after=30)
+                    await message.clear_reactions()
 
-            elif reaction.emoji == "🔴" and str(user.id) == (
-                    ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                     "").replace(
-                        "<@",
-                        "").replace(
-                        ":", "")) and inUso is False:
-                await reaction.message.clear_reactions()
+            elif emoji_name == "🔴" and user_id == check[1]:
+                await message.clear_reactions()
 
-                user_send = self.bot.get_user(int(
-                    ((reaction.message.embeds[0].description.split())[0].replace("<@!", "")).replace(">",
-                                                                                                     "").replace(
-                        "<@", "").replace(":", "")))
+                user_send = self.bot.get_user(check[1])
                 warning = discord.Embed(title="⬛️ IL CONTROLLO HACK E' STATO REVOCATO ⬛️",
-                                        description=f"{user_send.mention}: questo messaggio si autodistruggerà tra 3 secondi...",
+                                        description=f"{user_send.mention}: questo messaggio si autodistruggerà tra 3 "
+                                                    f"secondi...",
                                         color=discord.Colour.default(), timestamp=dt.datetime.utcnow())
                 warning.set_footer(text=cfg.footer)
                 warning.set_author(name="Among Us Ita")
-                await discord.Message.edit(reaction.message, embed=warning, delete_after=3)
+                await message.edit(embed=warning, delete_after=3)
 
-                admin_live_id = admin_live_id.replace(str(user_send.id), " ")
+                user_send = check[1]
+                db.execute("DELETE FROM ctrlhack WHERE admin_id = ?", (user_send,))
+                await db.commit()
 
-            elif reaction.emoji == "🔕" and (reaction.message.embeds[0].title.split())[0] == "🟩" and str(
-                    user.id) == (
-                    ((reaction.message.embeds[0].description.split())[2].replace("<@!", "")).replace(">",
-                                                                                                     "").replace(
-                        "<@",
-                        "").replace(
-                        ":", "")) and inUso is False:
-                user_send = self.bot.get_user(int(
-                    ((reaction.message.embeds[0].description.split())[2].replace("<@!", "")).replace(">",
-                                                                                                     "").replace(
-                        "<@", "").replace(":", "")))
-                numero = (reaction.message.embeds[0].description.split())[8].replace("°", "")
+            elif emoji_name == "🔕" and user_id == check[1]:
+                user_send = self.bot.get_user(check[1])
+                numero = check[4]
 
-                times = int((dt.datetime.utcnow() - reaction.message.embeds[0].timestamp).total_seconds())
+                times = int((dt.datetime.utcnow() - message.embeds[0].timestamp).total_seconds())
                 timem = int(round(times / 60)) if times >= 60 else 0
                 times -= timem * 60 if timem != 0 else 0
                 timeh = int(round(timem / 60)) if timem >= 60 else 0
                 timem -= timeh * 60 if timeh != 0 else 0
 
-                sus_users_true = None
+                sus_users = db.fetchall("SELECT * FROM userundercontrol WHERE id = ?", (check[0],))
+
+                sus_users_true = []
 
                 for c in sus_users:
-                    if c[1] == (
-                            ((reaction.message.embeds[0].description.split())[2].replace("<@!", "")).replace(">",
-                                                                                                             "").replace(
-                                "<@", "").replace(":", "")):
-                        sus_users_true = f"`{c[0]}`"
+                    sus_users_true.append(c[2] + ' su ' + c[3])
 
-                if sus_users_true == "``":
-                    sus_users_true = "`Nessuno`"
+                if len(sus_users_true) == 0:
+                    sus_users_true = ["`Nessuno`"]
+
+                sus_users_true = '\n'.join(sus_users_true)
 
                 warning = discord.Embed(title="⬜️ CONTROLLO HACK FINITO ⬜️",
                                         description=f"**STAFF:** {user_send.mention} \n \n**DURATA:** {abs(timeh)}:{abs(timem)}:{abs(times)}  _(h:mm:ss)_ \n**UTENTI COINVOLTI:** \n{sus_users_true}",
                                         color=discord.Color.lighter_gray(), timestamp=dt.datetime.utcnow())
                 warning.set_footer(text=cfg.footer)
                 warning.set_author(name="Among Us Ita")
-                await discord.Message.edit(reaction.message, embed=warning)
+                await message.edit(embed=warning)
 
+                guild_now = message.channel.guild
+                category = discord.utils.get(guild_now.categories, name="controllo hack")
                 category_channels = category.voice_channels
 
                 for channel in category_channels:
-                    if str(channel).startswith(f"Vocale {numero}") or str(channel).startswith(
-                            f"┠ Vocale {numero}") or str(channel).startswith(f"┗ Vocale {numero}"):
+                    if channel.name.startswith(f"Vocale {numero}") or channel.name.startswith(
+                            f"┠ Vocale {numero}") or channel.name.startswith(f"┗ Vocale {numero}"):
                         await channel.delete()
 
-                await reaction.message.clear_reaction("🔕")
-                admin_live_id = admin_live_id.replace(str(user_send.id), " ")
+                await message.clear_reaction("🔕")
+                user_send = check[1]
+                db.execute("DELETE FROM ctrlhack WHERE admin_id = ?", (user_send,))
+                await db.commit()
 
             else:
-                await reaction.message.remove_reaction(reaction, user)
+                await message.remove_reaction(emoji, member)
 
         else:
             pass
@@ -313,14 +297,16 @@ class Ctrlhack(commands.Cog):
     @commands.command()
     async def resetlist(self, ctx):
         cfg = self.bot.get_cog('Config')
+        db = self.bot.get_cog('Db')
         user_roles = set([role.id for role in ctx.message.author.roles])
         admin_roles = cfg.rolea_all
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
-            global admin_live_id
-            admin_live_id = ""
-            await ctx.channel.send("svuotato", delete_after=2)
+            db.execute("DELETE FROM ctrlhack")
+            db.execute("DELETE FROM user_under_control")
+            await db.commit()
+            await ctx.channel.send("Database svuotato", delete_after=2)
 
 
 def setup(bot):

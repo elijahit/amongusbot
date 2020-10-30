@@ -145,7 +145,7 @@ class Interactions(commands.Cog):
     async def on_command_error(self, _, error):
         if isinstance(error, CommandNotFound):
             return
-        raise error
+        # raise error -> troppi errori
 
     @tasks.loop(seconds=10)
     async def messageloop(self):
