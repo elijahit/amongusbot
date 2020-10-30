@@ -208,7 +208,7 @@ class Ticket(commands.Cog):
         utente_id = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
         utente = self.bot.get_user(utente_id)
         if utente is None:
-            utente = guild.fetch_member(utente_id)
+            utente = await guild.fetch_member(utente_id)
 
         m = await channel.fetch_message(message_id)
 
