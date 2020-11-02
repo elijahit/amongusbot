@@ -1,8 +1,10 @@
-from discord.ext.commands import CommandNotFound
-from datetime import datetime, timedelta
-from discord.ext import commands, tasks
-import discord
 import time
+from datetime import datetime, timedelta
+
+import discord
+from discord.ext import commands, tasks
+from discord.ext.commands import CommandNotFound
+
 
 class Interactions(commands.Cog):
 
@@ -16,11 +18,11 @@ class Interactions(commands.Cog):
             self.messageloop.start()
 
     async def welcome_dm(self, member):
-        debug = self.bot.get_channel(758089360410411108)
+        # debug = self.bot.get_channel(758089360410411108)
         embed = self.bot.get_cog('Embeds')
         cfg = self.bot.get_cog('Config')
 
-        ##CANALI##
+        # CANALI
         regolamento = self.bot.get_channel(750840605545857064)
         annunci = self.bot.get_channel(748504257782743081)
         wtf = self.bot.get_channel(755865318777159790)
@@ -31,46 +33,43 @@ class Interactions(commands.Cog):
         live = self.bot.get_channel(751062558206590976)
         ruoli = self.bot.get_channel(746124795791540224)
 
-
         field = (f"Benvenuto", cfg.welcomemessage.format(user=member.mention,
-                                        server=member.guild.name,
-                                        regole=regolamento.mention,
-                                        annunci=annunci.mention,
-                                        wtf=wtf.mention,
-                                        booster=booster.mention,
-                                        report=report.mention,
-                                        matchmaking=matchmaking.mention,
-                                        generale=generale.mention,
-                                        live=live.mention,
-                                        ruoli=ruoli.mention))
+                                                         server=member.guild.name,
+                                                         regole=regolamento.mention,
+                                                         annunci=annunci.mention,
+                                                         wtf=wtf.mention,
+                                                         booster=booster.mention,
+                                                         report=report.mention,
+                                                         matchmaking=matchmaking.mention,
+                                                         generale=generale.mention,
+                                                         live=live.mention,
+                                                         ruoli=ruoli.mention))
 
         field2 = (f"Vuoi supportarci?", cfg.welcomemessage2.format(user=member.mention,
-                                        server=member.guild.name,
-                                        regole=regolamento.mention,
-                                        annunci=annunci.mention,
-                                        wtf=wtf.mention,
-                                        booster=booster.mention,
-                                        report=report.mention,
-                                        matchmaking=matchmaking.mention,
-                                        generale=generale.mention,
-                                        live=live.mention,
-                                        ruoli=ruoli.mention))
+                                                                   server=member.guild.name,
+                                                                   regole=regolamento.mention,
+                                                                   annunci=annunci.mention,
+                                                                   wtf=wtf.mention,
+                                                                   booster=booster.mention,
+                                                                   report=report.mention,
+                                                                   matchmaking=matchmaking.mention,
+                                                                   generale=generale.mention,
+                                                                   live=live.mention,
+                                                                   ruoli=ruoli.mention))
         field3 = (f"\n\nIn fine", cfg.welcomemessage3.format(server=member.guild.name))
         welcome_message = embed.get_welcomemessage_embed("Benvenuto su Among Us Ita",
-                                                cfg.lightgreen,
-                                                member.avatar_url,
-                                                [field, field2],
-                                                field3, #inlinefield
-                                                "https://cdn.discordapp.com/attachments/758087809671102574/763020270084554772/Benvenuto.jpg",
-                                                member.guild.icon_url,
-                                                "Among Us ita © amongusita.it | Devloped by 3rd Party Developers")
+                                                         cfg.lightgreen,
+                                                         member.avatar_url,
+                                                         [field, field2],
+                                                         field3,  # inlinefield
+                                                         "https://cdn.discordapp.com/attachments/758087809671102574/763020270084554772/Benvenuto.jpg",
+                                                         member.guild.icon_url,
+                                                         "Among Us ita © amongusita.it | Devloped by 3rd Party Developers")
 
         await member.send(embed=welcome_message)
 
     async def checkinvite(self, message):
         pass
-        
-
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -78,7 +77,7 @@ class Interactions(commands.Cog):
         db = self.bot.get_cog('Db')
         embed = self.bot.get_cog('Embeds')
 
-        # Inserisce l'utente nel DB
+        # Insert User into db
         query = "INSERT INTO users (ID, Name, Creato, Joined) VALUES (?, ?, ?, ?)"
         values = (member.id, member.name, member.created_at.strftime("%d/%m/%y @ %H:%M:%S"),
                   member.joined_at.strftime("%d/%m/%y @ %H:%M:%S"))
@@ -88,13 +87,12 @@ class Interactions(commands.Cog):
 
         # Embed d'ingresso
         entrychannel = self.bot.get_channel(cfg.ingresso)
-        name = f"{member}"
         field = ("userlogs",
-                 f"**{member}** è entrato nel server.\n"
+                 f"**{member.mention}** è entrato nel server.\n"
                  f"**Id**: {member.id}\n"
                  f"**Creato il**: {member.created_at.strftime('%d/%m/%y @ %H:%M:%S')}")
 
-        login_embed = embed.get_standard_embed(name,
+        login_embed = embed.get_standard_embed(member.mention,
                                                cfg.green,
                                                member.avatar_url,
                                                [field],
@@ -110,14 +108,14 @@ class Interactions(commands.Cog):
         print(f"{member.id}")
 
         # welcome dm
-        try:       
-            #self.welcome_dm(member)
+        try:
+            # self.welcome_dm(member)
             pass
         except:
             pass
 
-    @commands.command()#addrole
-    async def debugdm(self, ctx, member:discord.Member):
+    @commands.command()  # addrole
+    async def debugdm(self, _, member: discord.Member):
         await self.welcome_dm(member)
 
     @commands.Cog.listener()
@@ -143,12 +141,11 @@ class Interactions(commands.Cog):
         print("[LOG] {0}#{1} è uscito dal server discord".format(member.name, member.discriminator))
         print("{0}".format(member.id))
 
-
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, _, error):
         if isinstance(error, CommandNotFound):
             return
-        raise error
+        # raise error -> troppi errori
 
     @tasks.loop(seconds=10)
     async def messageloop(self):
@@ -158,51 +155,51 @@ class Interactions(commands.Cog):
 
         if len(self.tasks) > 0:
             for i in self.tasks:
-                
+
                 # 0 = id, 1 = channel_id, 2 = text, 3 = freq
                 now = round(int(time.time()), -1)
 
-                # TODO: Read list of recurrent msgs from DB
                 msg = i[2]
                 freq = i[3]
-                #
 
                 freq = datetime.strptime(freq, "%H:%M:%S")
                 ms = int(timedelta(hours=freq.hour, minutes=freq.minute, seconds=freq.second).total_seconds())
 
                 if now % ms == 0:
-                    Send = discord.Embed(title = "🤖 • Messaggio automatico", description= f"{msg}")
-                    await self.bot.get_channel(i[1]).send(embed=Send)
+                    send = discord.Embed(title="🤖 • Messaggio automatico", description=f"{msg}")
+                    await self.bot.get_channel(i[1]).send(embed=send)
 
     @messageloop.before_loop
-    async def before_loop(self):        
+    async def before_loop(self):
         await self.bot.wait_until_ready()
-    
+
     async def load_tasks(self):
         conn = self.bot.get_cog("Db")
         z = conn.fetchallnovalues("SELECT * FROM scheduled_tasks")
         self.tasks = z
-        
+
         if self.messageloop.is_running() is True:
             self.messageloop.restart()
         else:
-            self.messageloop.start()        
-    
+            self.messageloop.start()
+
     @commands.command()
     async def addmessage(self, ctx, channel_id: int, freq: str, *, text: str):
-        
+
         conn = self.bot.get_cog("Db")
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
         admin_roles = cfg.roledev
 
         if len(user_roles.intersection(admin_roles)) != 0:
-            conn.execute("INSERT INTO scheduled_tasks (channel_id, text, freq) VALUES (?, ?, ?)", (channel_id, text, freq,))
+            conn.execute("INSERT INTO scheduled_tasks (channel_id, text, freq) VALUES (?, ?, ?)",
+                         (channel_id, text, freq,))
             await conn.commit()
-            
+
             msg = f"Messaggio automatico in: {channel_id}\nesto: {text}\nFrequenza: {freq}"
             await ctx.send(content=msg, delete_after=40)
             await self.load_tasks()
+
     @addmessage.error
     async def addmessage_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):
@@ -211,7 +208,7 @@ class Interactions(commands.Cog):
 
     @commands.command()
     async def removemessage(self, ctx, messageid):
-        
+
         conn = self.bot.get_cog("Db")
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
@@ -220,11 +217,11 @@ class Interactions(commands.Cog):
         if len(user_roles.intersection(admin_roles)) != 0:
             conn.execute("DELETE FROM scheduled_tasks WHERE id=?", (messageid,))
             await conn.commit()
-            
+
             msg = f"Rimosso messaggio ID: {messageid}"
             await ctx.send(content=msg, delete_after=40)
             await self.load_tasks()
-    
+
     @removemessage.error
     async def removemessage_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument) or isinstance(error, commands.errors.BadArgument):

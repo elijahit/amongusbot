@@ -1,6 +1,5 @@
 from discord.ext import commands
 from discord.ext.commands.errors import ExtensionAlreadyLoaded, ExtensionNotLoaded, ExtensionNotFound
-import discord
 
 cogs_path = 'cogs.'
 
@@ -42,7 +41,8 @@ class Default(commands.Cog):
             await ctx.send(embed=embeds.get_error_message(description=f'[ERROR] Modulo {cog} inesistente'))
             return
 
-        await ctx.send(embed=embeds.get_success_message(description=f'[SUCCESS]: Modulo {args[0]} {action} con successo'))
+        await ctx.send(
+            embed=embeds.get_success_message(description=f'[SUCCESS]: Modulo {args[0]} {action} con successo'))
 
     @commands.command()
     async def load(self, ctx, *args):
@@ -57,10 +57,11 @@ class Default(commands.Cog):
         await self._cog_handler(ctx, 'ricaricato', *args)
 
     @commands.command()
-    async def list(self, ctx, *args):
+    async def list(self, ctx):
 
         embeds = self.bot.get_cog('Embeds')
-        await ctx.send(embed=embeds.get_success_message(description=', '.join([c for c in self.bot.cogs]), title='Moduli disponibili'))
+        await ctx.send(embed=embeds.get_success_message(description=', '.join([c for c in self.bot.cogs]),
+                                                        title='Moduli disponibili'))
 
 
 def setup(bot):

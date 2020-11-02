@@ -1,6 +1,6 @@
-from discord.ext import commands
-from discord import Embed, Message
 from discord import Color
+from discord import Embed
+from discord.ext import commands
 
 
 class Embeds(commands.Cog):
@@ -15,14 +15,13 @@ class Embeds(commands.Cog):
 
         for field in fields:
             embed.add_field(name=field[0], value=field[1])
-            
+
         embed.set_footer(text=footer)
 
         return embed
 
-    
     @staticmethod
-    def get_welcomemessage_embed (name, color, icon, fields, inlinefiled, image, thumbnail, footer):
+    def get_welcomemessage_embed(name, color, icon, fields, inlinefiled, image, thumbnail, footer):
         embed = Embed(color=color)
         embed.set_author(name=name, icon_url=icon)
 
@@ -62,7 +61,6 @@ class Embeds(commands.Cog):
         embed.set_footer(text=footer)
 
         return embed
-
 
     @staticmethod
     def get_error_message(description=None, color=Color(0xf72525)):

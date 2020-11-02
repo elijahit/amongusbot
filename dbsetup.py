@@ -20,12 +20,12 @@ create_addrole_table = """CREATE TABLE IF NOT EXISTS addrole (
                             );"""
 
 if __name__ == '__main__':
-
-    database = '/root/amongusbot/cogs/database.db'
+    database = 'cogs/database.db'
     connection = sqlite3.connect(database)
     cursor = connection.cursor()
 
     cursor.execute(create_users_table)
     cursor.execute(create_tickets_table)
     cursor.execute(create_addrole_table)
-
+    connection.commit()
+    connection.close()
