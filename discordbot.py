@@ -46,6 +46,6 @@ async def on_ready():
         authorize?client_id={bot.user.id}&scope=bot&permissions=8''')
 
 
-bot.run('NTk3Nzk3ODI2NjcxNDExMjEx.XSNUnA.DZzs7XUqg7zO0jGiz8WD83UGpaA',
+bot.run('NzU3NjQ5NDU0MjM1OTEwMTc0.X2jeCg.7pQN7yL4ylmrFXK8pSnGOdFqxRc',
         bot=True,
         reconnect=True)
