@@ -12,7 +12,6 @@ def get_prefix(bot, message):
 
 # TODO
 # cogs.poll
-# cogs.ctrlhack
 # cogs.staffmover -> dovrebbe andare
 
 
