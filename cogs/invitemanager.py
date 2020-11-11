@@ -53,7 +53,11 @@ class InviteManager(commands.Cog):
                     await bot_reply.delete()
                     await ctx.message.delete()
 
+<<<<<<< HEAD
     @commands.Cog.listener()
+=======
+    # @commands.Cog.listener()
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
     async def on_invite_create(self, invite):
 
         if invite.max_age == 0:

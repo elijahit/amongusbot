@@ -77,7 +77,7 @@ class Interactions(commands.Cog):
         db = self.bot.get_cog('Db')
         embed = self.bot.get_cog('Embeds')
 
-        # Inserisce l'utente nel DB
+        # Insert User into db
         query = "INSERT INTO users (ID, Name, Creato, Joined) VALUES (?, ?, ?, ?)"
         values = (member.id, member.name, member.created_at.strftime("%d/%m/%y @ %H:%M:%S"),
                   member.joined_at.strftime("%d/%m/%y @ %H:%M:%S"))
@@ -87,13 +87,12 @@ class Interactions(commands.Cog):
 
         # Embed d'ingresso
         entrychannel = self.bot.get_channel(cfg.ingresso)
-        name = f"{member}"
         field = ("userlogs",
-                 f"**{member}** è entrato nel server.\n"
+                 f"**{member.mention}** è entrato nel server.\n"
                  f"**Id**: {member.id}\n"
                  f"**Creato il**: {member.created_at.strftime('%d/%m/%y @ %H:%M:%S')}")
 
-        login_embed = embed.get_standard_embed(name,
+        login_embed = embed.get_standard_embed(member.mention,
                                                cfg.green,
                                                member.avatar_url,
                                                [field],
@@ -146,7 +145,7 @@ class Interactions(commands.Cog):
     async def on_command_error(self, _, error):
         if isinstance(error, CommandNotFound):
             return
-        raise error
+        # raise error -> troppi errori
 
     @tasks.loop(seconds=10)
     async def messageloop(self):
@@ -160,10 +159,8 @@ class Interactions(commands.Cog):
                 # 0 = id, 1 = channel_id, 2 = text, 3 = freq
                 now = round(int(time.time()), -1)
 
-                # TODO: Read list of recurrent msgs from DB
                 msg = i[2]
                 freq = i[3]
-                #
 
                 freq = datetime.strptime(freq, "%H:%M:%S")
                 ms = int(timedelta(hours=freq.hour, minutes=freq.minute, seconds=freq.second).total_seconds())

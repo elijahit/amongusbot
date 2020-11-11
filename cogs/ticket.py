@@ -120,7 +120,11 @@ class Ticket(commands.Cog):
                 elif emoji == '🔴':
                     # Da finire, manca la sezione warn
                     try:
+<<<<<<< HEAD
                         await Ticket.warn_on_useless_ticket(self, guild_id, channel, member, user_id, 1,
+=======
+                        await Ticket.warn_on_useless_ticket(self, guild_id, channel, member, 1,
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
                                                             f'Ticket Inutilizzato \"{channel.name}\""')
                     except:
                         embed = discord.Embed(title="Errore",
@@ -206,9 +210,26 @@ class Ticket(commands.Cog):
         thelper = guild.get_role(762459426128789525)
 
         utente_id = conn.fetchall("SELECT * FROM tickets WHERE channel_id = ?", (channel_id,))[0][1]
+<<<<<<< HEAD
         utente = self.bot.get_user(utente_id)
         if utente is None:
             utente = await guild.fetch_member(utente_id)
+=======
+        try:
+            utente = self.bot.get_user(utente_id)
+            if utente is None:
+                utente = await guild.fetch_member(utente_id)
+        except discord.errors.NotFound:
+            conn.execute("DELETE FROM tickets WHERE channel_id = ?", (channel_id,))
+            await conn.commit()
+            embed = discord.Embed(title="Errore",
+                                  description="L'utente non è stato individuato, il canale verrà "
+                                              "eliminato tra 5 secondi!")
+            await channel.send(embed=embed)
+            await asyncio.sleep(5)
+            await channel.delete()
+            return 0
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
 
         m = await channel.fetch_message(message_id)
 
@@ -240,11 +261,24 @@ class Ticket(commands.Cog):
         await conn.commit()
 
         await channel.set_permissions(supporter, read_messages=False, send_messages=False, add_reactions=False)
+<<<<<<< HEAD
         await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False, read_message_history=True, attach_files=True)
         await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
         # await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
         # await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
         # await channel.set_permissions(thelper, read_messages=True, send_messages=True, add_reactions=True, read_message_history=True)
+=======
+        await channel.set_permissions(utente, read_messages=True, send_messages=True, add_reactions=False,
+                                      read_message_history=True, attach_files=True)
+        await channel.set_permissions(admin, read_messages=True, send_messages=True, add_reactions=True,
+                                      read_message_history=True)
+        await channel.set_permissions(moderator, read_messages=True, send_messages=True, add_reactions=True,
+                                      read_message_history=True)
+        await channel.set_permissions(senmod, read_messages=True, send_messages=True, add_reactions=True,
+                                      read_message_history=True)
+        await channel.set_permissions(thelper, read_messages=True, send_messages=True, add_reactions=True,
+                                      read_message_history=True)
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
 
         await m.clear_reactions()
         await m.delete()
@@ -372,17 +406,25 @@ class Ticket(commands.Cog):
             except discord.HTTPException:
                 await channel.send(content="Richiesta fallita.")
 
+<<<<<<< HEAD
     async def warn_on_useless_ticket(self, guild_id: int, channel: discord.TextChannel, member: discord.Member,
                                      user_id: int, gravity: int, reason: str = None):
+=======
+    async def warn_on_useless_ticket(self, guild_id: int, channel: discord.TextChannel, member: discord.Member, gravity: int, reason: str = None):
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
 
         warn = self.bot.get_cog("Warns")
         conn = self.bot.get_cog("Db")
 
         guild = self.bot.get_guild(guild_id)
+<<<<<<< HEAD
         user_id = \
             conn.fetchall("SELECT user_id FROM tickets WHERE channel_id = ? AND admin_id = ?",
                           (channel.id, member.id,))[0][
                 0]
+=======
+        user_id = conn.fetchall("SELECT user_id FROM tickets WHERE channel_id = ? AND admin_id = ?", (channel.id, member.id,))[0][0]
+>>>>>>> 5eb16c953dc3716c566b441c11d15029edfe778d
 
         user = self.bot.get_user(user_id)
         await warn.warn_user(guild, channel, member, user, gravity, reason)
