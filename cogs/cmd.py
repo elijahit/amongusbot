@@ -1,20 +1,14 @@
-from discord.message import Embed
-from discord.ext import commands
-from discord import Color
-from discord import utils
 import discord
-import random
-import time
+from discord import utils
+from discord.ext import commands
 
 
-class cmd(commands.Cog):
+class Cmd(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
 
-
-# CMD utente
-
+    # CMD utente
 
     @commands.command()
     async def ping(self, ctx):
@@ -47,7 +41,8 @@ class cmd(commands.Cog):
         await ctx.channel.send(embed=about_embed)
 
         return
-# ADMIN COMMAND
+
+    # ADMIN COMMAND
 
     @commands.command()  # CMD AIUTO ADMIN
     async def acmds(self, ctx):
@@ -66,47 +61,42 @@ class cmd(commands.Cog):
             field3 = ("Non Administrative", cfg.aiutoadmin3)
 
             acmds_embed = embed.get_standard_embed(name,
-                                               cfg.blue,
-                                               ctx.guild.icon_url,
-                                               [field, field2, field3],
-                                               "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T. Helper | [8] Gestore | [9] Prova")
+                                                   cfg.blue,
+                                                   ctx.guild.icon_url,
+                                                   [field, field2, field3],
+                                                   "[1] Owner | [2] Admin | [3] S. Mod | [4] Mod \n[5] S. Helper | [6] Helper | [7] T. Helper | [8] Gestore | [9] Prova")
 
             await ctx.channel.send(embed=acmds_embed)
-            return
+
         else:
             try:
                 await ctx.message.delete()
                 await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
             except:
                 pass
-            return
 
-    @commands.command()  # comando purge
+    @commands.command()  # comando purge -> purge can't raise errors
     async def purge(self, ctx, ammount=int(1)):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3,
-                          cfg.rolea4, cfg.rolea5, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             if ammount <= 200:
                 await ctx.channel.purge(limit=ammount)
-                return
             else:
                 try:
                     await ctx.message.author.send("Limite di messaggi da eliminare `200`.")
                     await ctx.message.delete()
                 except:
                     pass
-                return
         else:
             try:
                 await ctx.message.delete()
                 await ctx.message.author.send("Non possiedi il ruolo per eseguire questo comando.")
             except:
                 pass
-            return
 
     @purge.error
     async def purge_error(self, ctx, error):
@@ -120,8 +110,7 @@ class cmd(commands.Cog):
         db = self.bot.get_cog('Db')
         embed = self.bot.get_cog('Embeds')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3,
-                          cfg.rolea4, cfg.rolea6, cfg.rolea7, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea6, cfg.rolea7, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             roleadd = None
@@ -137,10 +126,10 @@ class cmd(commands.Cog):
                     "Errore", f"Il ruolo {role.mention} non è presente nella lista di gestione.")
 
                 role_embed = embed.get_standard_embed(name,
-                                                cfg.red,
-                                                ctx.guild.icon_url,
-                                                [field],
-                                                cfg.footer)
+                                                      cfg.red,
+                                                      ctx.guild.icon_url,
+                                                      [field],
+                                                      cfg.footer)
 
                 await ctx.channel.send(embed=role_embed)
 
@@ -157,10 +146,10 @@ class cmd(commands.Cog):
                         "Errore", f"L'utente {member.mention} possiede già il ruolo {role.mention}.")
 
                     role_embed = embed.get_standard_embed(name,
-                                                    cfg.red,
-                                                    ctx.guild.icon_url,
-                                                    [field],
-                                                    cfg.footer)
+                                                          cfg.red,
+                                                          ctx.guild.icon_url,
+                                                          [field],
+                                                          cfg.footer)
 
                     await ctx.channel.send(embed=role_embed)
 
@@ -171,25 +160,27 @@ class cmd(commands.Cog):
 
                     name = "Amministratore ruoli"
                     field = (
-                        "Aggiunto", f"Hai inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
+                        "Aggiunto",
+                        f"Hai inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
 
                     role_embed = embed.get_standard_embed(name,
-                                                    cfg.blue,
-                                                    ctx.guild.icon_url,
-                                                    [field],
-                                                    cfg.footer)
+                                                          cfg.blue,
+                                                          ctx.guild.icon_url,
+                                                          [field],
+                                                          cfg.footer)
 
                     await ctx.channel.send(embed=role_embed)
 
                     name = "user-logs"
                     field = (
-                        "Aggiunto", f"{ctx.author.mention} ha inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
+                        "Aggiunto",
+                        f"{ctx.author.mention} ha inserito il ruolo {role.mention} al utente {member.mention} motivo: `{motivo}`.")
 
                     logs_embed = embed.get_standard_embed(name,
-                                                    cfg.green,
-                                                    ctx.guild.icon_url,
-                                                    [field],
-                                                    cfg.footer)
+                                                          cfg.green,
+                                                          ctx.guild.icon_url,
+                                                          [field],
+                                                          cfg.footer)
 
                     await staff.send(embed=logs_embed)
                     await member.add_roles(role)
@@ -205,7 +196,7 @@ class cmd(commands.Cog):
         cfg = self.bot.get_cog('Config')
         db = self.bot.get_cog('Db')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             try:
@@ -251,7 +242,7 @@ class cmd(commands.Cog):
     async def editmsg(self, ctx, id, *, messaggio):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             try:
@@ -280,15 +271,14 @@ class cmd(commands.Cog):
 
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
-            if member == None or member == ctx.message.author:
+            if member is None or member == ctx.message.author:
                 await ctx.message.author.send("Non puoi bannarti da solo.")
                 return
-            if reason == None:
+            if reason is None:
                 reason = "Non definito"
             try:
                 embed = discord.Embed(
@@ -296,7 +286,7 @@ class cmd(commands.Cog):
                 embed.add_field(
                     name="Staffer", value=ctx.message.author, inline=True)
                 embed.add_field(name="Utente bannato",
-                                value=member, inline=True)
+                                value=member.mention, inline=True)
 
                 embed.add_field(name="Motivazione", value=reason, inline=True)
                 await member.send(embed=embed)
@@ -309,7 +299,7 @@ class cmd(commands.Cog):
                 title="⛔️ • Ban", description=f"{ctx.message.author.mention} ha bannato {member.mention}")
             embeds.add_field(name="Lo Staffer",
                              value=ctx.message.author, inline=True)
-            embeds.add_field(name="Ha bannato", value=member, inline=True)
+            embeds.add_field(name="Ha bannato", value=member.mention, inline=True)
 
             embeds.add_field(name="Motivazione", value=reason, inline=True)
             await sanzioni.send(embed=embeds)
@@ -317,7 +307,7 @@ class cmd(commands.Cog):
             conn = self.bot.get_cog("Db")
             try:
                 for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
-                    if g[4] == None:
+                    if g[4] is None:
                         conn.execute(
                             "UPDATE analytics SET ban = 1 WHERE admin_id = ?", (ctx.message.author.id,))
                     else:
@@ -355,8 +345,7 @@ class cmd(commands.Cog):
 
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -364,10 +353,10 @@ class cmd(commands.Cog):
             banned_users = await ctx.guild.bans()
             member_name, member_discriminator = member.split('#')
 
-            if member == None or member == ctx.message.author:
+            if member is None or member == ctx.message.author:
                 await ctx.message.author.send("Non puoi sbannarti da solo.")
                 return
-            if reason == None:
+            if reason is None:
                 reason = "Non definito"
             try:
                 embed = discord.Embed(
@@ -403,7 +392,7 @@ class cmd(commands.Cog):
                     conn = self.bot.get_cog("Db")
                     try:
                         for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
-                            if g[6] == None:
+                            if g[6] is None:
                                 conn.execute(
                                     "UPDATE analytics SET unban = 1 WHERE admin_id = ?", (ctx.message.author.id,))
                             else:
@@ -440,25 +429,24 @@ class cmd(commands.Cog):
     async def kick(self, ctx, member: discord.User, *, reason=None):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5,
-        cfg.rolea6, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
-            if member == None or member == ctx.message.author:
+            if member is None or member == ctx.message.author:
                 try:
                     await ctx.message.author.send("Non puoi kickarti da solo.")
                 except:
                     pass
                 return
-            if reason == None:
+            if reason is None:
                 reason = "Non definito"
             try:
                 embed = discord.Embed(
                     title="⛔️ • Kick", description=f"{ctx.message.author.mention}  ti ha kickato dal server")
                 embed.add_field(name="Lo Staffer",
                                 value=ctx.message.author, inline=True)
-                embed.add_field(name="Ha Kickato", value=member, inline=True)
+                embed.add_field(name="Ha Kickato", value=member.mention, inline=True)
 
                 embed.add_field(name="Motivazione", value=reason, inline=True)
                 await member.send(embed=embed)
@@ -467,7 +455,7 @@ class cmd(commands.Cog):
             conn = self.bot.get_cog("Db")
             try:
                 for g in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (ctx.message.author.id,)):
-                    if g[8] == None:
+                    if g[8] is None:
                         conn.execute(
                             "UPDATE analytics SET kick = 1 WHERE admin_id = ?", (ctx.message.author.id,))
                     else:
@@ -491,7 +479,7 @@ class cmd(commands.Cog):
                 title="⛔️ • Kick", description=f"{ctx.message.author.mention} ha kickato {member.mention}")
             embeds.add_field(name="Lo Staffer",
                              value=ctx.message.author, inline=True)
-            embeds.add_field(name="Ha Kickato", value=member, inline=True)
+            embeds.add_field(name="Ha Kickato", value=member.mention, inline=True)
 
             embeds.add_field(name="Motivazione", value=reason, inline=True)
             await sanzioni.send(embed=embeds)
@@ -514,8 +502,7 @@ class cmd(commands.Cog):
     async def tsay(self, ctx, *, text):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3,
-                          cfg.rolea4, cfg.rolea5, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
@@ -539,8 +526,7 @@ class cmd(commands.Cog):
     async def tuser(self, ctx, member: discord.User = None, *, text):
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3,
-                          cfg.rolea4, cfg.rolea5, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             try:
@@ -559,7 +545,7 @@ class cmd(commands.Cog):
                     member.name, member.discriminator), value=text, inline=True)
                 embedss.set_footer(text=cfg.footer)
                 await ctx.message.author.send(embed=embedss)
-                #########log##########
+                # LOG
                 logchannel = self.bot.get_channel(cfg.log)  # canale log
                 embedsss = discord.Embed(color=cfg.blue)
                 embedsss.set_author(name="{0}".format(
@@ -603,15 +589,19 @@ class cmd(commands.Cog):
 
                         invito = await member.voice.channel.create_invite(temporary=True)
                         reply = discord.Embed(
-                            description=f"L'utente {member.mention} si trova in **{member.voice.channel.name}**", colour=discord.Colour.from_rgb(3, 252, 94))
+                            description=f"L'utente {member.mention} si trova in **{member.voice.channel.name}**",
+                            colour=discord.Colour.from_rgb(3, 252, 94))
                         reply.add_field(
-                            name="Tasto per connettersi", value=f"[[Connettiti]({invito.url} 'Clicca qui per entrare nella stanza dell'utente')]", inline=True)
+                            name="Tasto per connettersi",
+                            value=f"[[Connettiti]({invito.url} 'Clicca qui per entrare nella stanza dell'utente')]",
+                            inline=True)
 
                         await ctx.send(content=ctx.message.author.mention, embed=reply)
 
                     else:
                         reply = discord.Embed(
-                            description=f"L'utente {member.mention} __non__ è collegato ad un canale vocale!", colour=discord.Colour.dark_red())
+                            description=f"L'utente {member.mention} __non__ è collegato ad un canale vocale!",
+                            colour=discord.Colour.dark_red())
 
                         await ctx.send(content=ctx.message.author.mention, embed=reply)
 
@@ -638,10 +628,14 @@ class cmd(commands.Cog):
                         if member.id != ctx.message.author.id:
                             await member.edit(mute=True)
                     text = discord.Embed(
-                        title=f"🔇 • Channel Mute", description=f"Ho silenziato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**", colour=discord.Colour.red())
+                        title=f"🔇 • Channel Mute",
+                        description=f"Ho silenziato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**",
+                        colour=discord.Colour.red())
                     await ctx.send(content=ctx.message.author.mention, embed=text)
                 else:
-                    text = discord.Embed(title=f"🔇 • Channel Mute - Errore", description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi mutare gli utenti o specifica il nome del canale di cui vuoi silenziare i membri.", colour=discord.Colour.from_rgb(252, 32, 3))
+                    text = discord.Embed(title=f"🔇 • Channel Mute - Errore",
+                                         description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi mutare gli utenti o specifica il nome del canale di cui vuoi silenziare i membri.",
+                                         colour=discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content=ctx.message.author.mention, embed=text)
 
             elif channel is not None:
@@ -654,16 +648,21 @@ class cmd(commands.Cog):
                                 if member.id != ctx.message.author.id:
                                     await member.edit(mute=True)
                             text = discord.Embed(
-                                title=f"🔇 Channel Mute", description=f"Ho silenziato tutti gli utenti presenti in **{guild_channel.name}**", colour=discord.Colour.red())
+                                title=f"🔇 Channel Mute",
+                                description=f"Ho silenziato tutti gli utenti presenti in **{guild_channel.name}**",
+                                colour=discord.Colour.red())
                             await ctx.send(content=ctx.message.author.mention, embed=text)
                         else:
                             text = discord.Embed(
-                                title=f"🔇 Channel Mute - Errore", description=f"La stanza **{guild_channel.name}** non ha utenti connessi!", colour=discord.Colour.from_rgb(252, 32, 3))
+                                title=f"🔇 Channel Mute - Errore",
+                                description=f"La stanza **{guild_channel.name}** non ha utenti connessi!",
+                                colour=discord.Colour.from_rgb(252, 32, 3))
                             await ctx.send(content=ctx.message.author.mention, embed=text)
                         break
-                if found == False:
+                if found is False:
                     text = discord.Embed(title=f"🔇 Channel Mute - Errore",
-                                         description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour=discord.Colour.from_rgb(252, 32, 3))
+                                         description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)",
+                                         colour=discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content=ctx.message.author.mention, embed=text)
 
     @muteroom.error
@@ -688,11 +687,14 @@ class cmd(commands.Cog):
                         if member.id != ctx.message.author.id:
                             await member.edit(mute=False)
                     text = discord.Embed(
-                        title=f"🔈 • Channel Unmute", description=f"Ho smutato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**", colour=discord.Colour.green())
+                        title=f"🔈 • Channel Unmute",
+                        description=f"Ho smutato tutti gli utenti presenti in **{ctx.message.author.voice.channel.name}**",
+                        colour=discord.Colour.green())
                     await ctx.send(content=ctx.message.author.mention, embed=text)
                 else:
                     text = discord.Embed(title=f"🔈 • Channel Unmute - Errore",
-                                         description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi smutare gli utenti o specifica il nome del canale di cui vuoi smutare i membri.", colour=discord.Colour.from_rgb(252, 32, 3))
+                                         description=f"Non sei connesso a nessun canale vocale!\nPer utilizzare questo comando collegati al canale del quale vuoi smutare gli utenti o specifica il nome del canale di cui vuoi smutare i membri.",
+                                         colour=discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content=ctx.message.author.mention, embed=text)
 
             elif channel is not None:
@@ -705,16 +707,21 @@ class cmd(commands.Cog):
                                 if member.id != ctx.message.author.id:
                                     await member.edit(mute=False)
                             text = discord.Embed(
-                                title=f"🔈 Channel Unmute", description=f"Ho smutato tutti gli utenti presenti in **{guild_channel.name}**", colour=discord.Colour.green())
+                                title=f"🔈 Channel Unmute",
+                                description=f"Ho smutato tutti gli utenti presenti in **{guild_channel.name}**",
+                                colour=discord.Colour.green())
                             await ctx.send(content=ctx.message.author.mention, embed=text)
                         else:
                             text = discord.Embed(
-                                title=f"🔈 Channel Unmute - Errore", description=f"La stanza **{guild_channel.name}** non ha utenti connessi!", colour=discord.Colour.from_rgb(252, 32, 3))
+                                title=f"🔈 Channel Unmute - Errore",
+                                description=f"La stanza **{guild_channel.name}** non ha utenti connessi!",
+                                colour=discord.Colour.from_rgb(252, 32, 3))
                             await ctx.send(content=ctx.message.author.mention, embed=text)
                         break
-                if found == False:
+                if found is False:
                     text = discord.Embed(title=f"🔈 Channel Unmute - Errore",
-                                         description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)", colour=discord.Colour.from_rgb(252, 32, 3))
+                                         description=f"Non sono riuscito a trovare la stanza che hai specificato!\n{ctx.message.author.mention} prova a spiegarti meglio ;)",
+                                         colour=discord.Colour.from_rgb(252, 32, 3))
                     await ctx.send(content=ctx.message.author.mention, embed=text)
 
     @unmuteroom.error
@@ -728,14 +735,14 @@ class cmd(commands.Cog):
         cfg = self.bot.get_cog('Config')
         embed = self.bot.get_cog('Embeds')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4,
-                          cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
             await ctx.message.delete()
             conn = self.bot.get_cog('Db')
 
             try:
+                field, field2 = (), ()
                 for x in conn.fetchall('SELECT * FROM analytics WHERE admin_id = ?', (user.id,)):
                     field = (f"Statistiche", f"*Ticket*: {x[2]}\n\
 *Hack*: {x[3]}\n\
@@ -747,18 +754,18 @@ class cmd(commands.Cog):
                     field2 = (f"Amministratore", f"**{user.mention}**({x[1]})")
 
                 analytics_message = embed.get_standard_embed("Analisi staffer",
-                                                    cfg.blue,
-                                                    user.guild.icon_url,
-                                                    [field, field2],
-                                                    "Administrative system")
+                                                             cfg.blue,
+                                                             user.guild.icon_url,
+                                                             [field, field2],
+                                                             "Administrative system")
                 await ctx.send(embed=analytics_message)
             except:
                 field = ("Errore", "Utente non presente nel database.")
                 analytics_message = embed.get_standard_embed("Analisi staffer",
-                                                    cfg.red,
-                                                    user.guild.icon_url,
-                                                    [field],
-                                                    "Administrative system")
+                                                             cfg.red,
+                                                             user.guild.icon_url,
+                                                             [field],
+                                                             "Administrative system")
                 await ctx.send(embed=analytics_message)
 
             return
@@ -784,17 +791,17 @@ class cmd(commands.Cog):
             if channel.type == discord.ChannelType.voice:
                 users += len(channel.members)
 
-
-        Send = discord.Embed(title = "🙆‍♂️ • Utenti", description= f"Attualmente sono connessi **{users}** utenti nei canali vocali", colour= discord.Colour.blue())
-        await ctx.channel.send(content=ctx.author.mention, embed=Send, delete_after=120)
+        send = discord.Embed(title="🙆‍♂️ • Utenti",
+                             description=f"Attualmente sono connessi **{users}** utenti nei canali vocali",
+                             colour=discord.Colour.blue())
+        await ctx.channel.send(content=ctx.author.mention, embed=send, delete_after=120)
 
     @commands.command(aliases=["bugLs"])
     async def buglist(self, ctx):
         c = self.bot.get_cog('Db')
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4,
-        cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
 
@@ -805,63 +812,59 @@ class cmd(commands.Cog):
             for x in c.fetchallnovalues('SELECT * FROM bugTab'):
                 bugs += f"[{x[0]}] {x[1]} \n"
 
-            Dire = discord.Embed(title="🦠 LISTA BUG 🦠", 
-            description=bugs, 
-            color=discord.Color.from_rgb(30, 115, 5))
-            
-            Dire.set_footer(text=cfg.footer)
-            await ctx.channel.send(embed = Dire)
-            
+            dire = discord.Embed(title="🦠 LISTA BUG 🦠",
+                                 description=bugs,
+                                 color=discord.Color.from_rgb(30, 115, 5))
+
+            dire.set_footer(text=cfg.footer)
+            await ctx.channel.send(embed=dire)
+
             await c.commit()
-  
+
     @commands.command()
     async def bugadd(self, ctx, *bug):
         c = self.bot.get_cog('Db')
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4,
-        cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.rolea2, cfg.rolea3, cfg.rolea4, cfg.rolea5, cfg.rolea6, cfg.rolea7, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
-
             await ctx.message.delete()
 
             c.execute("INSERT INTO bugTab (bug) VALUES (?)", (" ".join(bug),))
             print(f"[?] Aggiunto |{(' '.join(bug))}| alla lista dei bug")
 
-            Dire = discord.Embed(title="BUG AGGIUNTO", 
-            description= " ".join(bug), 
-            color=discord.Color.from_rgb(255, 255, 255))
-            
-            Dire.set_footer(text=cfg.footer)
-            await ctx.channel.send(embed = Dire, delete_after=5)
+            dire = discord.Embed(title="BUG AGGIUNTO",
+                                 description=" ".join(bug),
+                                 color=discord.Color.from_rgb(255, 255, 255))
+
+            dire.set_footer(text=cfg.footer)
+            await ctx.channel.send(embed=dire, delete_after=5)
 
             await c.commit()
 
-    
     @commands.command()
     async def bugremove(self, ctx, number):
         c = self.bot.get_cog('Db')
         cfg = self.bot.get_cog('Config')
         user_roles = set([role.id for role in ctx.message.author.roles])
-        admin_roles = set((cfg.rolea1, cfg.roledev))
+        admin_roles = {cfg.rolea1, cfg.roledev}
 
         if len(user_roles.intersection(admin_roles)) != 0:
-
             await ctx.message.delete()
 
             c.execute("DELETE FROM bugTab WHERE id = (?)", (number,))
             print(f"[?] Rimosso il bug numero {number} dalla lista dei bug")
 
-            Dire = discord.Embed(title="BUG RIMOSSO", 
-            color=discord.Color.from_rgb(0, 0, 0))
-            
-            Dire.set_footer(text=cfg.footer)
-            await ctx.channel.send(embed = Dire, delete_after=5)
-            
+            dire = discord.Embed(title="BUG RIMOSSO",
+                                 color=discord.Color.from_rgb(0, 0, 0))
+
+            dire.set_footer(text=cfg.footer)
+            await ctx.channel.send(embed=dire, delete_after=5)
+
             await c.commit()
 
-    
+
 def setup(bot):
-    bot.add_cog(cmd(bot))
+    bot.add_cog(Cmd(bot))
     print("[!] modulo cmd caricato")

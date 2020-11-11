@@ -12,7 +12,7 @@ def get_prefix(bot, message):
 
 
 startup_extensions = ['cogs.interactions', 'cogs.cmd', 'cogs.config', 'cogs.db', 'cogs.default', 'cogs.embeds', 
-'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager', 'cogs.warn']
+'cogs.ticket', 'cogs.staffmover', 'cogs.ctrlhack', 'cogs.generatoreinsulti', 'cogs.logger', 'cogs.polls', 'cogs.invitemanager', 'cogs.warn', "cogs.svago"]
 
 bot = commands.Bot(command_prefix=get_prefix, description='', case_insensitive=True)
 

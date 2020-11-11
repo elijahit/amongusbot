@@ -1,6 +1,6 @@
-from discord.ext import commands
 from sqlite3 import connect, Error
-import os
+
+from discord.ext import commands
 
 
 class Db(commands.Cog):
@@ -18,6 +18,8 @@ class Db(commands.Cog):
             self.Cursor.execute("CREATE TABLE IF NOT EXISTS tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id, channel_id, admin_id)")
             self.Cursor.execute("CREATE TABLE IF NOT EXISTS warns (id INTEGER PRIMARY KEY AUTOINCREMENT, guild_id INTEGER, user_id INTEGER, gravity INTEGER, reason TEXT)")
             self.Cursor.execute("CREATE TABLE IF NOT EXISTS scheduled_tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, channel_id INTEGER, text TEXT, freq TEXT)")
+            # TODO
+            # self.Cursor.execute("CREATE TABLE IF NOT EXISTS poll ()")
         except Error:
 
             print(Error)
@@ -43,18 +45,17 @@ class Db(commands.Cog):
 
     def execute(self, command, values):
         self.Cursor.execute(command, values)
-    
+
     def executeone(self, command):
         self.Cursor.execute(command)
 
     def fetchall(self, command, values):
-        self.Cursor.execute(command, (values))
+        self.Cursor.execute(command, values)
         return self.Cursor.fetchall()
-    
+
     def fetchallnovalues(self, command):
         self.Cursor.execute(command)
         return self.Cursor.fetchall()
-
 
     # def update(self):
     #     for Member in Guild.members:
