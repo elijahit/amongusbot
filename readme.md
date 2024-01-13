@@ -11,7 +11,4 @@ This is a bot created 4 years ago for the Among Us Italia discord server by vari
 - others not listed...
 
 
-## Badges
-
-
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
